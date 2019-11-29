@@ -1,0 +1,27 @@
+{
+  "name": "@segi/drag-drop",
+  "version": "0.2.2",
+  "publishConfig": {
+    "registry": "http://nexus.ulis.be/repository/npm-ulis/"
+  },
+  "files": [
+    "dist/drag-drop.esm.js",
+    "dist/drag-drop.d.ts"
+  ],
+  "module": "./dist/drag-drop.esm.js",
+  "dependencies": {
+    "core-js": "^2.6.5",
+    "vue": "^2.6.10",
+    "vue-class-component": "^7.0.2",
+    "vue-property-decorator": "^8.1.0",
+    "reflect-metadata": "^0.1.13"
+  },
+  "devDependencies": {
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 10"
+  ],
+  "types": "./dist/drag-drop.d.ts"
+}

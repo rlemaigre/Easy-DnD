@@ -1,0 +1,50 @@
+{
+  "name": "demo",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "rollup --config ./lib/rollup.config.js --environment BUILD:production"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.4.4",
+    "@mdi/font": "^3.6.95",
+    "@segi/template": "file:lib",
+    "core-js": "^2.6.5",
+    "roboto-fontface": "*",
+    "vue": "^2.6.10",
+    "vue-class-component": "^7.0.2",
+    "vue-property-decorator": "^8.1.0",
+    "vuetify": "^2.0.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.11.0",
+    "@vue/cli-plugin-typescript": "^3.11.0",
+    "@vue/cli-service": "^3.11.0",
+    "reflect-metadata": "^0.1.13",
+    "rollup": "^1.20.3",
+    "rollup-plugin-buble": "^0.19.8",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-dts": "^1.1.7",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-sass": "^1.2.2",
+    "rollup-plugin-typescript2": "^0.24.1",
+    "rollup-plugin-vue": "^5.0.1",
+    "sass": "^1.18.0",
+    "sass-loader": "^7.1.0",
+    "tslib": "^1.10.0",
+    "typescript": "^3.4.3",
+    "vue-cli-plugin-vuetify": "^0.6.3",
+    "vue-template-compiler": "^2.6.10"
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 10"
+  ]
+}
