@@ -142,11 +142,6 @@ Every event described in the following sections emits a data structure with the 
 
 ### Events
 
-All event emit a data structures with the follwoing properties :
-* `type` : type of the data being transfered
-* `data` : data being transfered
-* `mouse` :  type of the data being transfered
-
 * `dragstart` : emitted when the drag starts, first event of all
 * `dragend` : emitted when the drag ends, last event of all
 * `cut` or `copy` (or any custom mode) depending on the mode of the Drop component that terminated the drag operation
