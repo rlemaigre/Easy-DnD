@@ -1,4 +1,4 @@
-Easy-DND is a drag and drop implementation for Vue.js 2 that uses only standard mouse events instead of the HTML5 drag and drop API, which is [impossible to work with](https://www.quirksmode.org/blog/archives/2009/09/the_html5_drag.html). Think of it as a way to transfer data from some components to others using the mouse or support for a mouse assisted copy/cut - paste.
+Easy-DnD is a drag and drop implementation for Vue.js 2 that uses only standard mouse events instead of the HTML5 drag and drop API, which is [impossible to work with](https://www.quirksmode.org/blog/archives/2009/09/the_html5_drag.html). Think of it as a way to transfer data from some components to others using the mouse or support for a mouse assisted copy/cut - paste.
 
 # Demo
 
@@ -51,7 +51,7 @@ https://codesandbox.io/s/example-2-r8n1k
 
 A drag operation may have a type. The type is a data structure (can be a simple string) that defines the kind of data being transfered. The type of a drag operation is defined by the Drag component that initiates it.
 
-A Drop component is said to participate in a drag operation if it accepts its type (the default is to accept any type). As far as Easy-DND is concerned, if a Drop component doesn't accept the type of the current drag operation, it behaves like any other part of the page that is not sensitive to drag and drop. It is ignored during the drag, no special CSS classes are applied, no special cursors / drag images are displayed and no special events are triggered.
+A Drop component is said to participate in a drag operation if it accepts its type (the default is to accept any type). As far as Easy-DnD is concerned, if a Drop component doesn't accept the type of the current drag operation, it behaves like any other part of the page that is not sensitive to drag and drop. It is ignored during the drag, no special CSS classes are applied, no special cursors / drag images are displayed and no special events are triggered.
 
 The following demo illustrates the use of types :
 
@@ -67,7 +67,7 @@ If a drag isn't in progress, the cursor turns into `grab` when the mouse is over
 
 ## Drag image
 
-During the drag, an image may move along the mouse cursor. Easy-DND makes it so that this image is always on top of everything else. The Drag component provides a slot that can be used to set the default image displayed during the drag operation :
+During the drag, an image may move along the mouse cursor. Easy-DnD makes it so that this image is always on top of everything else. The Drag component provides a slot that can be used to set the default image displayed during the drag operation :
 
 * if the slot isn't defined, the image is a clone of the Drag component.
 * if the slot is defined and empty, there is no image.
