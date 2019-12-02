@@ -12,7 +12,6 @@
 
 <script lang="ts">
     import {Component, Prop, Vue} from "vue-property-decorator";
-    import {DnDEvent, dndimpl} from "../ts/utils";
     import DropMixin from "../mixins/DropMixin";
 
     @Component({})

@@ -5,8 +5,6 @@ export default class Drag extends DragMixin {
      */
     tag: string | object;
     readonly showDragImage: import("vue/types/vnode").NormalizedScopedSlot;
-    readonly dndtype: string;
-    readonly dnddata: any;
     readonly clazz: {
         'drag-in': boolean;
         'drag-out': boolean;
