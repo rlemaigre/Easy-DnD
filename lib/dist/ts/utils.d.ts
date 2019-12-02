@@ -8,7 +8,7 @@ export interface DragState {
     type: string;
     data: any;
 }
-export declare class DNDEvent {
+export declare class DnDEvent {
     type: any;
     data: any;
     mouse: MouseEvent;

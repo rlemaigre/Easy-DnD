@@ -62,7 +62,7 @@ export interface DragState {
 
 }
 
-export class DNDEvent {
+export class DnDEvent {
 
     constructor(
         public type: any,
@@ -110,7 +110,7 @@ export class DragStateImpl implements DragState {
             stack.push(...this.ancestors(comp.$parent));
         }
         if (comp['isDrop']) {
-            if (comp['acceptsType'] === null || comp['acceptsType'](this.type)) {
+            if (comp['_acceptsType'](this.type)) {
                 stack.push(comp);
             }
         } else if (comp['isDropMask']) {
@@ -200,11 +200,11 @@ export class DragStateImpl implements DragState {
         // Drag leave de la zone précédente :
         if (this.stack.length > 0) {
             let leave = this.stack[this.stack.length - 1];
-            leave.$emit('dragleave', new DNDEvent(this.type, this.data, event));
+            leave.$emit('dragleave', new DnDEvent(this.type, this.data, event));
         }
 
         // Drag enter dans la nouvelle zone :
-        enter.$emit('dragenter', new DNDEvent(this.type, this.data, event));
+        enter.$emit('dragenter', new DnDEvent(this.type, this.data, event));
 
         // Mise à jour de la pile :
         this.stack.push(enter);
@@ -219,7 +219,7 @@ export class DragStateImpl implements DragState {
     mouseLeave(event: MouseEvent) {
         // Drag leave de la zone précédente :
         let leave = this.stack[this.stack.length - 1];
-        leave.$emit('dragleave', new DNDEvent(this.type, this.data, event));
+        leave.$emit('dragleave', new DnDEvent(this.type, this.data, event));
 
         // Mise à jour de la pile :
         this.stack.pop();
@@ -227,7 +227,7 @@ export class DragStateImpl implements DragState {
         // Drag enter dans la nouvelle zone :
         if (this.stack.length > 0) {
             let enter = this.stack[this.stack.length - 1];
-            enter.$emit('dragenter', new DNDEvent(this.type, this.data, event));
+            enter.$emit('dragenter', new DnDEvent(this.type, this.data, event));
         }
 
         // Mise à jour de la visibilité des clones en fonction de l'état courant :

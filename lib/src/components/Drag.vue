@@ -13,7 +13,7 @@
 
 <script lang="ts">
     import {Component, Prop, Vue} from "vue-property-decorator";
-    import {DNDEvent, dndimpl} from "../ts/utils";
+    import {DnDEvent, dndimpl} from "../ts/utils";
 
     @Component({})
     export default class Drag extends Vue {
@@ -69,7 +69,7 @@
                     dragStarted = true;
                     dndimpl.type = comp.type;
                     dndimpl.data = comp.data;
-                    comp.$emit('dragstart', new DNDEvent(dndimpl.type, dndimpl.data, e));
+                    comp.$emit('dragstart', new DnDEvent(dndimpl.type, dndimpl.data, e));
                     dndimpl.init(comp, e);
                     document.documentElement.classList.add('drag-in-progress');
                 }
@@ -79,7 +79,7 @@
 
             function stopDragging(e) {
                 if (dragStarted) {
-                    comp.$emit('dragend', new DNDEvent(dndimpl.type, dndimpl.data, e));
+                    comp.$emit('dragend', new DnDEvent(dndimpl.type, dndimpl.data, e));
                     document.documentElement.classList.remove('drag-in-progress');
                     dndimpl.clear();
                     e.stopPropagation();

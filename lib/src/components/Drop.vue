@@ -12,7 +12,7 @@
 
 <script lang="ts">
     import {Component, Prop, Vue} from "vue-property-decorator";
-    import {DNDEvent, dndimpl} from "../ts/utils";
+    import {DnDEvent, dndimpl} from "../ts/utils";
 
     @Component({})
     export default class Drop extends Vue {
@@ -35,7 +35,9 @@
         mode: string;
 
         _acceptsType(type: string) {
-            if (typeof (this.acceptsType) === 'string')
+            if (this.acceptsType === null)
+                return true;
+            else if (typeof (this.acceptsType) === 'string')
                 return this.acceptsType === type;
             else if (typeof (this.acceptsType) === 'object' && Array.isArray(this.acceptsType)) {
                 return this.acceptsType.includes(type);
@@ -66,15 +68,15 @@
 
             function onDragOver(e) {
                 if (dndimpl.inProgress && comp._acceptsType(dndimpl.type)) {
-                    comp.$emit('dragover', new DNDEvent(dndimpl.type, dndimpl.data, e));
+                    comp.$emit('dragover', new DnDEvent(dndimpl.type, dndimpl.data, e));
                 }
             }
 
             function onDrop(e) {
                 if (dndimpl.inProgress && comp._acceptsType(dndimpl.type)) {
                     if (comp === dndimpl.top() && comp.compatibleModes() && comp.acceptsData(dndimpl.data, dndimpl.type)) {
-                        comp.$emit('drop', new DNDEvent(dndimpl.type, dndimpl.data, e));
-                        dndimpl.source.$emit(comp.mode, new DNDEvent(dndimpl.type, dndimpl.data, e));
+                        comp.$emit('drop', new DnDEvent(dndimpl.type, dndimpl.data, e));
+                        dndimpl.source.$emit(comp.mode, new DnDEvent(dndimpl.type, dndimpl.data, e));
                     }
                 }
             }

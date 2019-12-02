@@ -2,7 +2,7 @@ import {Component, Vue} from "vue-property-decorator";
 import {dnd} from "../ts/utils";
 
 @Component({})
-export default class DragSensitive extends Vue {
+export default class DragAware extends Vue {
 
     get dragInProgress() {
         return dnd.inProgress;
