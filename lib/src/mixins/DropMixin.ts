@@ -81,7 +81,7 @@ export default class DropMixin extends DragAwareMixin {
         }
     }
 
-    get typeAccepted() {
+    get typeAllowed() {
         if (dndimpl.inProgress) {
             return this._acceptsType(dndimpl.type);
         }
@@ -90,9 +90,9 @@ export default class DropMixin extends DragAwareMixin {
         }
     }
 
-    get dataAccepted() {
+    get dropAllowed() {
         if (dndimpl.inProgress) {
-            if (this.typeAccepted) {
+            if (this.typeAllowed) {
                 return this.compatibleModes() && this.acceptsData(dndimpl.data, dndimpl.type);
             }
             else {

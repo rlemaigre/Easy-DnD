@@ -134,7 +134,7 @@ export class DragStateImpl implements DragState {
     }
 
     private getSourceModel(): HTMLElement {
-        if (this.source.$scopedSlots['drag-image']) {
+        if (this.source.$refs['drag-image']) {
             let el = this.source.$refs['drag-image'] as HTMLElement;
             if (el.childElementCount !== 1)
                 return el;
@@ -153,7 +153,7 @@ export class DragStateImpl implements DragState {
         if (top === null || top['isDropMask']) {
             return this.getSourceModel();
         } else {
-            if (top.$scopedSlots['drag-image']) {
+            if (top.$refs['drag-image']) {
                 let el = top.$refs['drag-image'] as HTMLElement;
                 if (el.childElementCount > 1)
                     return el;
@@ -166,7 +166,7 @@ export class DragStateImpl implements DragState {
     }
 
     private getSourceTransform() {
-        if (this.source.$scopedSlots['drag-image']) {
+        if (this.source.$refs['drag-image']) {
             return () => {
             };
         } else {
