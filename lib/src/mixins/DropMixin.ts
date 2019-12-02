@@ -104,8 +104,4 @@ export default class DropMixin extends DragAwareMixin {
         }
     }
 
-    get dropReady() {
-        return dndimpl.inProgress && this._acceptsType(dndimpl.type) && this.compatibleModes() && this.acceptsData(dndimpl.data, dndimpl.type) && dndimpl.top() === this;
-    }
-
 }

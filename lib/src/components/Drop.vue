@@ -47,7 +47,7 @@
         }
 
         get style() {
-            if (this.dropReady) {
+            if (this.dropAllowed && this.dropIn) {
                 return {cursor: this.cursor + ' !important'};
             } else {
                 return {cursor: 'inherit'};

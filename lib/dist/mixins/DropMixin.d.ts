@@ -15,5 +15,4 @@ export default class DropMixin extends DragAwareMixin {
     readonly dropIn: boolean;
     readonly typeAllowed: boolean;
     readonly dropAllowed: boolean;
-    readonly dropReady: boolean;
 }

@@ -1,16 +1,13 @@
 {
-  "name": "@segi/drag-drop",
-  "version": "0.2.2",
-  "publishConfig": {
-    "registry": "http://nexus.ulis.be/repository/npm-ulis/"
-  },
+  "name": "vue-easy-dnd",
+  "version": "1.0.1",
+  "description": "Easy-DnD is a drag and drop implementation for Vue.js 2 that uses only standard mouse events instead of the HTML5 drag and drop API, which is [impossible to work with](https://www.quirksmode.org/blog/archives/2009/09/the_html5_drag.html). Think of it as a way to transfer data from some components to others using the mouse or support for a mouse assisted copy/cut - paste.",
   "files": [
-    "dist/drag-drop.esm.js",
-    "dist/drag-drop.d.ts"
+    "dist/vue-easy-dnd.esm.js",
+    "dist/README.md"
   ],
-  "module": "./dist/drag-drop.esm.js",
+  "module": "./dist/vue-easy-dnd.esm.js",
   "dependencies": {
-    "core-js": "^2.6.5",
     "vue": "^2.6.10",
     "vue-class-component": "^7.0.2",
     "vue-property-decorator": "^8.1.0",
@@ -23,5 +20,15 @@
     "last 2 versions",
     "not ie <= 10"
   ],
-  "types": "./dist/drag-drop.d.ts"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rlemaigre/Easy-DnD.git"
+  },
+  "keywords": ["vue", "vuejs", "vue2", "vuejs2", "drag-and-drop"],
+  "author": "Régis Lemaigre <rlemaigre.github@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rlemaigre/Easy-DnD/issues"
+  },
+  "homepage": "https://github.com/rlemaigre/Easy-DnD#readme"
 }
