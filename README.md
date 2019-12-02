@@ -98,7 +98,7 @@ During a drag operation, the Drop components on the page are assigned several CS
   * `drop-in` when the mouse is over one that is foremost at the current mouse position (remember Drop components can be nested), `drop-out` otherwise
   * `drop-allowed` when the Drop component accepts the data and the source of the drag accepts its mode, `drop-forbidden` otherwise
 
-## DragSensitive mixin
+## DragAware mixin
 
 A mixin is available to make components sensitive to drag operations. It adds the following computed fields to components that incorporate it :
 
