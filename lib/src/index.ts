@@ -3,7 +3,8 @@ import Drag from './components/Drag.vue';
 import Drop from './components/Drop.vue';
 import DropMask from './components/DropMask.vue';
 import {dnd, DnDEvent, DragState} from './ts/utils';
-import DragAware from './mixins/DragAware';
+import DragAwareMixin from './mixins/DragAwareMixin';
+import DragMixin from './mixins/DragMixin';
 
 export {
     Drag,
@@ -12,5 +13,6 @@ export {
     DragState,
     dnd,
     DnDEvent,
-    DragAware
+    DragAwareMixin,
+    DragMixin
 }

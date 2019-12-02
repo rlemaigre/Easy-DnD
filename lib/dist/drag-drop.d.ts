@@ -1,22 +1,23 @@
 import { Vue } from 'vue-property-decorator';
 import { NormalizedScopedSlot } from 'vue/types/vnode';
 
-declare class Drag extends Vue {
+declare class DragMixin extends Vue {
     isDrag: boolean;
+    type: string;
+    data: any;
+    mouseIn: boolean;
+    mounted(): void;
+    readonly dragIn: boolean;
+}
+
+declare class Drag extends DragMixin {
     /**
      * Tag to be used as root of this component. Defaults to div.
      */
     tag: string | object;
-    type: string;
-    data: any;
-    mouseIn: boolean;
-    onMouseEnter(): void;
-    onMouseLeave(): void;
-    mounted(): void;
     readonly showDragImage: NormalizedScopedSlot;
     readonly dndtype: string;
     readonly dnddata: any;
-    readonly dragIn: boolean;
     readonly clazz: {
         'drag-in': boolean;
         'drag-out': boolean;
@@ -57,7 +58,7 @@ interface DragState {
     type: string;
     data: any;
 }
-declare class DNDEvent {
+declare class DnDEvent {
     type: any;
     data: any;
     mouse: MouseEvent;
@@ -65,10 +66,10 @@ declare class DNDEvent {
 }
 declare let dnd: DragState;
 
-declare class DragSensitive extends Vue {
+declare class DragAwareMixin extends Vue {
     readonly dragInProgress: boolean;
     readonly dragData: any;
     readonly dragType: string;
 }
 
-export { DNDEvent, Drag, DragSensitive, DragState, Drop, DropMask, dnd };
+export { DnDEvent, Drag, DragAwareMixin, DragMixin, DragState, Drop, DropMask, dnd };
