@@ -89,16 +89,18 @@ https://codesandbox.io/s/example-4-6h8zy
 
 ## CSS classes
 
-A Drag component is assigned the class `drag-in` when the mouse is over it (or if a drag is in progress and the operation originates from it), `drag-out` otherwise.
+A Drag component is assigned the class `drag-in` when the mouse is over it and a drag operation isn't in progress, `drag-out` otherwise.
 
 During a drag operation, the Drop components on the page are assigned several CSS classes :
 
 * for all Drop components : `type-allowed` if the Drop component accepts the type of the drag operation, `type-forbidden` otherwise
-* for the Drop components that participate in the drag operation (i.e. accept its type) :
+* for the Drop components that participate in the drag operation (i.e. accepts its type) :
   * `drop-in` when the mouse is over one that is foremost at the current mouse position (remember Drop components can be nested), `drop-out` otherwise
   * `drop-allowed` when the Drop component accepts the data and the source of the drag accepts its mode, `drop-forbidden` otherwise
 
-## DragAware mixin
+## Mixins
+
+### DragAwareMixin
 
 A mixin is available to make components sensitive to drag operations. It adds the following computed fields to components that incorporate it :
 
@@ -111,6 +113,25 @@ The following demo displays information about the current drag operation when it
 https://codesandbox.io/s/example-5-j8qo9
 
 ![demo](img/vid6.gif)
+
+### DragMixin and DropMixin
+
+These mixins serve as base to the Drag and Drop components. Components that inherit from them get all the props and events the Drag and Drop components have. Additionally, they define the following computed fields (the CSS classes applied to the Drag and Drop components build upon these computed fields) :
+
+DragMixin :
+
+* `dragIn` : true when the mouse is over the component and a drag operation isn't in progress, false otherwise.
+
+DropMixin :
+
+* `typeAllowed` : true if the Drop component accepts the type of the drag operation, false otherwise
+* if the component participates in a drag operation (i.e. accepts its type) :
+    * `dropIn` : true when the mouse is over the component and it is foremost at the current mouse position (remember Drop components can be nested), false otherwise
+    * `dropAllowed` when the Drop component accepts the data and the source of the drag accepts its mode, false otherwise
+
+Drag images can be defined using the ref `drag-image` in the templates.
+
+The DragMixins and DropMixins can be used if some effects have to be applied that cannot be accomplished with CSS alone and thus the Drag and Drop components won't cut it.
 
 # API
 

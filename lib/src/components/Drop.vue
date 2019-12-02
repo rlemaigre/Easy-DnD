@@ -30,18 +30,18 @@
                     "drop-out": !this.dropIn
                 };
             }
-            if (this.typeAccepted !== null) {
+            if (this.typeAllowed !== null) {
                 clazz = {
                     ...clazz,
-                    "type-allowed": this.typeAccepted,
-                    "type-forbidden": !this.typeAccepted
+                    "type-allowed": this.typeAllowed,
+                    "type-forbidden": !this.typeAllowed
                 };
             }
-            if (this.dataAccepted !== null) {
+            if (this.dropAllowed !== null) {
                     clazz = {
                         ...clazz,
-                        "drop-allowed": this.dataAccepted,
-                        "drop-forbidden": !this.dataAccepted
+                        "drop-allowed": this.dropAllowed,
+                        "drop-forbidden": !this.dropAllowed
                     };
             }
             return clazz;
@@ -56,7 +56,7 @@
         }
 
         get showDragImage() {
-            return this.dragInProgress && this.typeAccepted && this.$scopedSlots['drag-image'];
+            return this.dragInProgress && this.typeAllowed && this.$scopedSlots['drag-image'];
         }
 
     }
