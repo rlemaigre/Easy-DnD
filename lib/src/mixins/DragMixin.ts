@@ -1,8 +1,9 @@
 import {Component, Prop, Vue} from "vue-property-decorator";
 import {DnDEvent, dndimpl} from "../ts/utils";
+import DragAwareMixin from "./DragAwareMixin";
 
 @Component({})
-export default class DragMixin extends Vue {
+export default class DragMixin extends DragAwareMixin {
 
     isDrag = true;
 

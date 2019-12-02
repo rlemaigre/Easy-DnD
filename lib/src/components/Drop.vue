@@ -5,7 +5,7 @@
             <slot :name="slot" v-bind="scope"/>
         </template>
         <div class="drag-image" v-if="showDragImage" ref="drag-image">
-            <slot name="drag-image" :type="dndtype" :data="dnddata"></slot>
+            <slot name="drag-image" :type="dragType" :data="dragData"></slot>
         </div>
     </component>
 </template>
@@ -13,115 +13,42 @@
 <script lang="ts">
     import {Component, Prop, Vue} from "vue-property-decorator";
     import {DnDEvent, dndimpl} from "../ts/utils";
+    import DropMixin from "../mixins/DropMixin";
 
     @Component({})
-    export default class Drop extends Vue {
-
-        isDrop = true;
+    export default class Drop extends DropMixin {
 
         @Prop({default: 'div', type: [String, Object]})
         tag: string | object;
 
-        @Prop({default: () => () => true, type: [String, Array, Function]})
-        acceptsType: string | string[] | { (type: any): boolean };
-
-        @Prop({default: () => () => true, type: Function})
-        acceptsData: { (data: any, type: string): boolean };
-
-        @Prop({default: 'pointer'})
-        cursor: string;
-
-        @Prop({default: 'copy'})
-        mode: string;
-
-        _acceptsType(type: string) {
-            if (this.acceptsType === null)
-                return true;
-            else if (typeof (this.acceptsType) === 'string')
-                return this.acceptsType === type;
-            else if (typeof (this.acceptsType) === 'object' && Array.isArray(this.acceptsType)) {
-                return this.acceptsType.includes(type);
-            } else {
-                return this.acceptsType(type);
-            }
-        }
-
-        mounted() {
-            let el = this.$el;
-            let comp = this;
-            el.addEventListener('mouseenter', onDragEnter);
-            el.addEventListener('mouseleave', onDragLeave);
-            el.addEventListener('mousemove', onDragOver);
-            el.addEventListener('mouseup', onDrop);
-
-            function onDragEnter(e) {
-                if (dndimpl.inProgress && comp._acceptsType(dndimpl.type)) {
-                    dndimpl.mouseEnter(comp, e);
-                }
-            }
-
-            function onDragLeave(e) {
-                if (dndimpl.inProgress && comp._acceptsType(dndimpl.type)) {
-                    dndimpl.mouseLeave(e);
-                }
-            }
-
-            function onDragOver(e) {
-                if (dndimpl.inProgress && comp._acceptsType(dndimpl.type)) {
-                    comp.$emit('dragover', new DnDEvent(dndimpl.type, dndimpl.data, e));
-                }
-            }
-
-            function onDrop(e) {
-                if (dndimpl.inProgress && comp._acceptsType(dndimpl.type)) {
-                    if (comp === dndimpl.top() && comp.compatibleModes() && comp.acceptsData(dndimpl.data, dndimpl.type)) {
-                        comp.$emit('drop', new DnDEvent(dndimpl.type, dndimpl.data, e));
-                        dndimpl.source.$emit(comp.mode, new DnDEvent(dndimpl.type, dndimpl.data, e));
-                    }
-                }
-            }
-
-        }
-
-        compatibleModes() {
-            return (this.mode === 'copy' || dndimpl.source.$listeners[this.mode]);
-        }
-
         get clazz() {
             let clazz = {};
-            if (dndimpl.inProgress) {
-                // Est-ce que la zone est actuellement survolée par le curseur ?
-                let top = dndimpl.top() === this;
+            if (this.dropIn !== null) {
                 clazz = {
                     ...clazz,
-                    "drop-in": top,
-                    "drop-out": !top
+                    "drop-in": this.dropIn,
+                    "drop-out": !this.dropIn
                 };
-
-                // Est-ce que la drop zone accepte le type de drag courant ?
-                let acceptType = this._acceptsType(dndimpl.type);
+            }
+            if (this.typeAccepted !== null) {
                 clazz = {
                     ...clazz,
-                    "type-allowed": acceptType,
-                    "type-forbidden": !acceptType
+                    "type-allowed": this.typeAccepted,
+                    "type-forbidden": !this.typeAccepted
                 };
-
-                // Est-ce que la drop zone accepte les données courantes ?
-                if (acceptType) {
-                    let acceptData = this.compatibleModes() && this.acceptsData(dndimpl.data, dndimpl.type);
+            }
+            if (this.dataAccepted !== null) {
                     clazz = {
                         ...clazz,
-                        "drop-allowed": acceptData,
-                        "drop-forbidden": !acceptData
+                        "drop-allowed": this.dataAccepted,
+                        "drop-forbidden": !this.dataAccepted
                     };
-                }
             }
-
             return clazz;
         }
 
         get style() {
-            if (dndimpl.inProgress && this._acceptsType(dndimpl.type) && this.compatibleModes() && this.acceptsData(dndimpl.data, dndimpl.type) && dndimpl.top() === this) {
+            if (this.dropReady) {
                 return {cursor: this.cursor + ' !important'};
             } else {
                 return {cursor: 'inherit'};
@@ -129,15 +56,7 @@
         }
 
         get showDragImage() {
-            return dndimpl.inProgress && this._acceptsType(dndimpl.type) && this.$scopedSlots['drag-image'];
-        }
-
-        get dndtype() {
-            return dndimpl.inProgress ? dndimpl.type : null;
-        }
-
-        get dnddata() {
-            return dndimpl.inProgress ? dndimpl.data : null;
+            return this.dragInProgress && this.typeAccepted && this.$scopedSlots['drag-image'];
         }
 
     }

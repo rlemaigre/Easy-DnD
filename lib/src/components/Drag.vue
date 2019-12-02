@@ -5,7 +5,7 @@
             <slot :name="slot" v-bind="scope"/>
         </template>
         <div class="drag-image" v-if="showDragImage" ref="drag-image">
-            <slot name="drag-image" :type="dndtype" :data="dnddata"></slot>
+            <slot name="drag-image" :type="dragType" :data="dragData"></slot>
         </div>
     </component>
 </template>
@@ -26,15 +26,7 @@
         tag: string | object;
 
         get showDragImage() {
-            return dndimpl.inProgress && this.$scopedSlots['drag-image'];
-        }
-
-        get dndtype() {
-            return dndimpl.inProgress ? dndimpl.type : null;
-        }
-
-        get dnddata() {
-            return dndimpl.inProgress ? dndimpl.data : null;
+            return this.dragInProgress && this.$scopedSlots['drag-image'];
         }
 
         get clazz() {
