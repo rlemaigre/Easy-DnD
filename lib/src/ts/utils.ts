@@ -73,16 +73,25 @@ export class DnDEvent {
 
 }
 
+export class Position {
+
+    constructor(
+        public x: number,
+        public y: number) {
+    }
+
+}
+
 export class DragStateImpl implements DragState {
 
     public inProgress = false;
     public type: string = null;
     public data: any = null;
-    public feedback: any = null;
     public source: Vue = null;
     public stack: Vue[] = null;
     public clones: Map<HTMLElement, HTMLElement> = null;
     public selfTransform: string = null;
+    public mousePosition: Position = null;
 
     /**
      * Appelée lors du début du drag avec en paramètre le composant Drag dont le drag part.
@@ -100,6 +109,10 @@ export class DragStateImpl implements DragState {
         this.source = source;
         this.stack = this.ancestors(this.source);
         this.clones = new Map<HTMLElement, HTMLElement>();
+        this.mousePosition = {
+            x: event.pageX,
+            y: event.pageY
+        };
         this.inProgress = true;
         Vue.nextTick(() => this.updateClonesVisibility());
     }
@@ -287,7 +300,7 @@ export class DragStateImpl implements DragState {
     top() {
         return this.stack.length === 0 ? null : this.stack[this.stack.length - 1];
     }
-
+ 
     /**
      * Moves all the clones to the position of the mouse pointer.
      */
@@ -296,6 +309,10 @@ export class DragStateImpl implements DragState {
             clone.style.left = event.pageX + "px";
             clone.style.top = event.pageY + "px";
         });
+        this.mousePosition = {
+            x: event.pageX,
+            y: event.pageY
+        };
     }
 
 }
