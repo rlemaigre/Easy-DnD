@@ -29,7 +29,6 @@
     })
     export default class App2 extends Vue {
 
-
     }
 </script>
 

@@ -1,19 +1,23 @@
 import {Component, Vue} from "vue-property-decorator";
-import {dnd} from "../ts/utils";
+import {dndimpl} from "../ts/utils";
 
 @Component({})
 export default class DragAwareMixin extends Vue {
 
     get dragInProgress() {
-        return dnd.inProgress;
+        return dndimpl.inProgress;
     }
 
     get dragData() {
-        return dnd.data;
+        return dndimpl.data;
     }
 
     get dragType() {
-        return dnd.type;
+        return dndimpl.type;
+    }
+
+    get dragPosition() {
+        return dndimpl.mousePosition;
     }
 
 }

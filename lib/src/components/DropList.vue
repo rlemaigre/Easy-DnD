@@ -38,10 +38,11 @@
 
         get itemsWithFeedback() {
             if (this.dragInProgress && this.dropIn && this.dropAllowed) {
+                let n = this.dragPosition.y / 10 % 5;
                 return [
-                    ...this.items.slice(0, 2),
+                    ...this.items.slice(0, n),
                     this.dragData,
-                    ...this.items.slice(2)
+                    ...this.items.slice(n)
                 ];
             } else {
                 return this.items;
