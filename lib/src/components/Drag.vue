@@ -1,5 +1,5 @@
 <template>
-    <component :is="tag" v-bind="$attrs" v-on="$listeners" :style="{cursor: 'grab'}" :class="clazz">
+    <component :is="tag" v-bind="$attrs" v-on="$listeners" :style="{cursor: 'grab'}" :class="cssClasses">
         <slot></slot>
         <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
             <slot :name="slot" v-bind="scope"/>
@@ -25,13 +25,6 @@
 
         get showDragImage() {
             return this.dragInProgress && this.$scopedSlots['drag-image'];
-        }
-
-        get clazz() {
-            return {
-                'drag-in': this.dragIn,
-                'drag-out': !this.dragIn
-            };
         }
 
     }

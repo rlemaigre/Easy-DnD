@@ -116,11 +116,12 @@ https://codesandbox.io/s/example-5-j8qo9
 
 ### DragMixin and DropMixin
 
-These mixins serve as base to the Drag and Drop components. Components that inherit from them get all the props and events the Drag and Drop components have. Additionally, they define the following computed fields (the CSS classes applied to the Drag and Drop components build upon these computed fields) :
+These mixins serve as base to the Drag and Drop components. Components that inherit from them get all the props, events and behaviour the Drag and Drop components have. These mixins can be used when access to the computed fields that power the Drag and Drop components is necessary, for example to create complex feedback that CSS alone can't accomplish.
 
-DragMixin :
+DragMixin computed fields :
 
 * `dragIn` : true when the mouse is over the component and a drag operation isn't in progress, false otherwise.
+* `cssClasses` : an object representing the CSS classes to be applied (see CSS Classes section)
 
 DropMixin :
 
@@ -128,10 +129,9 @@ DropMixin :
 * if the component participates in a drag operation (i.e. accepts its type) :
     * `dropIn` : true when the mouse is over the component and it is foremost at the current mouse position (remember Drop components can be nested), false otherwise
     * `dropAllowed` when the Drop component accepts the data and the source of the drag accepts its mode, false otherwise
+* `cssClasses` : an object representing the CSS classes to be applied (see CSS Classes section)
 
 Drag images can be defined using the ref `drag-image` in the templates.
-
-The DragMixins and DropMixins can be used if some effects have to be applied that cannot be accomplished with CSS alone and thus the Drag and Drop components won't cut it.
 
 # API
 

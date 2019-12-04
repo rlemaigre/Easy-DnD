@@ -1,5 +1,5 @@
 <template>
-    <component :is="tag" v-bind="$attrs" v-on="$listeners" :class="clazz" :style="style">
+    <component :is="tag" v-bind="$attrs" v-on="$listeners" :class="cssClasses" :style="cssStyle">
         <slot></slot>
         <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
             <slot :name="slot" v-bind="scope"/>
@@ -19,40 +19,6 @@
 
         @Prop({default: 'div', type: [String, Object]})
         tag: string | object;
-
-        get clazz() {
-            let clazz = {};
-            if (this.dropIn !== null) {
-                clazz = {
-                    ...clazz,
-                    "drop-in": this.dropIn,
-                    "drop-out": !this.dropIn
-                };
-            }
-            if (this.typeAllowed !== null) {
-                clazz = {
-                    ...clazz,
-                    "type-allowed": this.typeAllowed,
-                    "type-forbidden": !this.typeAllowed
-                };
-            }
-            if (this.dropAllowed !== null) {
-                    clazz = {
-                        ...clazz,
-                        "drop-allowed": this.dropAllowed,
-                        "drop-forbidden": !this.dropAllowed
-                    };
-            }
-            return clazz;
-        }
-
-        get style() {
-            if (this.dropAllowed && this.dropIn) {
-                return {cursor: this.cursor + ' !important'};
-            } else {
-                return {cursor: 'inherit'};
-            }
-        }
 
         get showDragImage() {
             return this.dragInProgress && this.typeAllowed && this.$scopedSlots['drag-image'];

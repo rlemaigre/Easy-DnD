@@ -104,4 +104,38 @@ export default class DropMixin extends DragAwareMixin {
         }
     }
 
+    get cssClasses() {
+        let clazz = {};
+        if (this.dropIn !== null) {
+            clazz = {
+                ...clazz,
+                "drop-in": this.dropIn,
+                "drop-out": !this.dropIn
+            };
+        }
+        if (this.typeAllowed !== null) {
+            clazz = {
+                ...clazz,
+                "type-allowed": this.typeAllowed,
+                "type-forbidden": !this.typeAllowed
+            };
+        }
+        if (this.dropAllowed !== null) {
+            clazz = {
+                ...clazz,
+                "drop-allowed": this.dropAllowed,
+                "drop-forbidden": !this.dropAllowed
+            };
+        }
+        return clazz;
+    }
+
+    get cssStyle() {
+        if (this.dropAllowed && this.dropIn) {
+            return {cursor: this.cursor + ' !important'};
+        } else {
+            return {cursor: 'inherit'};
+        }
+    }
+
 }

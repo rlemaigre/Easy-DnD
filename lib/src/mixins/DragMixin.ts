@@ -79,4 +79,11 @@ export default class DragMixin extends DragAwareMixin {
         return !dndimpl.inProgress && this.mouseIn;
     }
 
+    get cssClasses() {
+        return {
+            'drag-in': this.dragIn,
+            'drag-out': !this.dragIn
+        };
+    }
+
 }
