@@ -6,10 +6,11 @@
                     <drag v-for="n in [1,2,3,4,5]" :data="n" class="item">{{n}}</drag>
                 </div>
                 <drop-list :items="['a','b','c','d','e']" class="list">
-                    <template v-slot:items="{items, feedback}">
-                        <transition-group name="list" tag="div">
-                            <div class="item" v-for="item in items" :key="item">{{item}}</div>
-                        </transition-group>
+                    <template v-slot:item="{item}">
+                        <div class="item" :key="item">{{item}}</div>
+                    </template>
+                    <template v-slot:feedback="{item}">
+                        <div class="item" :key="item">test</div>
                     </template>
                 </drop-list>
             </v-container>
@@ -58,18 +59,5 @@
                 justify-content: center;
             }
         }
-    }
-
-    .item {
-        transition: transform .3s;
-    }
-
-    .list-enter, .list-leave-to {
-        visibility: hidden;
-    }
-
-    .list-leave-active {
-        position: absolute;
-        visibility: hidden;
     }
 </style>

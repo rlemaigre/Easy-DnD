@@ -144,6 +144,7 @@ export class DragStateImpl implements DragState {
             clone.remove();
         });
         this.clones = null;
+        this.mousePosition = null;
     }
 
     private getSourceModel(): HTMLElement {
@@ -300,7 +301,7 @@ export class DragStateImpl implements DragState {
     top() {
         return this.stack.length === 0 ? null : this.stack[this.stack.length - 1];
     }
- 
+
     /**
      * Moves all the clones to the position of the mouse pointer.
      */
