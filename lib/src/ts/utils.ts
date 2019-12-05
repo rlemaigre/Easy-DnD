@@ -73,6 +73,18 @@ export class DnDEvent {
 
 }
 
+export class InsertEvent {
+
+    constructor(
+        public type: any,
+        public data: any,
+        public index: number,
+        public mouse: MouseEvent
+    ) {
+    }
+
+}
+
 export class Position {
 
     constructor(

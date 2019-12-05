@@ -18,6 +18,8 @@
 <script lang="ts">
     import {Component, Prop} from "vue-property-decorator";
     import DropMixin from "../mixins/DropMixin";
+    import {DnDEvent} from "..";
+    import {InsertEvent} from "../ts/utils";
 
     @Component({})
     export default class DropList extends DropMixin {
@@ -54,6 +56,16 @@
         created() {
             this.$on('dragenter', this.onDragEnter);
             this.$on('dragleave', this.onDragLeave);
+            this.$on('drop', this.onDrop)
+        }
+
+        onDrop(event: DnDEvent) {
+            this.$emit('insert', new InsertEvent(
+                event.type,
+                event.data,
+                this.feedbackIndex,
+                event.mouse
+            ))
         }
 
         onDragEnter() {

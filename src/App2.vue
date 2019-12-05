@@ -5,12 +5,12 @@
                 <div class="list">
                     <drag v-for="n in [1,2,3,4,5]" :data="n" class="item">{{n}}</drag>
                 </div>
-                <drop-list :items="['a','b','c','d','e']" class="list">
+                <drop-list :items="items" class="list" @insert="onInsert">
                     <template v-slot:item="{item}">
                         <div class="item" :key="item">{{item}}</div>
                     </template>
                     <template v-slot:feedback="{data, type}">
-                        <div class="item" :key="data">test</div>
+                        <div class="item feedback" :key="data">&nbsp</div>
                     </template>
                 </drop-list>
             </v-container>
@@ -24,11 +24,18 @@
     import DropZone from "@/components/DropZone.vue";
     import DropMask from "../lib/src/components/DropMask.vue";
     import DropList from "../lib/src/components/DropList.vue";
+    import {InsertEvent} from "../lib/src/ts/utils";
 
     @Component({
         components: {DropMask, DropZone, Drag, DropList}
     })
     export default class App2 extends Vue {
+
+        items = ['a', 'b', 'c', 'd', 'e'];
+
+        onInsert(event: InsertEvent) {
+            this.items.splice(event.index, 0, event.data);
+        }
 
     }
 </script>
@@ -57,6 +64,11 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
+
+                &.feedback {
+                    background-color: rgb(255, 220, 220);
+                    border: 2px dashed black;
+                }
             }
         }
     }
