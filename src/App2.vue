@@ -49,7 +49,6 @@
             border: 1px solid black;
             margin: 100px auto;
             width: 200px;
-            height: 400px;
 
             .item {
                 padding: 20px;

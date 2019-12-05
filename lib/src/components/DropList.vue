@@ -1,6 +1,7 @@
 <template>
     <div :class="clazz" :style="cssStyle">
-        <transition-group :name="transition" :tag="tag" v-bind="$attrs" v-on="$listeners" class="tg" ref="tg">
+        <transition-group :name="transition" :duration="{ enter: 0, leave: 0 }" :tag="tag" v-bind="$attrs"
+                          v-on="$listeners" class="tg" ref="tg">
             <slot :name="itemSlot(item)" :item="item" v-for="item in itemsWithFeedback"></slot>
             <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
                 <slot :name="slot" v-bind="scope"/>
@@ -124,7 +125,7 @@
 <style scoped lang="scss">
     .tg {
         &::v-deep > * {
-            transition: transform .3s;
+            transition: transform .2s;
         }
     }
 
