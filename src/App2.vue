@@ -12,6 +12,9 @@
                     <template v-slot:feedback="{data, type}">
                         <div class="item feedback" :key="data">&nbsp</div>
                     </template>
+                    <template v-slot:drag-image="{data, type}">
+                        <div class="item drag-image">drag</div>
+                    </template>
                 </drop-list>
             </v-container>
         </v-content>
@@ -72,6 +75,11 @@
                 &.feedback {
                     background-color: rgb(255, 220, 220);
                     border: 2px dashed black;
+                }
+
+                &.drag-image {
+                    background-color: rgb(220, 255, 220);
+                    transform: translate(-50%, -50%);
                 }
             }
         }

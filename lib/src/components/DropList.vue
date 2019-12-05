@@ -12,6 +12,9 @@
         <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
             <slot :name="slot" v-bind="scope"/>
         </template>
+        <div class="__drag-image" v-if="showDragImage" ref="drag-image">
+            <slot name="drag-image" :type="dragType" :data="dragData"></slot>
+        </div>
     </component>
 </template>
 
@@ -19,7 +22,7 @@
     import {Component, Prop} from "vue-property-decorator";
     import DropMixin from "../mixins/DropMixin";
     import {DnDEvent} from "..";
-    import {InsertEvent} from "../ts/utils";
+    import {createDragImage, InsertEvent} from "../ts/utils";
 
     @Component({})
     export default class DropList extends DropMixin {
@@ -44,14 +47,6 @@
         transitionTag: string;
 
         grid = null;
-
-        itemSlot(index: number) {
-            if (index !== this.feedbackIndex) {
-                return 'item';
-            } else {
-                return 'feedback';
-            }
-        }
 
         created() {
             this.$on('dragenter', this.onDragEnter);
@@ -145,6 +140,31 @@
             };
         }
 
+        get showDragImage() {
+            return this.dragInProgress && this.typeAllowed && this.$scopedSlots['drag-image'];
+        }
+
+        createDragImage() {
+            let image;
+            if (this.$refs['drag-image']) {
+                let el = this.$refs['drag-image'] as HTMLElement;
+                let model;
+                if (el.childElementCount !== 1) {
+                    model = el;
+                } else {
+                    model = el.children.item(0);
+                }
+                let clone = model.cloneNode(true) as HTMLElement;
+                let tg = this.$refs['tg']['$el'] as HTMLElement;
+                tg.append(clone);
+                image = createDragImage(clone);
+                clone.remove();
+            } else {
+                image = 'source';
+            }
+            return image;
+        }
+
     }
 </script>
 
@@ -157,5 +177,13 @@
 
     .feedback {
         display: none;
+    }
+
+    /* Places a drag image out of sight while keeping its computed styles accessibles. */
+    .__drag-image {
+        position: fixed;
+        top: -10000px;
+        left: -10000px;
+        will-change: left, top;
     }
 </style>

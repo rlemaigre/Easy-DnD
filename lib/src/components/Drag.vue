@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Vue} from "vue-property-decorator";
+    import {Component, Prop} from "vue-property-decorator";
     import DragMixin from "../mixins/DragMixin";
 
     @Component({})
@@ -37,7 +37,9 @@
     html.drag-in-progress * {
         cursor: grabbing !important;
     }
+</style>
 
+<style lang="scss" scoped>
     /* Places a drag image out of sight while keeping its computed styles accessibles. */
     .drag-image {
         position: fixed;

@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Vue} from "vue-property-decorator";
+    import {Component, Prop} from "vue-property-decorator";
     import DropMixin from "../mixins/DropMixin";
 
     @Component({})
@@ -36,5 +36,15 @@
         &, * {
             cursor: no-drop !important;
         }
+    }
+</style>
+
+<style lang="scss" scoped>
+    /* Places a drag image out of sight while keeping its computed styles accessibles. */
+    .drag-image {
+        position: fixed;
+        top: -10000px;
+        left: -10000px;
+        will-change: left, top;
     }
 </style>
