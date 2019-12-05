@@ -7,13 +7,17 @@
                 <slot :name="slot" v-bind="scope"/>
             </template>
         </transition-group>
+        <div class="feedback" v-if="feedback !== null" ref="feedback">
+            <slot name="feedback" :item="feedback">
+                <slot name="item" :item="feedback"></slot>
+            </slot>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
     import {Component, Prop} from "vue-property-decorator";
     import DropMixin from "../mixins/DropMixin";
-    import {Position} from "../ts/utils";
 
     @Component({})
     export default class DropList extends DropMixin {
@@ -46,67 +50,71 @@
         }
 
         onDragEnter() {
-            this.grid = this.generateGrid();
+            if (this.dropAllowed) {
+                // Temporary adds a clone of the feedback to the list :
+                let feedbackParent = this.$refs['feedback'] as HTMLElement;
+                let feedback = feedbackParent.children[0];
+                let clone = feedback.cloneNode(true) as HTMLElement;
+                let tg = this.$refs['tg']['$el'] as HTMLElement;
+                tg.append(clone);
+
+                // Computes grid :
+                this.grid = [];
+                for (let child of tg.children) {
+                    let rect = child.getBoundingClientRect();
+                    this.grid.push({
+                        x: rect.left + rect.width / 2,
+                        y: rect.top + rect.height / 2
+                    });
+                }
+
+                // Remove clone :
+                clone.remove();
+            }
         }
 
         onDragLeave() {
             this.grid = null;
         }
 
-        generateGrid() {
-            let grid = [];
-            let tg = this.$refs['tg']['$el'] as HTMLElement;
-            for (let child of tg.children) {
-                let rect = child.getBoundingClientRect();
-                grid.push({
-                    x: rect.left + rect.width / 2,
-                    y: rect.top + rect.height / 2
-                });
-            }
-            return grid;
-        }
-
-        computeIndex(grid, position: Position) {
-            let minDist = 999999;
-            let index = -1;
-            for (let i = 0; i < grid.length; i++) {
-                let center = grid[i];
-                let dist = Math.sqrt(Math.pow(center.x - position.x, 2) + Math.pow(center.y - position.y, 2));
-                if (dist < minDist) {
-                    minDist = dist;
-                    index = i;
-                }
-            }
-            return index;
-        }
-
         get feedbackIndex() {
-            return this.computeIndex(this.grid, this.dragPosition);
+            if (this.grid) {
+                let minDist = 999999;
+                let index = -1;
+                for (let i = 0; i < this.grid.length; i++) {
+                    let center = this.grid[i];
+                    let dist = Math.sqrt(Math.pow(center.x - this.dragPosition.x, 2) + Math.pow(center.y - this.dragPosition.y, 2));
+                    if (dist < minDist) {
+                        minDist = dist;
+                        index = i;
+                    }
+                }
+                return index;
+            } else {
+                return null;
+            }
         }
 
-        get dragItem() {
-            return this.dataToItem(this.dragData, this.dragType);
+        get feedback() {
+            if (this.dragInProgress && this.dropAllowed) {
+                return this.dataToItem(this.dragData, this.dragType);
+            } else {
+                return null;
+            }
         }
 
         get itemsWithFeedback() {
             if (this.dragInProgress && this.dropIn && this.dropAllowed) {
-                if (this.feedbackIndex === 0) {
-                    return [
-                        this.dragItem,
-                        ...this.items
-                    ]
-                } else if (this.feedbackIndex >= this.items.length - 1) {
-                    return [
-                        ...this.items,
-                        this.dragItem
-                    ]
-                } else {
-                    return [
-                        ...this.items.slice(0, this.feedbackIndex),
-                        this.dragItem,
-                        ...this.items.slice(this.feedbackIndex)
-                    ];
+                let items = [];
+                for (let i = 0; i <= this.items.length; i++) {
+                    if (i === this.feedbackIndex) {
+                        items.push(this.feedback);
+                    }
+                    if (i < this.items.length) {
+                        items.push(this.items[i])
+                    }
                 }
+                return items;
             } else {
                 return this.items;
             }
@@ -136,5 +144,9 @@
     .list-leave-active {
         position: absolute;
         visibility: hidden;
+    }
+
+    .feedback {
+        display: none;
     }
 </style>
