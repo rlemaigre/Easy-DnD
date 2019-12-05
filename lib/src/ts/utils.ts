@@ -108,7 +108,9 @@ export class DragStateImpl implements DragState {
     /**
      * Appelée lors du début du drag avec en paramètre le composant Drag dont le drag part.
      */
-    init(source: Vue, event: MouseEvent) {
+    init(source: Vue, event: MouseEvent, type, data) {
+        this.type = type;
+        this.data = data;
         let startPos = {
             x: event.pageX,
             y: event.pageY
@@ -126,7 +128,12 @@ export class DragStateImpl implements DragState {
             y: event.pageY
         };
         this.inProgress = true;
-        Vue.nextTick(() => this.updateClonesVisibility());
+        Vue.nextTick(() => {
+            if (this.top() !== null && this.top()['isDrop']) {
+                this.top().$emit('dragenter', new DnDEvent(this.type, this.data, event));
+            }
+            this.updateClonesVisibility();
+        });
     }
 
     private ancestors(comp: Vue) {

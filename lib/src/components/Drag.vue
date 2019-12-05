@@ -4,7 +4,7 @@
         <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
             <slot :name="slot" v-bind="scope"/>
         </template>
-        <div class="drag-image" v-if="showDragImage" ref="drag-image">
+        <div class="__drag-image" v-if="showDragImage" ref="drag-image">
             <slot name="drag-image" :type="dragType" :data="dragData"></slot>
         </div>
     </component>
@@ -41,7 +41,7 @@
 
 <style lang="scss" scoped>
     /* Places a drag image out of sight while keeping its computed styles accessibles. */
-    .drag-image {
+    .__drag-image {
         position: fixed;
         top: -10000px;
         left: -10000px;

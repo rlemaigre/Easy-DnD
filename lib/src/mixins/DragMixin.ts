@@ -50,10 +50,8 @@ export default class DragMixin extends DragAwareMixin {
         function doDrag(e) {
             if (!dragStarted) {
                 dragStarted = true;
-                dndimpl.type = comp.type;
-                dndimpl.data = comp.data;
-                comp.$emit('dragstart', new DnDEvent(dndimpl.type, dndimpl.data, e));
-                dndimpl.init(comp, e);
+                comp.$emit('dragstart', new DnDEvent(comp.type, comp.data, e));
+                dndimpl.init(comp, e, comp.type, comp.data);
                 document.documentElement.classList.add('drag-in-progress');
             }
             comp.$emit('drag', e);

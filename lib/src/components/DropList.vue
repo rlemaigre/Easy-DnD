@@ -6,6 +6,7 @@
             <slot name="feedback" :data="dragData" :type="dragType" v-if="feedbackIndex !== null"></slot>
             <slot name="item" :item="item" v-for="item in itemsAfterFeedback"></slot>
         </transition-group>
+
         <div class="feedback" v-if="dropAllowed" ref="feedback">
             <slot name="feedback" :data="dragData" :type="dragType"></slot>
         </div>
@@ -45,6 +46,9 @@
 
         @Prop({default: 'div'})
         transitionTag: string;
+
+        @Prop({default: false})
+        allowReorder: boolean;
 
         grid = null;
 
@@ -143,6 +147,10 @@
         get showDragImage() {
             return this.dragInProgress && this.typeAllowed && this.$scopedSlots['drag-image'];
         }
+
+        // get reorderMode() {
+        //     return this.dragInProgress && dndimpl.source === this;
+        // }
 
         createDragImage() {
             let image;
