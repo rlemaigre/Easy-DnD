@@ -1,6 +1,6 @@
 <template>
     <div :class="clazz" :style="cssStyle">
-        <transition-group :name="transition" :duration="{ enter: 0, leave: 0 }" :tag="tag" v-bind="$attrs"
+        <transition-group :name="transitionName" :duration="transitionDuration" :tag="tag" v-bind="$attrs"
                           v-on="$listeners" class="tg" ref="tg">
             <slot :name="itemSlot(item)" :item="item" v-for="item in itemsWithFeedback"></slot>
             <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
@@ -29,7 +29,14 @@
         items: any[];
 
         @Prop({default: 'list'})
-        transition: string;
+        transitionName: string;
+
+        @Prop({
+            default: () => {
+                return {enter: 0, leave: 0}
+            }
+        })
+        transitionDuration: object;
 
         @Prop({default: (data) => data, type: Function})
         dataToItem: { (data: any, type: any): any };
