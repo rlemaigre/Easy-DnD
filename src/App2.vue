@@ -9,8 +9,8 @@
                     <template v-slot:item="{item}">
                         <div class="item" :key="item">{{item}}</div>
                     </template>
-                    <template v-slot:feedback="{item}">
-                        <div class="item" :key="item">test</div>
+                    <template v-slot:feedback="{data, type}">
+                        <div class="item" :key="data">test</div>
                     </template>
                 </drop-list>
             </v-container>

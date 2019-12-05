@@ -69,6 +69,7 @@ export default class DropMixin extends DragAwareMixin {
             if (dndimpl.inProgress && comp._acceptsType(dndimpl.type)) {
                 if (comp === dndimpl.top() && comp.compatibleModes() && comp.acceptsData(dndimpl.data, dndimpl.type)) {
                     comp.$emit('drop', new DnDEvent(dndimpl.type, dndimpl.data, e));
+                    comp.$emit('dragleave', new DnDEvent(dndimpl.type, dndimpl.data, e));
                     dndimpl.source.$emit(comp.mode, new DnDEvent(dndimpl.type, dndimpl.data, e));
                 }
             }

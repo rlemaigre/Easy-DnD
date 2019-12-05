@@ -1,18 +1,18 @@
 <template>
-    <div :class="clazz" :style="cssStyle">
-        <transition-group :name="transitionName" :duration="transitionDuration" :tag="tag" v-bind="$attrs"
-                          v-on="$listeners" class="tg" ref="tg">
-            <slot :name="itemSlot(item)" :item="item" v-for="item in itemsWithFeedback"></slot>
-            <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
-                <slot :name="slot" v-bind="scope"/>
-            </template>
+    <component :is="tag" v-bind="$attrs" v-on="$listeners" :class="clazz" :style="cssStyle">
+        <transition-group :tag="transitionTag" :name="transitionName" :duration="transitionDuration" class="tg"
+                          ref="tg">
+            <slot name="item" :item="item" v-for="item in itemsBeforeFeedback"></slot>
+            <slot name="feedback" :data="dragData" :type="dragType" v-if="feedbackIndex !== null"></slot>
+            <slot name="item" :item="item" v-for="item in itemsAfterFeedback"></slot>
         </transition-group>
-        <div class="feedback" v-if="feedback !== null" ref="feedback">
-            <slot name="feedback" :item="feedback">
-                <slot name="item" :item="feedback"></slot>
-            </slot>
+        <div class="feedback" v-if="dropAllowed" ref="feedback">
+            <slot name="feedback" :data="dragData" :type="dragType"></slot>
         </div>
-    </div>
+        <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
+            <slot :name="slot" v-bind="scope"/>
+        </template>
+    </component>
 </template>
 
 <script lang="ts">
@@ -38,16 +38,16 @@
         })
         transitionDuration: object;
 
-        @Prop({default: (data) => data, type: Function})
-        dataToItem: { (data: any, type: any): any };
+        @Prop({default: 'div'})
+        transitionTag: string;
 
         grid = null;
 
-        itemSlot(item: any) {
-            if (item !== this.dragData) {
+        itemSlot(index: number) {
+            if (index !== this.feedbackIndex) {
                 return 'item';
             } else {
-                return this.$scopedSlots['feedback'] ? 'feedback' : 'item';
+                return 'feedback';
             }
         }
 
@@ -102,28 +102,27 @@
             }
         }
 
-        get feedback() {
-            if (this.dragInProgress && this.dropAllowed) {
-                return this.dataToItem(this.dragData, this.dragType);
+        get itemsBeforeFeedback() {
+            if (this.dragInProgress && this.dropIn && this.dropAllowed) {
+                if (this.feedbackIndex === 0) {
+                    return [];
+                } else {
+                    return this.items.slice(0, this.feedbackIndex);
+                }
             } else {
-                return null;
+                return this.items;
             }
         }
 
-        get itemsWithFeedback() {
+        get itemsAfterFeedback() {
             if (this.dragInProgress && this.dropIn && this.dropAllowed) {
-                let items = [];
-                for (let i = 0; i <= this.items.length; i++) {
-                    if (i === this.feedbackIndex) {
-                        items.push(this.feedback);
-                    }
-                    if (i < this.items.length) {
-                        items.push(this.items[i])
-                    }
+                if (this.feedbackIndex === this.items.length) {
+                    return [];
+                } else {
+                    return this.items.slice(this.feedbackIndex);
                 }
-                return items;
             } else {
-                return this.items;
+                return [];
             }
         }
 
