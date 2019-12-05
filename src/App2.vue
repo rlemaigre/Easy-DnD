@@ -5,7 +5,7 @@
                 <div class="list">
                     <drag v-for="n in [1,2,3,4,5]" :data="n" class="item">{{n}}</drag>
                 </div>
-                <drop-list :items="items" class="list" @insert="onInsert">
+                <drop-list :items="items" class="list" @insert="onInsert" :accepts-data="accept">
                     <template v-slot:item="{item}">
                         <div class="item" :key="item">{{item}}</div>
                     </template>
@@ -35,6 +35,10 @@
 
         onInsert(event: InsertEvent) {
             this.items.splice(event.index, 0, event.data);
+        }
+
+        accept(data) {
+            return !this.items.includes(data);
         }
 
     }
