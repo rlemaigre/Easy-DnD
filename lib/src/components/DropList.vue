@@ -28,7 +28,7 @@
         @Prop()
         items: any[];
 
-        @Prop({default: 'list'})
+        @Prop({default: 'drop-list-transition'})
         transitionName: string;
 
         @Prop({
@@ -58,14 +58,14 @@
 
         onDragEnter() {
             if (this.dropAllowed) {
-                // Temporary adds a clone of the feedback to the list :
+                // Temporary add a clone of the feedback to the list :
                 let feedbackParent = this.$refs['feedback'] as HTMLElement;
                 let feedback = feedbackParent.children[0];
                 let clone = feedback.cloneNode(true) as HTMLElement;
                 let tg = this.$refs['tg']['$el'] as HTMLElement;
                 tg.append(clone);
 
-                // Computes grid :
+                // Compute grid :
                 this.grid = [];
                 for (let child of tg.children) {
                     let rect = child.getBoundingClientRect();
@@ -142,15 +142,6 @@
         &::v-deep > * {
             transition: transform .2s;
         }
-    }
-
-    .list-enter, .list-leave-to {
-        visibility: hidden;
-    }
-
-    .list-leave-active {
-        position: absolute;
-        visibility: hidden;
     }
 
     .feedback {
