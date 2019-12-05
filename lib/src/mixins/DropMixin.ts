@@ -1,4 +1,4 @@
-import {Component, Prop, Vue} from "vue-property-decorator";
+import {Component, Prop} from "vue-property-decorator";
 import {DnDEvent, dndimpl} from "../ts/utils";
 import DragAwareMixin from "./DragAwareMixin";
 
@@ -39,14 +39,22 @@ export default class DropMixin extends DragAwareMixin {
         el.addEventListener('mousemove', onDragOver);
         el.addEventListener('mouseup', onDrop);
 
+        /**
+         * The condition e.relatedTarget !== null is a fix for firefox triggering the mouseenter event several times. The
+         * wrong events have a null relatedTarget in FF.
+         */
         function onDragEnter(e) {
-            if (dndimpl.inProgress && comp._acceptsType(dndimpl.type)) {
+            if (dndimpl.inProgress && comp._acceptsType(dndimpl.type) && e.relatedTarget !== null) {
                 dndimpl.mouseEnter(comp, e);
             }
         }
 
+        /**
+         * The condition e.relatedTarget !== null is a fix for firefox triggering the mouseenter event several times. The
+         * wrong events have a null relatedTarget in FF.
+         */
         function onDragLeave(e) {
-            if (dndimpl.inProgress && comp._acceptsType(dndimpl.type)) {
+            if (dndimpl.inProgress && comp._acceptsType(dndimpl.type) && e.relatedTarget !== null) {
                 dndimpl.mouseLeave(e);
             }
         }
@@ -75,8 +83,7 @@ export default class DropMixin extends DragAwareMixin {
     get dropIn() {
         if (dndimpl.inProgress) {
             return dndimpl.top() === this;
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -84,8 +91,7 @@ export default class DropMixin extends DragAwareMixin {
     get typeAllowed() {
         if (dndimpl.inProgress) {
             return this._acceptsType(dndimpl.type);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -94,12 +100,10 @@ export default class DropMixin extends DragAwareMixin {
         if (dndimpl.inProgress) {
             if (this.typeAllowed) {
                 return this.compatibleModes() && this.acceptsData(dndimpl.data, dndimpl.type);
-            }
-            else {
+            } else {
                 return null;
             }
-        }
-        else {
+        } else {
             return null;
         }
     }

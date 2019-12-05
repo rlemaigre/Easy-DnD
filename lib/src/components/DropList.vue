@@ -50,7 +50,6 @@
 
         onDragLeave() {
             this.grid = null;
-            console.log("drag leave");
         }
 
         generateGrid() {
@@ -71,7 +70,7 @@
             let index = -1;
             for (let i = 0; i < grid.length; i++) {
                 let center = grid[i];
-                let dist = Math.sqrt((center.x - position.x) ^ 2 + (center.y - position.y) ^ 2);
+                let dist = Math.sqrt(Math.pow(center.x - position.x, 2) + Math.pow(center.y - position.y, 2));
                 if (dist < minDist) {
                     minDist = dist;
                     index = i;
