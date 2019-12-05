@@ -1,5 +1,5 @@
-import {Component, Prop, Vue} from "vue-property-decorator";
-import {DnDEvent, dndimpl} from "../ts/utils";
+import {Component, Prop} from "vue-property-decorator";
+import {createDragImage, DnDEvent, dndimpl} from "../ts/utils";
 import DragAwareMixin from "./DragAwareMixin";
 
 @Component({})
@@ -84,6 +84,22 @@ export default class DragMixin extends DragAwareMixin {
             'drag-in': this.dragIn,
             'drag-out': !this.dragIn
         };
+    }
+
+    createDragImage(selfTransform: string) {
+        let image;
+        if (this.$refs['drag-image']) {
+            let el = this.$refs['drag-image'] as HTMLElement;
+            if (el.childElementCount !== 1) {
+                image = createDragImage(el);
+            } else {
+                image = createDragImage(el.children.item(0) as HTMLElement);
+            }
+        } else {
+            image = createDragImage(this.$el as HTMLElement);
+            image.style.transform = selfTransform;
+        }
+        return image;
     }
 
 }

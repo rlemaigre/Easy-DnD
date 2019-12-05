@@ -39,5 +39,9 @@
 
         }
 
+        createDragImage() {
+            return 'source';
+        }
+
     }
 </script>

@@ -101,7 +101,7 @@ export class DragStateImpl implements DragState {
     public data: any = null;
     public source: Vue = null;
     public stack: Vue[] = null;
-    public clones: Map<HTMLElement, HTMLElement> = null;
+    public clones: Map<Vue, HTMLElement> = null;
     public selfTransform: string = null;
     public mousePosition: Position = null;
 
@@ -120,7 +120,7 @@ export class DragStateImpl implements DragState {
         this.selfTransform = "translate(-" + (startPos.x - sourcePos.x) + "px, -" + (startPos.y - sourcePos.y) + "px)";
         this.source = source;
         this.stack = this.ancestors(this.source);
-        this.clones = new Map<HTMLElement, HTMLElement>();
+        this.clones = new Map<Vue, HTMLElement>();
         this.mousePosition = {
             x: event.pageX,
             y: event.pageY
@@ -157,66 +157,6 @@ export class DragStateImpl implements DragState {
         });
         this.clones = null;
         this.mousePosition = null;
-    }
-
-    private getSourceModel(): HTMLElement {
-        if (this.source.$refs['drag-image']) {
-            let el = this.source.$refs['drag-image'] as HTMLElement;
-            if (el.childElementCount !== 1)
-                return el;
-            else
-                return el.children.item(0) as HTMLElement;
-        } else {
-            return this.source.$el as HTMLElement;
-        }
-    }
-
-    /**
-     * Retourne l'élément modèle de l'image de drag courante.
-     */
-    private getModel(): HTMLElement {
-        let top = this.top();
-        if (top === null || top['isDropMask']) {
-            return this.getSourceModel();
-        } else {
-            if (top.$refs['drag-image']) {
-                let el = top.$refs['drag-image'] as HTMLElement;
-                if (el.childElementCount > 1)
-                    return el;
-                else
-                    return el.children.item(0) as HTMLElement;
-            } else {
-                return this.getSourceModel();
-            }
-        }
-    }
-
-    private getSourceTransform() {
-        if (this.source.$refs['drag-image']) {
-            return () => {
-            };
-        } else {
-            return (clone: HTMLElement) => {
-                clone.style.transform = this.selfTransform;
-            };
-        }
-    }
-
-    /**
-     * Retourne la transformation à appliquer à l'image de drag courante.
-     */
-    private getTransform() {
-        let top = this.top();
-        if (top === null || top['isDropMask']) {
-            return this.getSourceTransform();
-        } else {
-            if (top.$scopedSlots['drag-image']) {
-                return () => {
-                };
-            } else {
-                return this.getSourceTransform();
-            }
-        }
     }
 
     /**
@@ -285,26 +225,26 @@ export class DragStateImpl implements DragState {
      * Retourne le clone actif en fonction de l'état courant.
      */
     private getActiveClone(): HTMLElement {
-        let model = this.getModel();
-        let transform = this.getTransform();
-        if (model !== null) {
-            if (!this.clones.has(model)) {
-                let clone;
-                if (model.parentElement) {
-                    clone = createDragImage(model);
-                } else {
-                    clone = model;
-                }
-                transform(clone);
+        // Object to get the drag image of :
+        let model = this.top();
+        if (model === null) model = this.source;
+
+        // Update clone map with missing key value pair if need be :
+        if (!this.clones.has(model)) {
+            let clone = model['createDragImage'](this.selfTransform);
+            if (clone === 'source') {
+                clone = this.source['createDragImage'](this.selfTransform);
+            }
+            if (clone !== null) {
                 clone.style.opacity = '0';
                 changeScale(clone, minScale);
                 document.body.append(clone);
-                this.clones.set(model, clone);
             }
-            return this.clones.get(model);
-        } else {
-            return null;
+            this.clones.set(model, clone);
         }
+
+        // Lookup result in clones map :
+        return this.clones.get(model);
     }
 
     /**
