@@ -10,7 +10,7 @@
                         <drag class="item" :key="item" :data="item">{{item}}</drag>
                     </template>
                     <template v-slot:feedback="{data, type}">
-                        <div class="item feedback" key="data">&nbsp</div>
+                        <div class="item feedback" :key="data">&nbsp</div>
                     </template>
                     <template v-slot:drag-image="{data, type}">
                         <drag class="item drag-image">drag</drag>
