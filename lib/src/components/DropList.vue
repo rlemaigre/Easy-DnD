@@ -1,12 +1,11 @@
 <template>
     <component :is="tag" v-bind="$attrs" v-on="$listeners" :class="clazz" :style="cssStyle">
-        <transition-group :tag="transitionTag" :name="transitionName" :duration="transitionDuration" class="tg"
-                          ref="tg">
+        <transition-group :tag="transitionTag" :name="transitionName" class="tg"
+                          ref="tg" :duration="{enter: 0, leave: 0}" :css="false">
             <slot name="item" :item="item" v-for="item in itemsBeforeFeedback"></slot>
             <slot name="feedback" :data="dragData" :type="dragType" v-if="feedbackIndex !== null"></slot>
             <slot name="item" :item="item" v-for="item in itemsAfterFeedback"></slot>
         </transition-group>
-
         <div class="feedback" v-if="dropAllowed" ref="feedback">
             <slot name="feedback" :data="dragData" :type="dragType"></slot>
         </div>
