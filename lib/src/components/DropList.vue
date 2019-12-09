@@ -1,5 +1,5 @@
 <template>
-    <transition-group :tag="transitionTag" name="drop-list-transition"
+    <transition-group :tag="tag" name="drop-list-transition"
                       ref="tg" :duration="{enter: 0, leave: 0}" :css="false" :class="clazz" :style="cssStyle">
         <slot name="item" :item="item" v-for="item in itemsBeforeFeedback"/>
         <slot name="feedback" :data="dragData" :type="dragType" v-if="feedbackIndex !== null"/>
@@ -18,7 +18,7 @@
     import {Component, Prop, Vue, Watch} from "vue-property-decorator";
     import DropMixin from "../mixins/DropMixin";
     import {DnDEvent} from "..";
-    import {createDragImage, InsertEvent} from "../ts/utils";
+    import {createDragImage, dndimpl, InsertEvent} from "../ts/utils";
     import DragFeedback from "./DragFeedback.vue";
 
     @Component({
@@ -32,11 +32,8 @@
         @Prop()
         items: any[];
 
-        @Prop({default: 'div'})
-        transitionTag: string;
-
         @Prop({default: false})
-        allowReorder: boolean;
+        reorder: boolean;
 
         grid = null;
 
@@ -163,7 +160,8 @@
             return {
                 ...this.cssClasses,
                 'drop-list': true,
-                'tg': true
+                'tg': true,
+                'reordering': this.reordering
             };
         }
 
@@ -171,9 +169,9 @@
             return this.dragInProgress && this.typeAllowed && this.$scopedSlots['drag-image'];
         }
 
-        // get reorderMode() {
-        //     return this.dragInProgress && dndimpl.source === this;
-        // }
+        get reordering() {
+            return this.dragInProgress && this.reorder && dndimpl.source.$el.parentElement === this.$refs['tg']['$el'];
+        }
 
         createDragImage() {
             let image;
