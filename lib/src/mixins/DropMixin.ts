@@ -31,6 +31,14 @@ export default class DropMixin extends DragAwareMixin {
         }
     }
 
+    overridableAcceptsType(type: string) {
+        return this._acceptsType(type);
+    }
+
+    overridableAcceptsData(data: any, type: any) {
+        return this.acceptsData(data, type);
+    }
+
     mounted() {
         let el = this.$el;
         let comp = this;
@@ -44,7 +52,7 @@ export default class DropMixin extends DragAwareMixin {
          * wrong events have a null relatedTarget in FF.
          */
         function onDragEnter(e) {
-            if (dndimpl.inProgress && comp._acceptsType(dndimpl.type) && e.relatedTarget !== null) {
+            if (dndimpl.inProgress && comp.overridableAcceptsType(dndimpl.type) && e.relatedTarget !== null) {
                 dndimpl.mouseEnter(comp, e);
             }
         }
@@ -54,20 +62,20 @@ export default class DropMixin extends DragAwareMixin {
          * wrong events have a null relatedTarget in FF.
          */
         function onDragLeave(e) {
-            if (dndimpl.inProgress && comp._acceptsType(dndimpl.type) && e.relatedTarget !== null) {
+            if (dndimpl.inProgress && comp.overridableAcceptsType(dndimpl.type) && e.relatedTarget !== null) {
                 dndimpl.mouseLeave(e);
             }
         }
 
         function onDragOver(e) {
-            if (dndimpl.inProgress && comp._acceptsType(dndimpl.type)) {
+            if (dndimpl.inProgress && comp.overridableAcceptsType(dndimpl.type)) {
                 comp.$emit('dragover', new DnDEvent(dndimpl.type, dndimpl.data, e));
             }
         }
 
         function onDrop(e) {
-            if (dndimpl.inProgress && comp._acceptsType(dndimpl.type)) {
-                if (comp === dndimpl.top() && comp.compatibleModes() && comp.acceptsData(dndimpl.data, dndimpl.type)) {
+            if (dndimpl.inProgress && comp.overridableAcceptsType(dndimpl.type)) {
+                if (comp === dndimpl.top() && comp.compatibleModes() && comp.overridableAcceptsData(dndimpl.data, dndimpl.type)) {
                     comp.$emit('drop', new DnDEvent(dndimpl.type, dndimpl.data, e));
                     comp.$emit('dragleave', new DnDEvent(dndimpl.type, dndimpl.data, e));
                     dndimpl.source.$emit(comp.mode, new DnDEvent(dndimpl.type, dndimpl.data, e));
@@ -100,7 +108,7 @@ export default class DropMixin extends DragAwareMixin {
     get dropAllowed() {
         if (dndimpl.inProgress) {
             if (this.typeAllowed) {
-                return this.compatibleModes() && this.acceptsData(dndimpl.data, dndimpl.type);
+                return this.compatibleModes() && this.overridableAcceptsData(dndimpl.data, dndimpl.type);
             } else {
                 return null;
             }

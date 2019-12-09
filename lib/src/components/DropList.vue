@@ -1,30 +1,29 @@
 <template>
-    <component :is="tag" v-bind="$attrs" v-on="$listeners" :class="clazz" :style="cssStyle">
-        <transition-group :tag="transitionTag" :name="transitionName" class="tg"
-                          ref="tg" :duration="{enter: 0, leave: 0}" :css="false">
-            <slot name="item" :item="item" v-for="item in itemsBeforeFeedback"/>
-            <slot name="feedback" :data="dragData" :type="dragType" v-if="feedbackIndex !== null"/>
-            <slot name="item" :item="item" v-for="item in itemsAfterFeedback"/>
-        </transition-group>
-        <div class="feedback" v-if="dropAllowed" ref="feedback">
+    <transition-group :tag="transitionTag" name="drop-list-transition"
+                      ref="tg" :duration="{enter: 0, leave: 0}" :css="false" :class="clazz" :style="cssStyle">
+        <slot name="item" :item="item" v-for="item in itemsBeforeFeedback"/>
+        <slot name="feedback" :data="dragData" :type="dragType" v-if="feedbackIndex !== null"/>
+        <slot name="item" :item="item" v-for="item in itemsAfterFeedback"/>
+        <drag-feedback class="feedback" ref="feedback" v-if="acceptsType(dragType) && acceptsData(dragData)"
+                       key="drag-feedback">
             <slot name="feedback" :data="dragData" :type="dragType"/>
-        </div>
-        <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
-            <slot :name="slot" v-bind="scope"/>
-        </template>
-        <div class="__drag-image" v-if="showDragImage" ref="drag-image">
+        </drag-feedback>
+        <div class="__drag-image" v-if="showDragImage" ref="drag-image" key="drag-image">
             <slot name="drag-image" :type="dragType" :data="dragData"/>
         </div>
-    </component>
+    </transition-group>
 </template>
 
 <script lang="ts">
-    import {Component, Prop} from "vue-property-decorator";
+    import {Component, Prop, Vue, Watch} from "vue-property-decorator";
     import DropMixin from "../mixins/DropMixin";
     import {DnDEvent} from "..";
     import {createDragImage, InsertEvent} from "../ts/utils";
+    import DragFeedback from "./DragFeedback.vue";
 
-    @Component({})
+    @Component({
+        components: {DragFeedback}
+    })
     export default class DropList extends DropMixin {
 
         @Prop({default: 'div', type: [String, Object]})
@@ -33,16 +32,6 @@
         @Prop()
         items: any[];
 
-        @Prop({default: 'drop-list-transition'})
-        transitionName: string;
-
-        @Prop({
-            default: () => {
-                return {enter: 0, leave: 0}
-            }
-        })
-        transitionDuration: object;
-
         @Prop({default: 'div'})
         transitionTag: string;
 
@@ -50,6 +39,10 @@
         allowReorder: boolean;
 
         grid = null;
+
+        forbiddenKeys = [];
+
+        feedbackKey = null;
 
         created() {
             this.$on('dragenter', this.onDragEnter);
@@ -66,10 +59,40 @@
             ))
         }
 
+        @Watch('items', {immediate: true, deep: true})
+        onItemsChange() {
+            Vue.nextTick(
+                () => {
+                    this.forbiddenKeys = this.$children[0].$vnode.context.$children[0].$slots.default
+                        .map(vn => vn.key)
+                        .filter(k => k !== undefined && k !== 'drag-image' && k !== 'drag-feedback');
+                }
+            );
+        }
+
+        @Watch('dragInProgress')
+        onDragInProgressChange(val) {
+            if (val) {
+                Vue.nextTick(() => {
+                    this.feedbackKey = this.$refs['feedback']['$slots']['default'][0]['key'];
+                });
+            } else {
+                this.feedbackKey = null;
+            }
+        }
+
+        overridableAcceptsData(data: any, type: any): boolean {
+            if (this.feedbackKey == null)
+                return true;
+            else {
+                return this.acceptsData(data, type) && !this.forbiddenKeys.includes(this.feedbackKey);
+            }
+        }
+
         onDragEnter() {
             if (this.dropAllowed) {
                 // Temporary add a clone of the feedback to the list :
-                let feedbackParent = this.$refs['feedback'] as HTMLElement;
+                let feedbackParent = this.$refs['feedback']['$el'] as HTMLElement;
                 let feedback = feedbackParent.children[0];
                 let clone = feedback.cloneNode(true) as HTMLElement;
                 let tg = this.$refs['tg']['$el'] as HTMLElement;
@@ -139,7 +162,8 @@
         get clazz() {
             return {
                 ...this.cssClasses,
-                'drop-list': true
+                'drop-list': true,
+                'tg': true
             };
         }
 
