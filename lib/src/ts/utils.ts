@@ -78,9 +78,24 @@ export class InsertEvent {
     constructor(
         public type: any,
         public data: any,
-        public index: number,
-        public mouse: MouseEvent
+        public index: number
     ) {
+    }
+
+}
+
+export class ReorderEvent {
+
+    constructor(
+        public fromIndex: number,
+        public toIndex: number
+    ) {
+    }
+
+    apply(array: any[]) {
+        let temp = array[this.fromIndex];
+        array.splice(this.fromIndex, 1);
+        array.splice(this.toIndex, 0, temp);
     }
 
 }

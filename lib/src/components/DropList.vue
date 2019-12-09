@@ -2,9 +2,11 @@
     <transition-group :tag="tag" name="drop-list-transition"
                       ref="tg" :duration="{enter: 0, leave: 0}" :css="false" :class="clazz" :style="cssStyle">
         <slot name="item" :item="item" v-for="item in itemsBeforeFeedback"/>
-        <slot name="feedback" :data="dragData" :type="dragType" v-if="feedbackIndex !== null"/>
+        <slot name="feedback" :data="dragData" :type="dragType" v-if="closestIndex !== null && !reordering"/>
         <slot name="item" :item="item" v-for="item in itemsAfterFeedback"/>
-        <drag-feedback class="feedback" ref="feedback" v-if="acceptsType(dragType) && acceptsData(dragData)"
+        <slot name="item" :item="item" v-for="item in reorderedItems"/>
+        <drag-feedback class="feedback" ref="feedback"
+                       v-if="acceptsType(dragType) && acceptsData(dragData) && !reordering"
                        key="drag-feedback">
             <slot name="feedback" :data="dragData" :type="dragType"/>
         </drag-feedback>
@@ -18,7 +20,7 @@
     import {Component, Prop, Vue, Watch} from "vue-property-decorator";
     import DropMixin from "../mixins/DropMixin";
     import {DnDEvent} from "..";
-    import {createDragImage, dndimpl, InsertEvent} from "../ts/utils";
+    import {createDragImage, dndimpl, InsertEvent, ReorderEvent} from "../ts/utils";
     import DragFeedback from "./DragFeedback.vue";
 
     @Component({
@@ -48,12 +50,20 @@
         }
 
         onDrop(event: DnDEvent) {
-            this.$emit('insert', new InsertEvent(
-                event.type,
-                event.data,
-                this.feedbackIndex,
-                event.mouse
-            ))
+            if (this.reordering) {
+                if (this.fromIndex !== this.closestIndex) {
+                    this.$emit('swap', new ReorderEvent(
+                        this.fromIndex,
+                        this.closestIndex
+                    ))
+                }
+            } else {
+                this.$emit('insert', new InsertEvent(
+                    event.type,
+                    event.data,
+                    this.closestIndex
+                ));
+            }
         }
 
         @Watch('items', {immediate: true, deep: true})
@@ -69,7 +79,7 @@
 
         @Watch('dragInProgress')
         onDragInProgressChange(val) {
-            if (val) {
+            if (val && !this.reordering) {
                 Vue.nextTick(() => {
                     this.feedbackKey = this.$refs['feedback']['$slots']['default'][0]['key'];
                 });
@@ -87,7 +97,10 @@
         }
 
         onDragEnter() {
-            if (this.dropAllowed) {
+            if (this.reordering) {
+                let tg = this.$refs['tg']['$el'] as HTMLElement;
+                this.grid = this.computeGrid(tg.children);
+            } else if (this.dropAllowed) {
                 // Temporary add a clone of the feedback to the list :
                 let feedbackParent = this.$refs['feedback']['$el'] as HTMLElement;
                 let feedback = feedbackParent.children[0];
@@ -96,25 +109,30 @@
                 tg.append(clone);
 
                 // Compute grid :
-                this.grid = [];
-                for (let child of tg.children) {
-                    let rect = child.getBoundingClientRect();
-                    this.grid.push({
-                        x: rect.left + rect.width / 2,
-                        y: rect.top + rect.height / 2
-                    });
-                }
+                this.grid = this.computeGrid(tg.children);
 
                 // Remove clone :
                 clone.remove();
             }
         }
 
+        computeGrid(collection: HTMLCollection) {
+            let grid = [];
+            for (let child of collection) {
+                let rect = child.getBoundingClientRect();
+                grid.push({
+                    x: rect.left + rect.width / 2,
+                    y: rect.top + rect.height / 2
+                });
+            }
+            return grid;
+        }
+
         onDragLeave() {
             this.grid = null;
         }
 
-        get feedbackIndex() {
+        get closestIndex() {
             if (this.grid) {
                 let minDist = 999999;
                 let index = -1;
@@ -133,23 +151,48 @@
         }
 
         get itemsBeforeFeedback() {
-            if (this.dragInProgress && this.dropIn && this.dropAllowed) {
-                if (this.feedbackIndex === 0) {
-                    return [];
+            if (!this.reordering) {
+                if (this.dragInProgress && this.dropIn && this.dropAllowed) {
+                    if (this.closestIndex === 0) {
+                        return [];
+                    } else {
+                        return this.items.slice(0, this.closestIndex);
+                    }
                 } else {
-                    return this.items.slice(0, this.feedbackIndex);
+                    return this.items;
                 }
             } else {
-                return this.items;
+                return [];
             }
         }
 
         get itemsAfterFeedback() {
-            if (this.dragInProgress && this.dropIn && this.dropAllowed) {
-                if (this.feedbackIndex === this.items.length) {
-                    return [];
+            if (!this.reordering) {
+                if (this.dragInProgress && this.dropIn && this.dropAllowed) {
+                    if (this.closestIndex === this.items.length) {
+                        return [];
+                    } else {
+                        return this.items.slice(this.closestIndex);
+                    }
                 } else {
-                    return this.items.slice(this.feedbackIndex);
+                    return [];
+                }
+            } else {
+                return [];
+            }
+        }
+
+        get reorderedItems() {
+            if (this.reordering) {
+                if (this.closestIndex !== null) {
+                    let toIndex = this.closestIndex;
+                    let reordered = [...this.items];
+                    let temp = reordered[this.fromIndex];
+                    reordered.splice(this.fromIndex, 1);
+                    reordered.splice(toIndex, 0, temp);
+                    return reordered;
+                } else {
+                    return this.items;
                 }
             } else {
                 return [];
@@ -171,6 +214,14 @@
 
         get reordering() {
             return this.dragInProgress && this.reorder && dndimpl.source.$el.parentElement === this.$refs['tg']['$el'];
+        }
+
+        get fromIndex() {
+            if (this.reordering) {
+                return Array.prototype.indexOf.call(dndimpl.source.$el.parentElement.children, dndimpl.source.$el);
+            } else {
+                return null;
+            }
         }
 
         createDragImage() {
