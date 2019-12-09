@@ -5,7 +5,7 @@
                 <div class="list">
                     <drag v-for="n in [1,2,3,4,5]" :data="n" class="item">{{n}}</drag>
                 </div>
-                <drop-list :items="items" class="list" @insert="onInsert" reorder @swap="$event.apply(items)">
+                <drop-list :items="items" class="list" @insert="onInsert" @reorder="$event.apply(items)">
                     <template v-slot:item="{item}">
                         <drag class="item" :key="item">{{item}}</drag>
                     </template>

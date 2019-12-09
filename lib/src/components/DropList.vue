@@ -34,9 +34,6 @@
         @Prop()
         items: any[];
 
-        @Prop({default: false})
-        reorder: boolean;
-
         grid = null;
 
         forbiddenKeys = [];
@@ -52,7 +49,7 @@
         onDrop(event: DnDEvent) {
             if (this.reordering) {
                 if (this.fromIndex !== this.closestIndex) {
-                    this.$emit('swap', new ReorderEvent(
+                    this.$emit('reorder', new ReorderEvent(
                         this.fromIndex,
                         this.closestIndex
                     ))
@@ -92,7 +89,7 @@
             if (this.feedbackKey == null)
                 return true;
             else {
-                return this.acceptsData(data, type) && !this.forbiddenKeys.includes(this.feedbackKey);
+                return this.$listeners['insert'] && this.acceptsData(data, type) && !this.forbiddenKeys.includes(this.feedbackKey);
             }
         }
 
@@ -213,7 +210,7 @@
         }
 
         get reordering() {
-            return this.dragInProgress && this.reorder && dndimpl.source.$el.parentElement === this.$refs['tg']['$el'];
+            return this.dragInProgress && this.$listeners['reorder'] && dndimpl.source.$el.parentElement === this.$refs['tg']['$el'];
         }
 
         get fromIndex() {

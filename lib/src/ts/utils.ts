@@ -1,6 +1,6 @@
 import {Vue} from "vue-property-decorator";
 
-const minScale = "0.5";
+const minScale = "1";
 
 /**
  * Creates a drag image using the given element as model.
@@ -127,8 +127,8 @@ export class DragStateImpl implements DragState {
         this.type = type;
         this.data = data;
         let startPos = {
-            x: event.pageX,
-            y: event.pageY
+            x: event.clientX,
+            y: event.clientY
         };
         let sourcePos = {
             x: source.$el.getBoundingClientRect().left,
@@ -281,12 +281,12 @@ export class DragStateImpl implements DragState {
      */
     move(event) {
         this.clones.forEach((clone) => {
-            clone.style.left = event.pageX + "px";
-            clone.style.top = event.pageY + "px";
+            clone.style.left = event.clientX + "px";
+            clone.style.top = event.clientY + "px";
         });
         this.mousePosition = {
-            x: event.pageX,
-            y: event.pageY
+            x: event.clientX,
+            y: event.clientY
         };
     }
 
