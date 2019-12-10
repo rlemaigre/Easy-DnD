@@ -16,7 +16,7 @@ export default class DropMixin extends DragAwareMixin {
     compatibleModes(): true | Function | Function[];
     readonly dropIn: boolean;
     readonly typeAllowed: boolean;
-    readonly dropAllowed: boolean;
+    readonly dropAllowed: any;
     readonly cssClasses: {};
     readonly cssStyle: {
         cursor: string;

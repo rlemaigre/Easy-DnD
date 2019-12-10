@@ -15,12 +15,18 @@ Notice the following :
 * Different CSS classes are applied to the drop area depending on whether :
   * it accepts the drop or not
   * the mouse is on top of it or not
+  
+The following demo features list reordering and drag and drop between two lists.
+
+https://codesandbox.io/s/easy-dnd-demo-9mbij
+
+![demo](img/vid7.gif)
 
 # Manual
 
 ## Components
 
-There are three components : Drag, Drop and DropMask. The Drag component is meant to define an area from which data can be exported. The Drop component is meant to define an area into which data can be imported. Drop components can be nested forming hierarchies of arbitrary depth. The DropMask component is meant to create an island insensitive to drag and drop on top of a Drop component.
+There are four components : Drag, Drop, DropMask and DropList. The Drag component is meant to define an area from which data can be exported. The Drop component is meant to define an area into which data can be imported. Drop components can be nested forming hierarchies of arbitrary depth. The DropMask component is meant to create an island insensitive to drag and drop on top of a Drop component. The DropList component is a special kind of drop component that displays a list of items that supports dragging into and reordering.
 
 The following demo illustrates the three components :
 
@@ -107,6 +113,7 @@ A mixin is available to make components sensitive to drag operations. It adds th
 * `dragInProgress` : true if a drag operation is in progress, false otherwise
 * `dragType` : the type of the current drag operation
 * `dragData` : the data of the current drag operation
+* `dragPosition` : the current position of the mouse relative to the document
 
 The following demo displays information about the current drag operation when it is in progress :
 
@@ -132,6 +139,10 @@ DropMixin :
 * `cssClasses` : an object representing the CSS classes to be applied (see CSS Classes section)
 
 Drag images can be defined using the ref `drag-image` in the templates.
+
+## DropList component
+
+
 
 # API
 
