@@ -6,7 +6,7 @@
         <slot name="item" :item="item" v-for="item in itemsAfterFeedback"/>
         <slot name="item" :item="item" v-for="item in reorderedItems"/>
         <drag-feedback class="feedback" ref="feedback"
-                       v-if="acceptsType(dragType) && acceptsData(dragData) && !reordering"
+                       v-if="showFeedback"
                        key="drag-feedback">
             <slot name="feedback" :data="dragData" :type="dragType"/>
         </drag-feedback>
@@ -76,9 +76,11 @@
 
         @Watch('dragInProgress')
         onDragInProgressChange(val) {
-            if (val && !this.reordering) {
+            if (val) {
                 Vue.nextTick(() => {
-                    this.feedbackKey = this.$refs['feedback']['$slots']['default'][0]['key'];
+                    if (!this.reordering) {
+                        this.feedbackKey = this.$refs['feedback']['$slots']['default'][0]['key'];
+                    }
                 });
             } else {
                 this.feedbackKey = null;
@@ -209,6 +211,10 @@
             return this.dragInProgress && this.typeAllowed && this.$scopedSlots['drag-image'];
         }
 
+        get showFeedback() {
+            return this.dragInProgress && this.typeAllowed && this.$scopedSlots['feedback'] && this.acceptsData(this.dragData, this.dragType) && !this.reordering;
+        }
+
         get reordering() {
             return this.dragInProgress && this.$listeners['reorder'] && dndimpl.source.$el.parentElement === this.$refs['tg']['$el'];
         }
@@ -262,5 +268,17 @@
         top: -10000px;
         left: -10000px;
         will-change: left, top;
+    }
+</style>
+
+<style lang="scss">
+    .drop-allowed.drop-in * {
+        cursor: inherit !important;
+    }
+
+    .drop-forbidden.drop-in {
+        &, * {
+            cursor: no-drop !important;
+        }
     }
 </style>

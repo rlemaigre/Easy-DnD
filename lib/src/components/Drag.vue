@@ -30,7 +30,16 @@
     }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
+    .drop-allowed.drop-in * {
+        cursor: inherit !important;
+    }
+
+    .drop-forbidden.drop-in {
+        &, * {
+            cursor: no-drop !important;
+        }
+    }
 </style>
 
 <style lang="scss">

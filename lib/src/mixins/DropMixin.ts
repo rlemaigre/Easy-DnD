@@ -78,7 +78,9 @@ export default class DropMixin extends DragAwareMixin {
                 if (comp === dndimpl.top() && comp.compatibleModes() && comp.overridableAcceptsData(dndimpl.data, dndimpl.type)) {
                     comp.$emit('drop', new DnDEvent(dndimpl.type, dndimpl.data, e));
                     comp.$emit('dragleave', new DnDEvent(dndimpl.type, dndimpl.data, e));
-                    dndimpl.source.$emit(comp.mode, new DnDEvent(dndimpl.type, dndimpl.data, e));
+                    if (!comp['reordering']) {
+                        dndimpl.source.$emit(comp.mode, new DnDEvent(dndimpl.type, dndimpl.data, e));
+                    }
                 }
             }
         }
@@ -108,7 +110,7 @@ export default class DropMixin extends DragAwareMixin {
     get dropAllowed() {
         if (dndimpl.inProgress) {
             if (this.typeAllowed) {
-                return this.compatibleModes() && this.overridableAcceptsData(dndimpl.data, dndimpl.type);
+                return this['reordering'] || (this.compatibleModes() && this.overridableAcceptsData(dndimpl.data, dndimpl.type));
             } else {
                 return null;
             }

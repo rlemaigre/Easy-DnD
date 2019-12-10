@@ -1,6 +1,6 @@
 import "reflect-metadata"
 import Vue from 'vue'
-import App2 from './App2.vue'
+import App3 from './App3.vue'
 import vuetify from './plugins/vuetify';
 import '@babel/polyfill'
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
@@ -10,5 +10,5 @@ Vue.config.productionTip = false
 
 new Vue({
     vuetify,
-    render: h => h(App2)
+    render: h => h(App3)
 }).$mount('#app')

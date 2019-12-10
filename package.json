@@ -15,7 +15,7 @@
     "vue": "^2.6.10",
     "vue-class-component": "^7.0.2",
     "vue-property-decorator": "^8.1.0",
-    "vuetify": "^2.0.0"
+    "vuetify": "^2.1.13"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.11.0",
