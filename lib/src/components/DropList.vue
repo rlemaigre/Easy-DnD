@@ -4,14 +4,14 @@
         <slot name="item" :item="item" v-for="item in itemsBeforeFeedback"/>
         <slot name="feedback" :data="dragData" :type="dragType" v-if="closestIndex !== null && !reordering"/>
         <slot name="item" :item="item" v-for="item in itemsAfterFeedback"/>
-        <slot name="item" :item="item" v-for="item in reorderedItems"/>
+        <slot name="item" :item="item" v-for="(item, index) in reorderedItems" :reorder="index === closestIndex"/>
         <drag-feedback class="feedback" ref="feedback"
                        v-if="showFeedback"
                        key="drag-feedback">
             <slot name="feedback" :data="dragData" :type="dragType"/>
         </drag-feedback>
         <div class="__drag-image" v-if="showDragImage" ref="drag-image" key="drag-image">
-            <slot name="drag-image" :type="dragType" :data="dragData"/>
+            <slot name="drag-image" :type="dragType" :data="dragData" :reorder="reordering"/>
         </div>
     </transition-group>
 </template>

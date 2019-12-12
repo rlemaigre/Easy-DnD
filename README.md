@@ -103,6 +103,24 @@ During a drag operation, the Drop components on the page are assigned several CS
 * for the Drop components that participate in the drag operation (i.e. accepts its type) :
   * `drop-in` when the mouse is over one that is foremost at the current mouse position (remember Drop components can be nested), `drop-out` otherwise
   * `drop-allowed` when the Drop component accepts the data and the source of the drag accepts its mode, `drop-forbidden` otherwise
+  
+## DropList component
+
+The DropList component is a special Drop component so it inherits all the props, events and slots of the Drop component. It can be used when the result of a drag operation is to import data into the component as an item in a list or to allow the user to reorder a list of items using drag and drop.
+
+Comparing to the Drop component, there are two more events :
+* `insert` : emitted when the user drops data into the DropList. The index where the new item should be inserted is available in the `index` property. If no listener is provided for this event, then the DropList can't be dropped into.
+* `reorder` : emitted when the user reorders the list. The index to be removed is available in the propery `from` and the index where the item must be reinserted is available in the property `to`. The property `apply` contains a function that applies the required reordering to the given array. If no listener is provided for this event, then the DropList can't be reordred.
+
+Comparing to the Drop component, there is two more slots : `item` and `feedback`.
+
+The `item` slot is used to render each list item. It has two properties, `item` and `reorder`. Reorder is true when the item is the one subject to reordering.
+
+The `feedback` slot is used to render a placeholder to show the position where the new item would be inserted if the drag operation ended in the current mouse position. It has two properties : `type` and `data`.
+
+The `drag-image` slot also gains a new property : `reorder`. That property is true when the list is being reordered. It can be used to provide a different drag image depending on whether the list is being drop into or reordered. Before the content of the `drag-image` slot is cloned to serve as a drag image, it is briefly inserted into the list so that its dimensions can depend on the ones of the list.
+
+
 
 ## Mixins
 
@@ -139,8 +157,6 @@ DropMixin :
 * `cssClasses` : an object representing the CSS classes to be applied (see CSS Classes section)
 
 Drag images can be defined using the ref `drag-image` in the templates.
-
-## DropList component
 
 
 

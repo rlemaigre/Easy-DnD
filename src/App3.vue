@@ -6,9 +6,10 @@
                     <v-col>
                         <v-list three-line class="list1">
                             <drop-list :items="items1" @reorder="$event.apply(items1)" @insert="insert1" mode="cut">
-                                <template v-slot:item="{item}">
+                                <template v-slot:item="{item, reorder}">
                                     <drag :key="item.title" :data="item" @cut="remove(items1, item)">
-                                        <v-list-item style="background-color: white">
+                                        <v-list-item style="background-color: white"
+                                                     :style="{borderLeft: reorder ? '2px solid #1976D2' : 'none'}">
                                             <v-list-item-avatar>
                                                 <v-img :src="item.avatar"></v-img>
                                             </v-list-item-avatar>
