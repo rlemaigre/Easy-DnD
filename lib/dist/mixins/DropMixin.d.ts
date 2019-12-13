@@ -12,6 +12,10 @@ export default class DropMixin extends DragAwareMixin {
     _acceptsType(type: string): boolean;
     overridableAcceptsType(type: string): boolean;
     overridableAcceptsData(data: any, type: any): boolean;
+    created(): void;
+    destroyed(): void;
+    onDragMove(): void;
+    onDragEnd(): void;
     mounted(): void;
     compatibleModes(): true | Function | Function[];
     readonly dropIn: boolean;

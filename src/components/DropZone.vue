@@ -13,7 +13,7 @@
 <script lang="ts">
     import {Component, Prop, Vue} from "vue-property-decorator";
     import Drop from "../../lib/src/components/Drop.vue";
-    import {dnd} from "../../lib/src/ts/utils";
+    import {dnd} from "../../lib/src/index";
 
     @Component({
         components: {Drop}

@@ -10,7 +10,7 @@
 <script lang="ts">
     import {Component, Prop} from "vue-property-decorator";
     import DragAwareMixin from "../mixins/DragAwareMixin";
-    import {dnd} from "../ts/globals";
+    import {dnd} from "../ts/DnD";
 
     @Component({})
     export default class DropMask extends DragAwareMixin {

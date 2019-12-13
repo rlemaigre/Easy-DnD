@@ -1,5 +1,5 @@
 import {Component, Vue} from "vue-property-decorator";
-import {dnd} from "../ts/globals";
+import {dnd} from "../ts/DnD";
 
 @Component({})
 export default class DragAwareMixin extends Vue {

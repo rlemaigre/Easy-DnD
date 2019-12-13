@@ -8,13 +8,19 @@ import {Vue} from "vue-property-decorator";
 export class DnD extends Vue {
 
     public inProgress = false;
+    public started = false;
     public type: any = null;
     public data: any = null;
     public source: Vue = null;
     public stack: Vue[] = null;
     public position: { x: number, y: number } = null;
 
+    constructor() {
+        super();
+    }
+
     public startDrag(source: Vue, event: MouseEvent, type, data) {
+        console.log("start");
         this.type = type;
         this.data = data;
         this.source = source;
@@ -26,6 +32,7 @@ export class DnD extends Vue {
         this.inProgress = true;
         Vue.nextTick(() => {
             this.$emit("dragstart");
+            this.started = true;
             if (this.top() !== null && this.top()['isDrop']) {
                 this.$emit('dragenter', {
                     from: null,
@@ -88,7 +95,9 @@ export class DnD extends Vue {
             x: event.clientX,
             y: event.clientY
         };
-        this.$emit('dragmove');
+        if (this.started) {
+            this.$emit('dragmove');
+        }
     }
 
     public top() {
@@ -96,3 +105,5 @@ export class DnD extends Vue {
     }
 
 }
+
+export let dnd = new DnD();

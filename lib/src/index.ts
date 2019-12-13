@@ -5,6 +5,8 @@ import DropMask from './components/DropMask.vue';
 import DragAwareMixin from './mixins/DragAwareMixin';
 import DragMixin from './mixins/DragMixin';
 import DropMixin from './mixins/DropMixin';
+import {dnd} from './ts/DnD';
+import {DragImagesManager} from './ts/DragImagesManager';
 
 export {
     Drag,
@@ -12,5 +14,7 @@ export {
     DropMask,
     DragAwareMixin,
     DragMixin,
-    DropMixin
+    DropMixin,
+    DragImagesManager,
+    dnd
 }

@@ -1,7 +1,7 @@
 import {Component, Prop} from "vue-property-decorator";
 import DragAwareMixin from "./DragAwareMixin";
-import {dnd} from "../ts/globals";
-import {createDragImage} from "src/ts/createDragImage";
+import {createDragImage} from "../ts/createDragImage";
+import {dnd} from "../ts/DnD";
 
 @Component({})
 export default class DropMixin extends DragAwareMixin {
