@@ -41,13 +41,13 @@ export default class DropMixin extends DragAwareMixin {
     }
 
     created() {
-        dnd.$on("dragmove", this.onDragMove);
-        dnd.$on("dragend", this.onDragEnd);
+        dnd.on("dragmove", this.onDragMove);
+        dnd.on("dragend", this.onDragEnd);
     }
 
     destroyed() {
-        dnd.$off("dragmove", this.onDragMove);
-        dnd.$off("dragend", this.onDragEnd);
+        dnd.off("dragmove", this.onDragMove);
+        dnd.off("dragend", this.onDragEnd);
     }
 
     onDragMove() {

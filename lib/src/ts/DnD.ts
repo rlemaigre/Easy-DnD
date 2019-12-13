@@ -2,10 +2,10 @@ import {Vue} from "vue-property-decorator";
 
 /**
  * This is the class of the global object that holds the state of the drag and drop during its progress. It emits all
- * kinds of events during the progress of the drag and drop. It is a Vue instance, so its data is reactive and listeners
- * can be attachted to it using the method $on.
+ * kinds of events during the progress of the drag and drop. Its data is reactive and listeners can be attachted to it
+ * using the method on.
  */
-export class DnD extends Vue {
+export class DnD {
 
     public inProgress = false;
     public started = false;
@@ -14,13 +14,12 @@ export class DnD extends Vue {
     public source: Vue = null;
     public stack: Vue[] = null;
     public position: { x: number, y: number } = null;
+    private eventBus = new Vue();
 
     constructor() {
-        super();
     }
 
     public startDrag(source: Vue, event: MouseEvent, type, data) {
-        console.log("start");
         this.type = type;
         this.data = data;
         this.source = source;
@@ -31,28 +30,25 @@ export class DnD extends Vue {
         };
         this.inProgress = true;
         Vue.nextTick(() => {
-            this.$emit("dragstart");
             this.started = true;
-            if (this.top() !== null && this.top()['isDrop']) {
-                this.$emit('dragenter', {
-                    from: null,
-                    to: this.top()
-                });
-            }
-            this.$emit('dragmove');
+            this.emit("dragstart");
+            this.emit('dragtopchanged', {from: null});
+            this.emit('dragpositionchanged');
         });
     }
 
     public stopDrag() {
-        if (this.top() !== null && this.top()['isDrop']) {
-            this.$emit('dragleave');
-        }
-        this.$emit("dragend");
+        this.emit('dragtopchanged', {
+            from: this.top(),
+            to: null
+        });
+        this.emit("dragend");
         this.inProgress = false;
         this.data = null;
         this.source = null;
         this.stack = null;
         this.position = null;
+        this.started = false;
     }
 
     protected ancestors(comp: Vue) {
@@ -72,22 +68,14 @@ export class DnD extends Vue {
 
     public mouseEnter(enter: Vue) {
         let from = this.top();
-        let to = enter;
         this.stack.push(enter);
-        if (from) {
-            this.$emit('dragleave', {from, to});
-        }
-        this.$emit('dragenter', {from, to});
+        this.emit('dragtopchanged', {from});
     }
 
     public mouseLeave(leave: Vue) {
         let from = leave;
         this.stack.pop();
-        let to = this.top();
-        this.$emit('dragleave', {from, to});
-        if (to) {
-            this.$emit('dragenter', {from, to});
-        }
+        this.emit('dragtopchanged', {from});
     }
 
     public mouseMove(event) {
@@ -95,15 +83,35 @@ export class DnD extends Vue {
             x: event.clientX,
             y: event.clientY
         };
-        if (this.started) {
-            this.$emit('dragmove');
-        }
+        this.emit('dragpositionchanged');
     }
 
     public top() {
         return this.stack.length === 0 ? null : this.stack[this.stack.length - 1];
     }
 
+    private emit(event, data?) {
+        if (this.started) {
+            this.eventBus.$emit(event, {
+                type: this.type,
+                data: this.data,
+                top: this.top(),
+                source: this.source,
+                position: this.position,
+                ...data
+            });
+        }
+    }
+
+    public on(event, callback) {
+        this.eventBus.$on(event, callback);
+    }
+
+    public off(event, callback) {
+        this.eventBus.$off(event, callback);
+    }
+
 }
 
 export let dnd = new DnD();
+dnd = Vue.observable(dnd);

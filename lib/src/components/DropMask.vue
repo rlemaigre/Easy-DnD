@@ -27,13 +27,13 @@
             el.addEventListener('mouseleave', onDragLeave);
 
             function onDragEnter(e) {
-                if (this.dragInProgress) {
+                if (comp.dragInProgress) {
                     dnd.mouseEnter(comp);
                 }
             }
 
             function onDragLeave(e) {
-                if (this.dragInProgress) {
+                if (comp.dragInProgress) {
                     dnd.mouseLeave(comp);
                 }
             }
