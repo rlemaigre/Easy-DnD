@@ -34,20 +34,20 @@ export class DnD extends Vue {
             this.$emit("dragstart");
             this.started = true;
             if (this.top() !== null && this.top()['isDrop']) {
-                this.$emit('dragenter', {
+                this.emit('dragenter', {
                     from: null,
                     to: this.top()
                 });
             }
-            this.$emit('dragmove');
+            this.emit('dragmove');
         });
     }
 
     public stopDrag() {
         if (this.top() !== null && this.top()['isDrop']) {
-            this.$emit('dragleave');
+            this.emit('dragleave');
         }
-        this.$emit("dragend");
+        this.emit("dragend");
         this.inProgress = false;
         this.data = null;
         this.source = null;
@@ -75,18 +75,18 @@ export class DnD extends Vue {
         let to = enter;
         this.stack.push(enter);
         if (from) {
-            this.$emit('dragleave', {from, to});
+            this.emit('dragleave', {from, to});
         }
-        this.$emit('dragenter', {from, to});
+        this.emit('dragenter', {from, to});
     }
 
     public mouseLeave(leave: Vue) {
         let from = leave;
         this.stack.pop();
         let to = this.top();
-        this.$emit('dragleave', {from, to});
+        this.emit('dragleave', {from, to});
         if (to) {
-            this.$emit('dragenter', {from, to});
+            this.emit('dragenter', {from, to});
         }
     }
 
@@ -95,13 +95,15 @@ export class DnD extends Vue {
             x: event.clientX,
             y: event.clientY
         };
-        if (this.started) {
-            this.$emit('dragmove');
-        }
+        this.emit('dragmove');
     }
 
     public top() {
         return this.stack.length === 0 ? null : this.stack[this.stack.length - 1];
+    }
+
+    private emit(event, data?) {
+        if (this.started) this.$emit(event, data);
     }
 
 }
