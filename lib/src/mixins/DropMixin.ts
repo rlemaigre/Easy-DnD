@@ -1,6 +1,7 @@
 import {Component, Prop} from "vue-property-decorator";
-import {createDragImage, DnDEvent, dndimpl} from "../ts/utils";
 import DragAwareMixin from "./DragAwareMixin";
+import {dnd} from "../ts/globals";
+import {createDragImage} from "src/ts/createDragImage";
 
 @Component({})
 export default class DropMixin extends DragAwareMixin {
@@ -39,21 +40,41 @@ export default class DropMixin extends DragAwareMixin {
         return this.acceptsData(data, type);
     }
 
+    created() {
+        dnd.$on("dragmove", this.onDragMove);
+        dnd.$on("dragend", this.onDragEnd);
+    }
+
+    destroyed() {
+        dnd.$off("dragmove", this.onDragMove);
+        dnd.$off("dragend", this.onDragEnd);
+    }
+
+    onDragMove() {
+        if (this === this.dragTop) {
+            this.$emit("dragover");
+        }
+    }
+
+    onDragEnd() {
+        if (this === this.dragTop) {
+            this.$emit("drop");
+        }
+    }
+
     mounted() {
         let el = this.$el;
         let comp = this;
-        el.addEventListener('mouseenter', onDragEnter);
-        el.addEventListener('mouseleave', onDragLeave);
-        el.addEventListener('mousemove', onDragOver);
-        el.addEventListener('mouseup', onDrop);
+        el.addEventListener('mouseenter', onMouseEnter);
+        el.addEventListener('mouseleave', onMouseLeave);
 
         /**
          * The condition e.relatedTarget !== null is a fix for firefox triggering the mouseenter event several times. The
          * wrong events have a null relatedTarget in FF.
          */
-        function onDragEnter(e) {
-            if (dndimpl.inProgress && comp.overridableAcceptsType(dndimpl.type) && e.relatedTarget !== null) {
-                dndimpl.mouseEnter(comp, e);
+        function onMouseEnter(e) {
+            if (dnd.inProgress && comp.overridableAcceptsType(dnd.type) && e.relatedTarget !== null) {
+                dnd.mouseEnter(comp);
             }
         }
 
@@ -61,56 +82,50 @@ export default class DropMixin extends DragAwareMixin {
          * The condition e.relatedTarget !== null is a fix for firefox triggering the mouseenter event several times. The
          * wrong events have a null relatedTarget in FF.
          */
-        function onDragLeave(e) {
-            if (dndimpl.inProgress && comp.overridableAcceptsType(dndimpl.type) && e.relatedTarget !== null) {
-                dndimpl.mouseLeave(e);
+        function onMouseLeave(e) {
+            if (dnd.inProgress && comp.overridableAcceptsType(dnd.type) && e.relatedTarget !== null) {
+                dnd.mouseLeave(comp);
             }
         }
 
-        function onDragOver(e) {
-            if (dndimpl.inProgress && comp.overridableAcceptsType(dndimpl.type)) {
-                comp.$emit('dragover', new DnDEvent(dndimpl.type, dndimpl.data, e));
-            }
-        }
-
-        function onDrop(e) {
-            if (dndimpl.inProgress && comp.overridableAcceptsType(dndimpl.type)) {
-                if (comp === dndimpl.top() && comp.compatibleModes() && comp.overridableAcceptsData(dndimpl.data, dndimpl.type)) {
-                    comp.$emit('drop', new DnDEvent(dndimpl.type, dndimpl.data, e));
-                    comp.$emit('dragleave', new DnDEvent(dndimpl.type, dndimpl.data, e));
-                    if (!comp['reordering']) {
-                        dndimpl.source.$emit(comp.mode, new DnDEvent(dndimpl.type, dndimpl.data, e));
-                    }
-                }
-            }
-        }
+        /* function onDrop(e) {
+             if (dndimpl.inProgress && comp.overridableAcceptsType(dndimpl.type)) {
+                 if (comp === dndimpl.top() && comp.compatibleModes() && comp.overridableAcceptsData(dndimpl.data, dndimpl.type)) {
+                     comp.$emit('drop', new DnDEvent(dndimpl.type, dndimpl.data, e));
+                     comp.$emit('dragleave', new DnDEvent(dndimpl.type, dndimpl.data, e));
+                     if (!comp['reordering']) {
+                         dndimpl.source.$emit(comp.mode, new DnDEvent(dndimpl.type, dndimpl.data, e));
+                     }
+                 }
+             }
+         }*/
 
     }
 
     compatibleModes() {
-        return (this.mode === 'copy' || dndimpl.source.$listeners[this.mode]);
+        return (this.mode === 'copy' || dnd.source.$listeners[this.mode]);
     }
 
     get dropIn() {
-        if (dndimpl.inProgress) {
-            return dndimpl.top() === this;
+        if (this.dragInProgress) {
+            return this.dragTop === this;
         } else {
             return null;
         }
     }
 
     get typeAllowed() {
-        if (dndimpl.inProgress) {
-            return this._acceptsType(dndimpl.type);
+        if (this.dragInProgress) {
+            return this._acceptsType(dnd.type);
         } else {
             return null;
         }
     }
 
     get dropAllowed() {
-        if (dndimpl.inProgress) {
+        if (this.dragInProgress) {
             if (this.typeAllowed) {
-                return this['reordering'] || (this.compatibleModes() && this.overridableAcceptsData(dndimpl.data, dndimpl.type));
+                return this['reordering'] || (this.compatibleModes() && this.overridableAcceptsData(dnd.data, dnd.type));
             } else {
                 return null;
             }

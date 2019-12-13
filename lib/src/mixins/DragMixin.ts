@@ -1,6 +1,7 @@
 import {Component, Prop} from "vue-property-decorator";
-import {createDragImage, DnDEvent, dndimpl} from "../ts/utils";
 import DragAwareMixin from "./DragAwareMixin";
+import {dnd} from 'src/ts/globals';
+import {createDragImage} from "src/ts/createDragImage";
 
 @Component({})
 export default class DragMixin extends DragAwareMixin {
@@ -20,7 +21,8 @@ export default class DragMixin extends DragAwareMixin {
         let el = this.$el;
         let dragStarted = false;
         let initialUserSelect;
-        el.addEventListener('mousedown', startDragging);
+        let mouseDownEvent = null;
+        el.addEventListener('mousedown', onMouseDown);
         el.addEventListener('mouseenter', onMouseEnter);
         el.addEventListener('mouseleave', onMouseLeave);
 
@@ -37,7 +39,7 @@ export default class DragMixin extends DragAwareMixin {
             e.preventDefault();
         }
 
-        function startDragging(e) {
+        function onMouseDown(e) {
             initialUserSelect = document.body.style.userSelect;
             document.documentElement.style.userSelect = 'none'; // Permet au drag de se poursuivre normalement même
             // quand on quitte un élémént avec overflow: hidden.
@@ -45,23 +47,22 @@ export default class DragMixin extends DragAwareMixin {
             document.addEventListener('mousemove', doDrag);
             document.addEventListener('mouseup', stopDragging);
             document.addEventListener('selectstart', noop);
+            mouseDownEvent = e;
         }
 
         function doDrag(e) {
             if (!dragStarted) {
                 dragStarted = true;
-                comp.$emit('dragstart', new DnDEvent(comp.type, comp.data, e));
-                dndimpl.init(comp, e, comp.type, comp.data);
+                dnd.startDrag(comp, mouseDownEvent, comp.type, comp.data);
                 document.documentElement.classList.add('drag-in-progress');
             }
-            dndimpl.move(e);
+            dnd.mouseMove(e);
         }
 
         function stopDragging(e) {
             if (dragStarted) {
-                comp.$emit('dragend', new DnDEvent(dndimpl.type, dndimpl.data, e));
                 document.documentElement.classList.remove('drag-in-progress');
-                dndimpl.clear();
+                dnd.stopDrag();
                 e.stopPropagation();
                 e.preventDefault();
             }
@@ -73,7 +74,7 @@ export default class DragMixin extends DragAwareMixin {
     }
 
     get dragIn() {
-        return !dndimpl.inProgress && this.mouseIn;
+        return !this.dragInProgress && this.mouseIn;
     }
 
     get cssClasses() {

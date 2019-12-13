@@ -8,11 +8,12 @@
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Vue} from "vue-property-decorator";
-    import {dndimpl} from "../ts/utils";
+    import {Component, Prop} from "vue-property-decorator";
+    import DragAwareMixin from "../mixins/DragAwareMixin";
+    import {dnd} from "../ts/globals";
 
     @Component({})
-    export default class DropMask extends Vue {
+    export default class DropMask extends DragAwareMixin {
 
         isDropMask = true;
 
@@ -26,14 +27,14 @@
             el.addEventListener('mouseleave', onDragLeave);
 
             function onDragEnter(e) {
-                if (dndimpl.inProgress) {
-                    dndimpl.mouseEnter(comp, e);
+                if (this.dragInProgress) {
+                    dnd.mouseEnter(comp);
                 }
             }
 
             function onDragLeave(e) {
-                if (dndimpl.inProgress) {
-                    dndimpl.mouseLeave(e);
+                if (this.dragInProgress) {
+                    dnd.mouseLeave(comp);
                 }
             }
 
