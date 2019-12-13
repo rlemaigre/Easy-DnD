@@ -15,12 +15,18 @@ Notice the following :
 * Different CSS classes are applied to the drop area depending on whether :
   * it accepts the drop or not
   * the mouse is on top of it or not
+  
+The following demo features list reordering and drag and drop between two lists.
+
+https://codesandbox.io/s/easy-dnd-demo-9mbij
+
+![demo](img/vid7.gif)
 
 # Manual
 
 ## Components
 
-There are three components : Drag, Drop and DropMask. The Drag component is meant to define an area from which data can be exported. The Drop component is meant to define an area into which data can be imported. Drop components can be nested forming hierarchies of arbitrary depth. The DropMask component is meant to create an island insensitive to drag and drop on top of a Drop component.
+There are four components : Drag, Drop, DropMask and DropList. The Drag component is meant to define an area from which data can be exported. The Drop component is meant to define an area into which data can be imported. Drop components can be nested forming hierarchies of arbitrary depth. The DropMask component is meant to create an island insensitive to drag and drop on top of a Drop component. The DropList component is a special kind of drop component that displays a list of items that supports dragging into and reordering.
 
 The following demo illustrates the three components :
 
@@ -97,6 +103,24 @@ During a drag operation, the Drop components on the page are assigned several CS
 * for the Drop components that participate in the drag operation (i.e. accepts its type) :
   * `drop-in` when the mouse is over one that is foremost at the current mouse position (remember Drop components can be nested), `drop-out` otherwise
   * `drop-allowed` when the Drop component accepts the data and the source of the drag accepts its mode, `drop-forbidden` otherwise
+  
+## DropList component
+
+The DropList component is a special Drop component so it inherits all the props, events and slots of the Drop component. It can be used when the result of a drag operation is to import data into the component as an item in a list or to allow the user to reorder a list of items using drag and drop.
+
+Comparing to the Drop component, there are two more events :
+* `insert` : emitted when the user drops data into the DropList. The index where the new item should be inserted is available in the `index` property. If no listener is provided for this event, then the DropList can't be dropped into.
+* `reorder` : emitted when the user reorders the list. The index to be removed is available in the propery `from` and the index where the item must be reinserted is available in the property `to`. The property `apply` contains a function that applies the required reordering to the given array. If no listener is provided for this event, then the DropList can't be reordred.
+
+Comparing to the Drop component, there is two more slots : `item` and `feedback`.
+
+The `item` slot is used to render each list item. It has two properties, `item` and `reorder`. Reorder is true when the item is the one subject to reordering.
+
+The `feedback` slot is used to render a placeholder to show the position where the new item would be inserted if the drag operation ended in the current mouse position. It has two properties : `type` and `data`.
+
+The `drag-image` slot also gains a new property : `reorder`. That property is true when the list is being reordered. It can be used to provide a different drag image depending on whether the list is being drop into or reordered. Before the content of the `drag-image` slot is cloned to serve as a drag image, it is briefly inserted into the list so that its dimensions can depend on the ones of the list.
+
+
 
 ## Mixins
 
@@ -107,6 +131,7 @@ A mixin is available to make components sensitive to drag operations. It adds th
 * `dragInProgress` : true if a drag operation is in progress, false otherwise
 * `dragType` : the type of the current drag operation
 * `dragData` : the data of the current drag operation
+* `dragPosition` : the current position of the mouse relative to the document
 
 The following demo displays information about the current drag operation when it is in progress :
 
@@ -132,6 +157,8 @@ DropMixin :
 * `cssClasses` : an object representing the CSS classes to be applied (see CSS Classes section)
 
 Drag images can be defined using the ref `drag-image` in the templates.
+
+
 
 # API
 
