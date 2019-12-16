@@ -20,7 +20,19 @@ export default class DropMixin extends DragAwareMixin {
     @Prop({default: 'copy'})
     mode: string;
 
-    _acceptsType(type: string) {
+    onDragPositionChangedCallback: { (event: any): void };
+
+    onDragEndCallback: { (event: any): void };
+
+    test = "testttt";
+
+    constructor() {
+        super();
+        this.onDragPositionChangedCallback = (event) => this.onDragPositionChanged(event);
+        this.onDragEndCallback = (event) => this.onDragEnd(event);
+    }
+
+    effectiveAcceptsType(type: string) {
         if (this.acceptsType === null)
             return true;
         else if (typeof (this.acceptsType) === 'string')
@@ -32,31 +44,28 @@ export default class DropMixin extends DragAwareMixin {
         }
     }
 
-    overridableAcceptsType(type: string) {
-        return this._acceptsType(type);
-    }
-
-    overridableAcceptsData(data: any, type: any) {
+    effectiveAcceptsData(data: any, type: any) {
         return this.acceptsData(data, type);
     }
 
     created() {
-        dnd.on("dragmove", this.onDragMove);
+        dnd.on("dragpositionchanged", this.onDragPositionChangedCallback);
         dnd.on("dragend", this.onDragEnd);
     }
 
     destroyed() {
-        dnd.off("dragmove", this.onDragMove);
+        dnd.off("dragpositionchanged", this.onDragPositionChanged);
         dnd.off("dragend", this.onDragEnd);
     }
 
-    onDragMove() {
-        if (this === this.dragTop) {
+    onDragPositionChanged(event) {
+        if (this === event.top) {
             this.$emit("dragover");
         }
     }
 
-    onDragEnd() {
+    onDragEnd(event) {
+        console.log(this.test);
         if (this === this.dragTop) {
             this.$emit("drop");
         }
@@ -73,7 +82,7 @@ export default class DropMixin extends DragAwareMixin {
          * wrong events have a null relatedTarget in FF.
          */
         function onMouseEnter(e) {
-            if (dnd.inProgress && comp.overridableAcceptsType(dnd.type) && e.relatedTarget !== null) {
+            if (dnd.inProgress && comp.effectiveAcceptsType(dnd.type) && e.relatedTarget !== null) {
                 dnd.mouseEnter(comp);
             }
         }
@@ -83,7 +92,7 @@ export default class DropMixin extends DragAwareMixin {
          * wrong events have a null relatedTarget in FF.
          */
         function onMouseLeave(e) {
-            if (dnd.inProgress && comp.overridableAcceptsType(dnd.type) && e.relatedTarget !== null) {
+            if (dnd.inProgress && comp.effectiveAcceptsType(dnd.type) && e.relatedTarget !== null) {
                 dnd.mouseLeave(comp);
             }
         }
@@ -116,7 +125,7 @@ export default class DropMixin extends DragAwareMixin {
 
     get typeAllowed() {
         if (this.dragInProgress) {
-            return this._acceptsType(dnd.type);
+            return this.effectiveAcceptsType(dnd.type);
         } else {
             return null;
         }
@@ -125,7 +134,7 @@ export default class DropMixin extends DragAwareMixin {
     get dropAllowed() {
         if (this.dragInProgress) {
             if (this.typeAllowed) {
-                return this['reordering'] || (this.compatibleModes() && this.overridableAcceptsData(dnd.data, dnd.type));
+                return this['reordering'] || (this.compatibleModes() && this.effectiveAcceptsData(dnd.data, dnd.type));
             } else {
                 return null;
             }

@@ -1,10 +1,11 @@
-import {Vue} from "vue-property-decorator";
+import {Component, Vue} from "vue-property-decorator";
 import {dnd} from "./DnD";
 
 /**
  * This class reacts to drag events emitted by the dnd object to manage a sequence of drag images and fade from one to the
  * other as the drag progresses.
  */
+@Component({}) // Necessary to set proper "this" context in event listeners.
 export class DragImagesManager extends Vue {
 
     selfTransform: string = null;
@@ -14,10 +15,10 @@ export class DragImagesManager extends Vue {
 
     constructor() {
         super();
-        dnd.on('dragstart', (event) => this.onDragStart(event));
-        dnd.on('dragtopchanged', (event) => this.onDragTopChanged(event));
-        dnd.on('dragpositionchanged', (event) => this.onDragPositionChanged(event));
-        dnd.on('dragend', (event) => this.onDragEnd(event));
+        dnd.on('dragstart', this.onDragStart);
+        dnd.on('dragtopchanged', this.onDragTopChanged);
+        dnd.on('dragpositionchanged', this.onDragPositionChanged);
+        dnd.on('dragend', this.onDragEnd);
     }
 
     onDragStart(event) {

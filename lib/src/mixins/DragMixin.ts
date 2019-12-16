@@ -16,6 +16,11 @@ export default class DragMixin extends DragAwareMixin {
 
     mouseIn: boolean = null;
 
+    created() {
+        dnd.on("dragstart", (event) => this.$emit("dragstart", event));
+        dnd.on("dragend", (event) => this.$emit("dragend", event));
+    }
+
     mounted() {
         let comp = this;
         let el = this.$el;
@@ -56,6 +61,7 @@ export default class DragMixin extends DragAwareMixin {
                 dnd.startDrag(comp, mouseDownEvent, comp.type, comp.data);
                 document.documentElement.classList.add('drag-in-progress');
             }
+            dnd.mouseMove(e);
         }
 
         function stopDragging(e) {

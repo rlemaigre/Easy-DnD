@@ -57,7 +57,7 @@ export class DnD {
             stack.push(...this.ancestors(comp.$parent));
         }
         if (comp['isDrop']) {
-            if (comp['_acceptsType'](this.type)) {
+            if (comp['effectiveAcceptsType'](this.type)) {
                 stack.push(comp);
             }
         } else if (comp['isDropMask']) {
@@ -69,13 +69,13 @@ export class DnD {
     public mouseEnter(enter: Vue) {
         let from = this.top();
         this.stack.push(enter);
-        this.emit('dragtopchanged', {from});
+        this.emit('dragtopchanged', {previousTop: from});
     }
 
     public mouseLeave(leave: Vue) {
         let from = leave;
         this.stack.pop();
-        this.emit('dragtopchanged', {from});
+        this.emit('dragtopchanged', {previousTop: from});
     }
 
     public mouseMove(event) {
@@ -115,3 +115,14 @@ export class DnD {
 
 export let dnd = new DnD();
 dnd = Vue.observable(dnd);
+
+export class DnDEvent {
+
+    type: any;
+    data: any;
+    top: Vue;
+    previousTop: Vue;
+    source: Vue;
+    position: { x, y };
+
+}
