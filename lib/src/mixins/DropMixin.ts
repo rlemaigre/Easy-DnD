@@ -1,7 +1,8 @@
 import {Component, Prop} from "vue-property-decorator";
 import DragAwareMixin from "./DragAwareMixin";
 import {createDragImage} from "../ts/createDragImage";
-import {dnd} from "../ts/DnD";
+import {dnd, DnDEvent} from "../ts/DnD";
+import Drag from "../components/Drag.vue";
 
 @Component({})
 export default class DropMixin extends DragAwareMixin {
@@ -20,16 +21,8 @@ export default class DropMixin extends DragAwareMixin {
     @Prop({default: 'copy'})
     mode: string;
 
-    onDragPositionChangedCallback: { (event: any): void };
-
-    onDragEndCallback: { (event: any): void };
-
-    test = "testttt";
-
     constructor() {
         super();
-        this.onDragPositionChangedCallback = (event) => this.onDragPositionChanged(event);
-        this.onDragEndCallback = (event) => this.onDragEnd(event);
     }
 
     effectiveAcceptsType(type: string) {
@@ -49,25 +42,35 @@ export default class DropMixin extends DragAwareMixin {
     }
 
     created() {
-        dnd.on("dragpositionchanged", this.onDragPositionChangedCallback);
-        dnd.on("dragend", this.onDragEnd);
+        dnd.on("dragpositionchanged", this.onDragPositionChanged);
+        dnd.on("dragtopchanged", this.onDragTopChanged);
+        dnd.on("drop", this.onDrop);
     }
 
     destroyed() {
         dnd.off("dragpositionchanged", this.onDragPositionChanged);
-        dnd.off("dragend", this.onDragEnd);
+        dnd.off("dragtopchanged", this.onDragTopChanged);
+        dnd.off("drop", this.onDrop);
     }
 
-    onDragPositionChanged(event) {
+    onDragPositionChanged(event: DnDEvent) {
         if (this === event.top) {
-            this.$emit("dragover");
+            this.$emit("dragover", event);
         }
     }
 
-    onDragEnd(event) {
-        console.log(this.test);
-        if (this === this.dragTop) {
-            this.$emit("drop");
+    onDragTopChanged(event: DnDEvent) {
+        if (this === event.top) {
+            this.$emit("dragenter", event);
+        }
+        if (this === event.previousTop) {
+            this.$emit("dragleave", event);
+        }
+    }
+
+    onDrop(event: DnDEvent) {
+        if (event.top === this && this.compatibleModes(event.source) && this.effectiveAcceptsData(event.data, event.type)) {
+            this.$emit('drop', event);
         }
     }
 
@@ -77,42 +80,26 @@ export default class DropMixin extends DragAwareMixin {
         el.addEventListener('mouseenter', onMouseEnter);
         el.addEventListener('mouseleave', onMouseLeave);
 
-        /**
-         * The condition e.relatedTarget !== null is a fix for firefox triggering the mouseenter event several times. The
-         * wrong events have a null relatedTarget in FF.
-         */
         function onMouseEnter(e) {
-            if (dnd.inProgress && comp.effectiveAcceptsType(dnd.type) && e.relatedTarget !== null) {
-                dnd.mouseEnter(comp);
-            }
+            dnd.mouseEnter(comp, e);
         }
 
-        /**
-         * The condition e.relatedTarget !== null is a fix for firefox triggering the mouseenter event several times. The
-         * wrong events have a null relatedTarget in FF.
-         */
         function onMouseLeave(e) {
-            if (dnd.inProgress && comp.effectiveAcceptsType(dnd.type) && e.relatedTarget !== null) {
-                dnd.mouseLeave(comp);
-            }
+            dnd.mouseLeave(comp, e);
         }
-
-        /* function onDrop(e) {
-             if (dndimpl.inProgress && comp.overridableAcceptsType(dndimpl.type)) {
-                 if (comp === dndimpl.top() && comp.compatibleModes() && comp.overridableAcceptsData(dndimpl.data, dndimpl.type)) {
-                     comp.$emit('drop', new DnDEvent(dndimpl.type, dndimpl.data, e));
-                     comp.$emit('dragleave', new DnDEvent(dndimpl.type, dndimpl.data, e));
-                     if (!comp['reordering']) {
-                         dndimpl.source.$emit(comp.mode, new DnDEvent(dndimpl.type, dndimpl.data, e));
-                     }
-                 }
-             }
-         }*/
 
     }
 
-    compatibleModes() {
-        return (this.mode === 'copy' || dnd.source.$listeners[this.mode]);
+    compatibleModes(source: Drag) {
+        return this.mode === 'copy' || source.$listeners[this.mode];
+    }
+
+    get compatibleMode() {
+        if (this.dragInProgress) {
+            return this.compatibleModes(this.dragSource);
+        } else {
+            return null;
+        }
     }
 
     get dropIn() {
@@ -125,7 +112,7 @@ export default class DropMixin extends DragAwareMixin {
 
     get typeAllowed() {
         if (this.dragInProgress) {
-            return this.effectiveAcceptsType(dnd.type);
+            return this.effectiveAcceptsType(this.dragType);
         } else {
             return null;
         }
@@ -134,7 +121,7 @@ export default class DropMixin extends DragAwareMixin {
     get dropAllowed() {
         if (this.dragInProgress) {
             if (this.typeAllowed) {
-                return this['reordering'] || (this.compatibleModes() && this.effectiveAcceptsData(dnd.data, dnd.type));
+                return this.compatibleMode && this.effectiveAcceptsData(this.dragData, this.dragType);
             } else {
                 return null;
             }

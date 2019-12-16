@@ -42,6 +42,9 @@ export class DnD {
             from: this.top(),
             to: null
         });
+        if (this.top() !== null) {
+            this.emit("drop");
+        }
         this.emit("dragend");
         this.inProgress = false;
         this.data = null;
@@ -66,16 +69,28 @@ export class DnD {
         return stack;
     }
 
-    public mouseEnter(enter: Vue) {
-        let from = this.top();
-        this.stack.push(enter);
-        this.emit('dragtopchanged', {previousTop: from});
+    public mouseEnter(enter: Vue, event: MouseEvent) {
+        /*
+         * The condition e.relatedTarget !== null is a fix for firefox triggering the mouseenter event several times. The
+         * wrong events have a null relatedTarget in FF.
+         */
+        if (this.inProgress && (enter['isDropMask'] || enter['effectiveAcceptsType'](this.type)) && event.relatedTarget !== null) {
+            let from = this.top();
+            this.stack.push(enter);
+            this.emit('dragtopchanged', {previousTop: from});
+        }
     }
 
-    public mouseLeave(leave: Vue) {
-        let from = leave;
-        this.stack.pop();
-        this.emit('dragtopchanged', {previousTop: from});
+    public mouseLeave(leave: Vue, event: MouseEvent) {
+        /*
+         * The condition e.relatedTarget !== null is a fix for firefox triggering the mouseenter event several times. The
+         * wrong events have a null relatedTarget in FF.
+         */
+        if (this.inProgress && (leave['isDropMask'] || leave['effectiveAcceptsType'](this.type)) && event.relatedTarget !== null) {
+            let from = leave;
+            this.stack.pop();
+            this.emit('dragtopchanged', {previousTop: from});
+        }
     }
 
     public mouseMove(event) {

@@ -23,19 +23,15 @@
         mounted() {
             let el = this.$el;
             let comp = this;
-            el.addEventListener('mouseenter', onDragEnter);
-            el.addEventListener('mouseleave', onDragLeave);
+            el.addEventListener('mouseenter', onMouseEnter);
+            el.addEventListener('mouseleave', onMouseLeave);
 
-            function onDragEnter(e) {
-                if (comp.dragInProgress) {
-                    dnd.mouseEnter(comp);
-                }
+            function onMouseEnter(e) {
+                dnd.mouseEnter(comp, e);
             }
 
-            function onDragLeave(e) {
-                if (comp.dragInProgress) {
-                    dnd.mouseLeave(comp);
-                }
+            function onMouseLeave(e) {
+                dnd.mouseLeave(comp, e);
             }
 
         }
