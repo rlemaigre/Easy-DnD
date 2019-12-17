@@ -121,50 +121,6 @@
             }
         }
 
-        computeForbiddenKeys() {
-            return this.$children[0].$vnode.context.$children[0].$slots.default
-                .map(vn => vn.key)
-                .filter(k => k !== undefined && k !== 'drag-image' && k !== 'drag-feedback');
-        }
-
-        computeFeedbackKey() {
-            return this.$refs['feedback']['$slots']['default'][0]['key'];
-        }
-
-        computeInsertingGrid() {
-            let feedbackParent = this.$refs['feedback']['$el'] as HTMLElement;
-            let feedback = feedbackParent.children[0];
-            let clone = feedback.cloneNode(true) as HTMLElement;
-            let tg = this.$refs['tg']['$el'] as HTMLElement;
-            tg.append(clone);
-            let grid = new Grid(tg.children);
-            clone.remove();
-            return grid;
-        }
-
-        computeReorderingGrid() {
-            let tg = this.$refs['tg']['$el'] as HTMLElement;
-            return new Grid(tg.children);
-        }
-
-        doDrop(event: DnDEvent) {
-            DropMixin['options'].methods.doDrop.call(this, event);
-            if (this.reordering) {
-                if (this.fromIndex !== this.closestIndex) {
-                    this.$emit('reorder', {
-                        from: this.fromIndex,
-                        to: this.closestIndex
-                    } as ReorderEvent)
-                }
-            } else {
-                this.$emit('insert', {
-                    type: event.type,
-                    data: event.data,
-                    index: this.closestIndex
-                } as InsertEvent);
-            }
-        }
-
         get itemsBeforeFeedback() {
             if (this.closestIndex === 0) {
                 return [];
@@ -207,8 +163,52 @@
             return false; //this.operation === 'reordering' && this.$scopedSlots['reordering-drag-image'];
         }
 
+        doDrop(event: DnDEvent) {
+            DropMixin['options'].methods.doDrop.call(this, event);
+            if (this.reordering) {
+                if (this.fromIndex !== this.closestIndex) {
+                    this.$emit('reorder', {
+                        from: this.fromIndex,
+                        to: this.closestIndex
+                    } as ReorderEvent)
+                }
+            } else {
+                this.$emit('insert', {
+                    type: event.type,
+                    data: event.data,
+                    index: this.closestIndex
+                } as InsertEvent);
+            }
+        }
+
         candidate(type: any, data: any, source: Vue): boolean {
             return super.candidate(type, data, source);
+        }
+
+        computeForbiddenKeys() {
+            return this.$children[0].$vnode.context.$children[0].$slots.default
+                .map(vn => vn.key)
+                .filter(k => k !== undefined && k !== 'drag-image' && k !== 'drag-feedback');
+        }
+
+        computeFeedbackKey() {
+            return this.$refs['feedback']['$slots']['default'][0]['key'];
+        }
+
+        computeInsertingGrid() {
+            let feedbackParent = this.$refs['feedback']['$el'] as HTMLElement;
+            let feedback = feedbackParent.children[0];
+            let clone = feedback.cloneNode(true) as HTMLElement;
+            let tg = this.$refs['tg']['$el'] as HTMLElement;
+            tg.append(clone);
+            let grid = new Grid(tg.children);
+            clone.remove();
+            return grid;
+        }
+
+        computeReorderingGrid() {
+            let tg = this.$refs['tg']['$el'] as HTMLElement;
+            return new Grid(tg.children);
         }
 
         createDragImage() {

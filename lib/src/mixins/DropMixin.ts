@@ -69,7 +69,7 @@ export default class DropMixin extends DragAwareMixin {
     }
 
     onDrop(event: DnDEvent) {
-        if (event.top === this && this.compatibleModes(event.source) && this.effectiveAcceptsData(event.data, event.type)) {
+        if (this.dropIn && this.compatibleMode && this.dropAllowed) {
             this.doDrop(event);
         }
     }
@@ -94,13 +94,9 @@ export default class DropMixin extends DragAwareMixin {
 
     }
 
-    compatibleModes(source: Vue) {
-        return this.mode === 'copy' || source.$listeners[this.mode];
-    }
-
     get compatibleMode() {
         if (this.dragInProgress) {
-            return this.compatibleModes(this.dragSource);
+            return this.mode === 'copy' || dnd.source.$listeners.hasOwnProperty(this.mode);
         } else {
             return null;
         }
