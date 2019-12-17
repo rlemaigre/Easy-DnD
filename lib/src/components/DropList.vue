@@ -164,7 +164,6 @@
         }
 
         doDrop(event: DnDEvent) {
-            DropMixin['options'].methods.doDrop.call(this, event);
             if (this.reordering) {
                 if (this.fromIndex !== this.closestIndex) {
                     this.$emit('reorder', new ReorderEvent(
@@ -173,6 +172,7 @@
                     ));
                 }
             } else {
+                DropMixin['options'].methods.doDrop.call(this, event);
                 this.$emit('insert', new InsertEvent(
                     event.type,
                     event.data,
