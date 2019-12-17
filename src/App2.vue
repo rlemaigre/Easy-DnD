@@ -5,15 +5,12 @@
                 <div class="list">
                     <drag v-for="n in [1,2,3,4,5]" :data="n" class="item">{{n}}</drag>
                 </div>
-                <drop-list :items="items" class="list">
+                <drop-list :items="items" class="list" @insert="onInsert">
                     <template v-slot:item="{item}">
                         <drag class="item" :key="item">{{item}}</drag>
                     </template>
                     <template v-slot:feedback="{data}">
                         <div class="item feedback" :key="data">{{data}}</div>
-                    </template>
-                    <template v-slot:drag-image="{data, type}">
-                        <drag class="item drag-image">drag</drag>
                     </template>
                 </drop-list>
             </v-container>

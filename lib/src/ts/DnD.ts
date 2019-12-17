@@ -1,9 +1,9 @@
 import {Vue} from "vue-property-decorator";
 
 /**
- * This is the class of the global object that holds the state of the drag and drop during its progress. It emits all
- * kinds of events during the progress of the drag and drop. Its data is reactive and listeners can be attachted to it
- * using the method on.
+ * This is the class of the global object that holds the state of the drag and drop during its progress. It emits events
+ * reporting its state evolution during the progress of the drag and drop. Its data is reactive and listeners can be
+ * attachted to it using the method on.
  */
 export class DnD {
 
@@ -22,25 +22,25 @@ export class DnD {
         this.type = type;
         this.data = data;
         this.source = source;
-        this.stack = this.ancestors(this.source);
         this.position = {
             x: event.pageX,
             y: event.pageY
         };
+        this.stack = this.ancestors(this.source);
         this.inProgress = true;
         this.emit("dragstart");
-        this.emit('dragtopchanged', {from: null});
+        this.emit('dragtopchanged', {previousTop: null});
         this.emit('dragpositionchanged');
     }
 
     public stopDrag() {
-        this.emit('dragtopchanged', {
-            from: this.top(),
-            to: null
-        });
         if (this.top() !== null) {
             this.emit("drop");
         }
+        this.emit('dragtopchanged', {
+            previousTop: this.top(),
+            to: null
+        });
         this.emit("dragend");
         this.inProgress = false;
         this.data = null;
@@ -55,7 +55,7 @@ export class DnD {
             stack.push(...this.ancestors(comp.$parent));
         }
         if (comp['isDrop']) {
-            if (comp['effectiveAcceptsType'](this.type)) {
+            if (comp['candidate'](this.type, this.data, this.source)) {
                 stack.push(comp);
             }
         } else if (comp['isDropMask']) {
@@ -97,7 +97,7 @@ export class DnD {
     }
 
     public top() {
-        return this.stack.length === 0 ? null : this.stack[this.stack.length - 1];
+        return (this.stack === null || this.stack.length === 0) ? null : this.stack[this.stack.length - 1];
     }
 
     private emit(event, data?) {
