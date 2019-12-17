@@ -29,11 +29,8 @@ export class DnD {
         };
         this.inProgress = true;
         this.emit("dragstart");
-        Vue.nextTick(() => {
-            this.emit("dragstarted");
-            this.emit('dragtopchanged', {from: null});
-            this.emit('dragpositionchanged');
-        });
+        this.emit('dragtopchanged', {from: null});
+        this.emit('dragpositionchanged');
     }
 
     public stopDrag() {

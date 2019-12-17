@@ -68,8 +68,8 @@
         name: "App",
         components: {
             Drag,
-            DropList,
-            Drop
+            Drop,
+            DropList
         },
         data: function () {
             return {

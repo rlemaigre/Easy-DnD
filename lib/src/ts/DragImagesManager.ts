@@ -32,49 +32,55 @@ export class DragImagesManager extends Vue {
     }
 
     onDragEnd(event) {
-        this.clones.forEach((clone) => {
-            clone.remove();
+        Vue.nextTick(() => {
+            this.clones.forEach((clone) => {
+                clone.remove();
+            });
+            if (this.sourceClone !== null) {
+                this.sourceClone.remove();
+            }
+            this.selfTransform = null;
+            this.clones = null;
+            this.source = null;
+            this.sourceClone = null;
         });
-        if (this.sourceClone !== null) {
-            this.sourceClone.remove();
-        }
-        this.selfTransform = null;
-        this.clones = null;
-        this.source = null;
-        this.sourceClone = null;
     }
 
     onDragTopChanged(event) {
-        let top = event.top;
+        // We use nextTick to ensure any changes on the drag images resulting from the dnd data update has been pushed
+        // to the DOM.
+        Vue.nextTick(() => {
+            let top = event.top;
 
-        this.clones.forEach(clone => {
-            clone.style.opacity = "0";
-        });
-        if (this.sourceClone) {
-            this.sourceClone.style.opacity = "0";
-        }
-
-        let activeClone;
-        if (top === null) {
-            activeClone = this.getSourceClone();
-        } else {
-            if (!this.clones.has(top)) {
-                let clone = top['createDragImage'](this.selfTransform);
-                if (clone === 'source') {
-                    clone = this.getSourceClone();
-                } else if (clone !== null) {
-                    clone.style.opacity = '0';
-                    document.body.append(clone);
-                }
-                this.clones.set(top, clone);
+            this.clones.forEach(clone => {
+                clone.style.opacity = "0";
+            });
+            if (this.sourceClone) {
+                this.sourceClone.style.opacity = "0";
             }
-            activeClone = this.clones.get(top);
-        }
 
-        if (activeClone !== null) {
-            activeClone.offsetWidth; // Forces broswer reflow
-            activeClone.style.opacity = "0.7";
-        }
+            let activeClone;
+            if (top === null) {
+                activeClone = this.getSourceClone();
+            } else {
+                if (!this.clones.has(top)) {
+                    let clone = top['createDragImage'](this.selfTransform);
+                    if (clone === 'source') {
+                        clone = this.getSourceClone();
+                    } else if (clone !== null) {
+                        clone.style.opacity = '0';
+                        document.body.append(clone);
+                    }
+                    this.clones.set(top, clone);
+                }
+                activeClone = this.clones.get(top);
+            }
+
+            if (activeClone !== null) {
+                activeClone.offsetWidth; // Forces broswer reflow
+                activeClone.style.opacity = "0.7";
+            }
+        });
     }
 
     getSourceClone() {
