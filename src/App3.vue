@@ -62,7 +62,10 @@
 </template>
 
 <script>
-    import {Drag, Drop, DropList} from "../lib/src";
+    import Drag from "../lib/src/components/Drag.vue";
+    import Drop from "../lib/src/components/Drop.vue";
+    import DropList from "../lib/src/components/DropList.vue";
+    import "../lib/src/ts/DragImagesManager.ts";
 
     export default {
         name: "App",

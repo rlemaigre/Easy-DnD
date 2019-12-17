@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Vue} from "vue-property-decorator";
+    import {Component, Prop} from "vue-property-decorator";
     import DropMixin from "../mixins/DropMixin";
     import DragFeedback from "./DragFeedback.vue";
     import Grid from "../ts/Grid";
@@ -68,8 +68,8 @@
                 this.grid = this.computeReorderingGrid();
             } else {
                 this.$nextTick(() => {
-                    // Presence of feedback node in the DOM required => delayed until what depends on drag data has been
-                    // processed.
+                    // Presence of feedback node in the DOM and of keys in the virtual DOM required => delayed until what
+                    // depends on drag data has been processed.
                     this.grid = this.computeInsertingGrid();
                     this.feedbackKey = this.computeFeedbackKey();
                     this.forbiddenKeys = this.computeForbiddenKeys();
@@ -181,8 +181,9 @@
             }
         }
 
-        candidate(type: any, data: any, source: Vue): boolean {
-            return super.candidate(type, data, source);
+        candidate(): boolean {
+            let superCandidate = DropMixin['options'].methods.candidate.call(this);
+            return superCandidate || this.reordering;
         }
 
         computeForbiddenKeys() {
