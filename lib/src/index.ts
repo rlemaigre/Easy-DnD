@@ -7,14 +7,24 @@ import DragMixin from './mixins/DragMixin';
 import DropMixin from './mixins/DropMixin';
 import {dnd} from './ts/DnD';
 import {DragImagesManager} from './ts/DragImagesManager';
+import DropList from './components/DropList.vue';
+import {DnDEvent, InsertEvent, ReorderEvent} from './ts/events';
+import reorder from './ts/reorder';
+import {createDragImage} from './ts/createDragImage';
 
 export {
     Drag,
     Drop,
+    DropList,
     DropMask,
     DragAwareMixin,
     DragMixin,
     DropMixin,
     DragImagesManager,
-    dnd
+    dnd,
+    DnDEvent,
+    InsertEvent,
+    ReorderEvent,
+    reorder,
+    createDragImage
 }

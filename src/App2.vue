@@ -1,150 +1,82 @@
 <template>
     <v-app>
         <v-content>
-            <v-container fluid>
-                <v-row align-content="stretch">
-                    <v-col>
-                        <v-list three-line class="list1">
-                            <drop-list :items="items1" @reorder="$event.apply(items1)" @insert="insert1" mode="cut">
-                                <template v-slot:item="{item, reorder}">
-                                    <drag :key="item.title" :data="item" @cut="remove(items1, item)">
-                                        <v-list-item style="background-color: white"
-                                                     :style="{borderLeft: reorder ? '2px solid #1976D2' : 'none'}">
-                                            <v-list-item-avatar>
-                                                <v-img :src="item.avatar"></v-img>
-                                            </v-list-item-avatar>
-                                            <v-list-item-content>
-                                                <v-list-item-title v-html="item.title"></v-list-item-title>
-                                                <v-list-item-subtitle v-html="item.subtitle"></v-list-item-subtitle>
-                                            </v-list-item-content>
-                                        </v-list-item>
-                                        <v-divider></v-divider>
-                                    </drag>
-                                </template>
-                                <template v-slot:drag-image="{data}">
-                                    <v-list-item-avatar style="transform:translate(-50%, -50%) scale(1.5)">
-                                        <img :src="data.avatar">
-                                    </v-list-item-avatar>
-                                </template>
-                                <template v-slot:feedback="{data}">
-                                    <v-skeleton-loader
-                                            type="list-item-avatar-three-line"
-                                            :key="data.title"
-                                            style="border-left: 2px solid #1976D2"
-                                    ></v-skeleton-loader>
-                                </template>
-                            </drop-list>
-                        </v-list>
-                    </v-col>
-                    <v-col>
-                        <drop-list class="list2" :items="items2" @reorder="$event.apply(items2)" @insert="insert2"
-                                   mode="cut">
-                            <template v-slot:item="{item}">
-                                <drag :key="item.title" class="chip" :data="item" @cut="remove(items2, item)">
-                                    <v-chip>{{item.title}}</v-chip>
-                                </drag>
-                            </template>
-                            <template v-slot:feedback="{data}">
-                                <div class="chip" :key="data.title">
-                                    <v-chip color="primary">{{data.title}}</v-chip>
-                                </div>
-                            </template>
-                            <template v-slot:drag-image="{data}">
-                                <v-chip :key="data.title" style="transform: translate(-50%, -50%)">{{data.title}}
-                                </v-chip>
-                            </template>
-                        </drop-list>
-                    </v-col>
-                </v-row>
+            <v-container fluid class="wrapper">
+                <div class="list">
+                    <drag v-for="n in [1,2,3,4,5]" :data="n" class="item">{{n}}</drag>
+                </div>
+                <drop-list :items="items" class="list">
+                    <template v-slot:item="{item}">
+                        <drag class="item" :key="item">{{item}}</drag>
+                    </template>
+                    <template v-slot:feedback="{data}">
+                        <div class="item feedback" :key="data">{{data}}</div>
+                    </template>
+                    <template v-slot:drag-image="{data, type}">
+                        <drag class="item drag-image">drag</drag>
+                    </template>
+                </drop-list>
             </v-container>
         </v-content>
     </v-app>
 </template>
 
-<script>
-    import {Drag, Drop, DropList} from "../lib/src";
+<script lang="ts">
+    import {Component, Vue} from "vue-property-decorator";
+    import Drag from "../lib/src/components/Drag.vue";
+    import DropList from "../lib/src/components/DropList.vue";
+    import {InsertEvent} from "../lib/src/ts/events";
+    import "../lib/src/ts/DragImagesManager.ts";
 
-    export default {
-        name: "App",
-        components: {
-            Drag,
-            Drop,
-            DropList
-        },
-        data: function () {
-            return {
-                items1: [
-                    {
-                        avatar: "https://cdn.vuetifyjs.com/images/lists/1.jpg",
-                        title: "Brunch this weekend?",
-                        subtitle:
-                            "<span class='text--primary'>Ali Connors</span> &mdash; I'll be in your neighborhood doing errands this weekend. Do you want to hang out?"
-                    },
-                    {
-                        avatar: "https://cdn.vuetifyjs.com/images/lists/2.jpg",
-                        title: "Summer BBQ",
-                        subtitle:
-                            "<span class='text--primary'>to Alex, Scott, Jennifer</span> &mdash; Wish I could come, but I'm out of town this weekend."
-                    },
-                    {
-                        avatar: "https://cdn.vuetifyjs.com/images/lists/3.jpg",
-                        title: "Oui oui",
-                        subtitle:
-                            "<span class='text--primary'>Sandra Adams</span> &mdash; Do you have Paris recommendations? Have you ever been?"
-                    }
-                ],
-                items2: [
-                    {
-                        avatar: "https://cdn.vuetifyjs.com/images/lists/4.jpg",
-                        title: "Birthday gift",
-                        subtitle:
-                            "<span class='text--primary'>Trevor Hansen</span> &mdash; Have any ideas about what we should get Heidi for her birthday?"
-                    },
-                    {
-                        avatar: "https://cdn.vuetifyjs.com/images/lists/5.jpg",
-                        title: "Recipe to try",
-                        subtitle:
-                            "<span class='text--primary'>Britta Holt</span> &mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos."
-                    }
-                ]
-            };
-        },
-        methods: {
-            insert1(event) {
-                this.items1.splice(event.index, 0, event.data);
-            },
-            insert2(event) {
-                this.items2.splice(event.index, 0, event.data);
-            },
-            remove(array, value) {
-                let index = array.indexOf(value);
-                array.splice(index, 1);
-            }
+    @Component({
+        components: {Drag, DropList}
+    })
+    export default class App2 extends Vue {
+
+        items = ['a', 'b', 'c', 'd', 'e'];
+
+        onInsert(event: InsertEvent) {
+            this.items.splice(event.index, 0, event.data);
         }
-    };
+
+    }
 </script>
 
-<style>
-    html,
-    body {
-        height: 100%;
-        font-family: "Roboto";
-    }
-
-    .list1 {
+<style lang="scss">
+    html, body, #app, .v-application--wrap, .v-content, .v-content__wrap {
         height: 100%;
     }
 
-    .list2 {
-        display: flex;
-        height: 100%;
+    .drop-in {
+        box-shadow: 0 0 10px rgba(0, 0, 255, 0.3);
     }
+</style>
 
-    .chip {
-        margin: 10px;
-    }
+<style scoped lang="scss">
+    .wrapper {
+        .list {
+            border: 1px solid black;
+            margin: 100px auto;
+            width: 200px;
 
-    .drop-allowed.drop-in * {
-        cursor: inherit !important;
+            .item {
+                padding: 20px;
+                margin: 10px;
+                background-color: rgb(220, 220, 255);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                &.feedback {
+                    background-color: rgb(255, 220, 220);
+                    border: 2px dashed black;
+                }
+
+                &.drag-image {
+                    background-color: rgb(220, 255, 220);
+                    transform: translate(-50%, -50%);
+                }
+            }
+        }
     }
 </style>

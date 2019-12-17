@@ -1,16 +1,16 @@
 <template>
     <transition-group :tag="tag" name="drop-list-transition"
                       ref="tg" :duration="{enter: 0, leave: 0}" :css="false" :class="clazz" :style="cssStyle">
-        <template v-if="mode === 'normal'">
+        <template v-if="state === 'normal'">
             <slot name="item" v-for="item in items" :item="item" :reorder="false"/>
         </template>
-        <template v-if="mode === 'reordering'">
+        <template v-if="state === 'reordering'">
             <slot name="item" v-for="(item, index) in reorderedItems" :item="item" :reorder="index === closestIndex"/>
             <div class="__drag-image" v-if="showReorderingDragImage" ref="drag-image" key="drag-image">
                 <slot name="reordering-drag-image" :item="items[fromIndex]"/>
             </div>
         </template>
-        <template v-if="mode === 'inserting'">
+        <template v-if="state === 'inserting'">
             <slot name="item" v-for="item in itemsBeforeFeedback" :item="item" :reorder="false"/>
             <slot name="feedback" :data="dragData" :type="dragType"/>
             <slot name="item" v-for="item in itemsAfterFeedback" :item="item" :reorder="false"/>
@@ -44,7 +44,7 @@
         @Prop()
         items: any[];
 
-        mode: 'normal' | 'reordering' | 'inserting' = 'normal';
+        state: 'normal' | 'reordering' | 'inserting' = 'normal';
         grid: Grid = null;
         forbiddenKeys = [];
         feedbackKey = null;
@@ -62,12 +62,12 @@
 
         onDragEnter(event: DnDEvent) {
             if (this.$listeners['reorder'] && event.source.$el.parentElement === this.$refs['tg']['$el']) {
-                this.mode = "reordering";
+                this.state = "reordering";
                 let tg = this.$refs['tg']['$el'] as HTMLElement;
                 this.grid = new Grid(tg.children);
                 this.fromIndex = Array.prototype.indexOf.call(event.source.$el.parentElement.children, event.source.$el);
             } else if (this.effectiveAcceptsData(event.data, event.type) && this.compatibleModes(event.source)) {
-                this.mode = "inserting";
+                this.state = "inserting";
                 this.feedbackKey = this.$refs['feedback']['$slots']['default'][0]['key'];
                 this.forbiddenKeys = this.$children[0].$vnode.context.$children[0].$slots.default
                     .map(vn => vn.key)
@@ -80,13 +80,13 @@
                 this.grid = new Grid(tg.children);
                 clone.remove();
             } else {
-                this.mode = "normal";
+                this.state = "normal";
             }
         }
 
 
         onDragLeave(event: DnDEvent) {
-            this.mode = 'normal';
+            this.state = 'normal';
             this.grid = null;
             this.forbiddenKeys = [];
             this.feedbackKey = null;
@@ -94,7 +94,7 @@
 
         doDrop(event: DnDEvent) {
             super.doDrop(event);
-            if (this.mode === "reordering") {
+            if (this.state === "reordering") {
                 if (this.fromIndex !== this.closestIndex) {
                     this.$emit('reorder', {
                         from: this.fromIndex,
@@ -111,10 +111,10 @@
         }
 
         effectiveAcceptsData(data: any, type: any): boolean {
-            if (this.mode === "reordering")
+            if (this.state === "reordering")
                 return true;
             else {
-                return super.effectiveAcceptsData(data, type) && !this.forbiddenKeys.includes(this.feedbackKey)
+                return true;// super.effectiveAcceptsData(data, type) && !this.forbiddenKeys.includes(this.feedbackKey)
             }
         }
 
@@ -151,8 +151,8 @@
             return {
                 ...this.cssClasses,
                 'drop-list': true,
-                'reordering': this.mode === "reordering",
-                'inserting': this.mode === "inserting"
+                'reordering': this.state === "reordering",
+                'inserting': this.state === "inserting"
             };
         }
 

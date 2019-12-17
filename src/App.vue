@@ -52,6 +52,7 @@
     import Drag from "../lib/src/components/Drag.vue";
     import DropZone from "@/components/DropZone.vue";
     import DropMask from "../lib/src/components/DropMask.vue";
+    import "../lib/src/ts/DragImagesManager.ts";
 
     @Component({
         components: {DropMask, DropZone, Drag}
