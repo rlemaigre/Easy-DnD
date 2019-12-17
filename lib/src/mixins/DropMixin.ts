@@ -76,6 +76,7 @@ export default class DropMixin extends DragAwareMixin {
 
     doDrop(event: DnDEvent) {
         this.$emit('drop', event);
+        event.source.$emit(this.mode, event);
     }
 
     mounted() {

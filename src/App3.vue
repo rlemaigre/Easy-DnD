@@ -11,14 +11,14 @@
                                         <v-list-item style="background-color: white"
                                                      :style="{borderLeft: reorder ? '2px solid #1976D2' : 'none'}">
                                             <v-list-item-avatar>
-                                                <v-img :src="item.avatar"></v-img>
+                                                <v-img :src="item.avatar"/>
                                             </v-list-item-avatar>
                                             <v-list-item-content>
-                                                <v-list-item-title v-html="item.title"></v-list-item-title>
-                                                <v-list-item-subtitle v-html="item.subtitle"></v-list-item-subtitle>
+                                                <v-list-item-title v-html="item.title"/>
+                                                <v-list-item-subtitle v-html="item.subtitle"/>
                                             </v-list-item-content>
                                         </v-list-item>
-                                        <v-divider></v-divider>
+                                        <v-divider/>
                                     </drag>
                                 </template>
                                 <template v-slot:drag-image="{data}">
@@ -30,8 +30,8 @@
                                     <v-skeleton-loader
                                             type="list-item-avatar-three-line"
                                             :key="data.title"
-                                            style="border-left: 2px solid #1976D2"
-                                    ></v-skeleton-loader>
+                                            style="border-left: 2px solid #1976D2; margin-left: -2px;"
+                                    />
                                 </template>
                             </drop-list>
                         </v-list>

@@ -167,17 +167,17 @@
             DropMixin['options'].methods.doDrop.call(this, event);
             if (this.reordering) {
                 if (this.fromIndex !== this.closestIndex) {
-                    this.$emit('reorder', {
-                        from: this.fromIndex,
-                        to: this.closestIndex
-                    } as ReorderEvent)
+                    this.$emit('reorder', new ReorderEvent(
+                        this.fromIndex,
+                        this.closestIndex
+                    ));
                 }
             } else {
-                this.$emit('insert', {
-                    type: event.type,
-                    data: event.data,
-                    index: this.closestIndex
-                } as InsertEvent);
+                this.$emit('insert', new InsertEvent(
+                    event.type,
+                    event.data,
+                    this.closestIndex
+                ));
             }
         }
 
@@ -237,7 +237,7 @@
 </script>
 
 <style scoped lang="scss">
-    .tg {
+    .drop-list {
         &::v-deep > * {
             transition: transform .2s;
         }

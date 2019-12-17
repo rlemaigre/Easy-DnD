@@ -13,15 +13,27 @@ export class DnDEvent {
 
 export class ReorderEvent {
 
-    from: number;
-    to: number;
+    constructor(
+        public from: number,
+        public to: number
+    ) {
+    }
+
+    apply(array: any[]) {
+        let tmp = array[this.from];
+        array.splice(this.from, 1);
+        array.splice(this.to, 0, tmp);
+    }
 
 }
 
 export class InsertEvent {
 
-    type: any;
-    data: any;
-    index: number;
+    constructor(
+        public type: any,
+        public data: any,
+        public index: number
+    ) {
+    }
 
 }
