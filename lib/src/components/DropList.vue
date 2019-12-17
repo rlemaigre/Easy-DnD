@@ -1,18 +1,21 @@
 <template>
     <transition-group :tag="tag" name="drop-list-transition"
                       ref="tg" :duration="{enter: 0, leave: 0}" :css="false" :class="clazz" :style="cssStyle">
-        <template v-if="operation === 'reordering' && operationInProgress">
-            <slot name="item" v-for="(item, index) in reorderedItems" :item="item" :reorder="index === closestIndex"/>
-        </template>
-        <template v-else-if="operation === 'inserting' && operationInProgress">
-            <slot name="item" v-for="item in itemsBeforeFeedback" :item="item" :reorder="false"/>
-            <slot name="feedback" :data="dragData" :type="dragType"/>
-            <slot name="item" v-for="item in itemsAfterFeedback" :item="item" :reorder="false"/>
+        <template v-if="dropIn && dropAllowed">
+            <template v-if="reordering">
+                <slot name="item" v-for="(item, index) in reorderedItems" :item="item"
+                      :reorder="index === closestIndex"/>
+            </template>
+            <template v-else>
+                <slot name="item" v-for="item in itemsBeforeFeedback" :item="item" :reorder="false"/>
+                <slot name="feedback" :data="dragData" :type="dragType"/>
+                <slot name="item" v-for="item in itemsAfterFeedback" :item="item" :reorder="false"/>
+            </template>
         </template>
         <template v-else>
             <slot name="item" v-for="item in items" :item="item" :reorder="false"/>
         </template>
-        <drag-feedback class="feedback" v-if="showDragFeedback" ref="feedback" key="drag-feedback">
+        <drag-feedback class="feedback" v-if="dragInProgress && typeAllowed" ref="feedback" key="drag-feedback">
             <slot name="feedback" :data="dragData" :type="dragType"/>
         </drag-feedback>
         <div class="__drag-image" v-if="showInsertingDragImage" ref="drag-image" key="inserting-drag-image">
@@ -44,42 +47,31 @@
         @Prop()
         items: any[];
 
-        operation: 'reordering' | 'inserting' = null;
-        operationInProgress: boolean = false;
         grid: Grid = null;
         forbiddenKeys = [];
         feedbackKey = null;
         fromIndex: number = null;
-        closestIndex: number = null;
 
         created() {
             dnd.on("dragstart", this.onDragStart);
-            this.$on("dragenter", this.onDragEnter);
-            this.$on("dragleave", this.onDragLeave);
-            this.$on("dragover", this.onDragOver);
             dnd.on("dragend", this.onDragEnd);
         }
 
         destroyed() {
             dnd.off("dragstart", this.onDragStart);
-            this.$off("dragenter", this.onDragEnter);
-            this.$off("dragleave", this.onDragLeave);
-            this.$off("dragover", this.onDragOver);
             dnd.off("dragend", this.onDragEnd);
         }
 
         onDragStart(event: DnDEvent) {
-            if (event.source.$el.parentElement === this.$refs['tg']['$el'] && this.$listeners['reorder']) {
-                this.operation = "reordering";
+            if (this.reordering) {
                 this.fromIndex = Array.prototype.indexOf.call(event.source.$el.parentElement.children, event.source.$el);
                 this.grid = this.computeReorderingGrid();
             } else {
-                this.operation = "inserting";
                 this.$nextTick(() => {
                     // Presence of feedback node in the DOM required => delayed until what depends on drag data has been
                     // processed.
                     this.grid = this.computeInsertingGrid();
-                    this.feedbackKey = this.$refs['feedback']['$slots']['default'][0]['key'];
+                    this.feedbackKey = this.computeFeedbackKey();
                     this.forbiddenKeys = this.computeForbiddenKeys();
                 });
             }
@@ -89,28 +81,43 @@
             this.fromIndex = null;
             this.feedbackKey = null;
             this.forbiddenKeys = null;
-            this.operation = null;
+            this.grid = null;
         }
 
-        onDragEnter(event: DnDEvent) {
-            if (this.operation === "reordering") {
-                this.operationInProgress = true;
-            } else if (this.effectiveAcceptsType(event.type) && this.effectiveAcceptsData(event.data, event.type) && this.$listeners['insert']) {
-                this.operationInProgress = true;
-            }
-            if (this.operationInProgress) {
-                this.closestIndex = this.grid.closestIndex(event.position);
+        get reordering() {
+            if (dnd.inProgress) {
+                return dnd.source.$el.parentElement === this.$el && this.$listeners.hasOwnProperty('reorder');
+            } else {
+                return null;
             }
         }
 
-        onDragLeave() {
-            this.operationInProgress = false;
-            this.closestIndex = null;
+        get closestIndex() {
+            if (this.grid) {
+                return this.grid.closestIndex(dnd.position);
+            } else {
+                return null;
+            }
         }
 
-        onDragOver(event: DnDEvent) {
-            if (this.operationInProgress) {
-                this.closestIndex = this.grid.closestIndex(event.position);
+        get dropAllowed() {
+            if (this.dragInProgress) {
+                if (this.reordering) {
+                    return true;
+                } else {
+                    let superDropAllowed = DropMixin['options'].computed.dropAllowed.get.call(this);
+                    if (!superDropAllowed) {
+                        return false;
+                    } else {
+                        if (this.forbiddenKeys !== null && this.feedbackKey !== null) {
+                            return !this.forbiddenKeys.includes(this.feedbackKey)
+                        } else {
+                            return null;
+                        }
+                    }
+                }
+            } else {
+                return null;
             }
         }
 
@@ -118,6 +125,10 @@
             return this.$children[0].$vnode.context.$children[0].$slots.default
                 .map(vn => vn.key)
                 .filter(k => k !== undefined && k !== 'drag-image' && k !== 'drag-feedback');
+        }
+
+        computeFeedbackKey() {
+            return this.$refs['feedback']['$slots']['default'][0]['key'];
         }
 
         computeInsertingGrid() {
@@ -138,7 +149,7 @@
 
         doDrop(event: DnDEvent) {
             DropMixin['options'].methods.doDrop.call(this, event);
-            if (this.operation === "reordering") {
+            if (this.reordering) {
                 if (this.fromIndex !== this.closestIndex) {
                     this.$emit('reorder', {
                         from: this.fromIndex,
@@ -151,27 +162,6 @@
                     data: event.data,
                     index: this.closestIndex
                 } as InsertEvent);
-            }
-        }
-
-        effectiveAcceptsType(type: any): boolean {
-            if (this.operation === 'reordering') {
-                return true;
-            } else {
-                return DropMixin['options'].methods.effectiveAcceptsType.call(this, type);
-            }
-        }
-
-        effectiveAcceptsData(data: any, type: any): boolean {
-            let superResult = DropMixin['options'].methods.effectiveAcceptsData.call(this, data, type);
-            if (!superResult) {
-                return false;
-            } else {
-                if (this.feedbackKey !== null && this.forbiddenKeys !== null) {
-                    return !this.forbiddenKeys.includes(this.feedbackKey)
-                } else {
-                    return null;
-                }
             }
         }
 
@@ -203,21 +193,18 @@
         get clazz() {
             return {
                 'drop-list': true,
-                'reordering': this.operation === "reordering",
-                ...(this.operation === 'inserting' ? this.cssClasses : {})
+                'reordering': this.reordering === true,
+                'inserting': this.reordering === false,
+                ...(this.reordering === false ? this.cssClasses : {})
             };
         }
 
         get showInsertingDragImage() {
-            return this.operation === 'inserting' && this.effectiveAcceptsType(this.dragType) && this.$scopedSlots['inserting-drag-image'];
+            return false; //this.operation === 'inserting' && this.effectiveAcceptsType(this.dragType) && this.$scopedSlots['inserting-drag-image'];
         }
 
         get showReorderingDragImage() {
-            return this.operation === 'reordering' && this.$scopedSlots['reordering-drag-image'];
-        }
-
-        get showDragFeedback() {
-            return this.operation === 'inserting' && this.effectiveAcceptsType(this.dragType);
+            return false; //this.operation === 'reordering' && this.$scopedSlots['reordering-drag-image'];
         }
 
         candidate(type: any, data: any, source: Vue): boolean {
