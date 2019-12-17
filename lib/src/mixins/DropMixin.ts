@@ -1,8 +1,8 @@
-import {Component, Prop} from "vue-property-decorator";
+import {Component, Prop, Vue} from "vue-property-decorator";
 import DragAwareMixin from "./DragAwareMixin";
 import {createDragImage} from "../ts/createDragImage";
-import {dnd, DnDEvent} from "../ts/DnD";
-import Drag from "../components/Drag.vue";
+import {DnDEvent} from "../ts/events";
+import {dnd} from "../ts/DnD";
 
 @Component({})
 export default class DropMixin extends DragAwareMixin {
@@ -70,8 +70,12 @@ export default class DropMixin extends DragAwareMixin {
 
     onDrop(event: DnDEvent) {
         if (event.top === this && this.compatibleModes(event.source) && this.effectiveAcceptsData(event.data, event.type)) {
-            this.$emit('drop', event);
+            this.doDrop(event);
         }
+    }
+
+    doDrop(event: DnDEvent) {
+        this.$emit('drop', event);
     }
 
     mounted() {
@@ -90,7 +94,7 @@ export default class DropMixin extends DragAwareMixin {
 
     }
 
-    compatibleModes(source: Drag) {
+    compatibleModes(source: Vue) {
         return this.mode === 'copy' || source.$listeners[this.mode];
     }
 

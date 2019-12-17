@@ -8,7 +8,6 @@ import {Vue} from "vue-property-decorator";
 export class DnD {
 
     public inProgress = false;
-    public started = false;
     public type: any = null;
     public data: any = null;
     public source: Vue = null;
@@ -29,9 +28,9 @@ export class DnD {
             y: event.pageY
         };
         this.inProgress = true;
+        this.emit("dragstart");
         Vue.nextTick(() => {
-            this.started = true;
-            this.emit("dragstart");
+            this.emit("dragstarted");
             this.emit('dragtopchanged', {from: null});
             this.emit('dragpositionchanged');
         });
@@ -51,7 +50,6 @@ export class DnD {
         this.source = null;
         this.stack = null;
         this.position = null;
-        this.started = false;
     }
 
     protected ancestors(comp: Vue) {
@@ -106,16 +104,14 @@ export class DnD {
     }
 
     private emit(event, data?) {
-        if (this.started) {
-            this.eventBus.$emit(event, {
-                type: this.type,
-                data: this.data,
-                top: this.top(),
-                source: this.source,
-                position: this.position,
-                ...data
-            });
-        }
+        this.eventBus.$emit(event, {
+            type: this.type,
+            data: this.data,
+            top: this.top(),
+            source: this.source,
+            position: this.position,
+            ...data
+        });
     }
 
     public on(event, callback) {
@@ -130,14 +126,3 @@ export class DnD {
 
 export let dnd = new DnD();
 dnd = Vue.observable(dnd);
-
-export class DnDEvent {
-
-    type: any;
-    data: any;
-    top: Vue;
-    previousTop: Vue;
-    source: Vue;
-    position: { x, y };
-
-}

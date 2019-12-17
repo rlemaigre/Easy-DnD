@@ -12,7 +12,7 @@ export function createDragImage(el: HTMLElement): HTMLElement {
     clone.style.position = 'fixed';
     clone.style.margin = '0';
     clone.style["z-index"] = '1000';
-    clone.style.transition = 'opacity 0.2s, transform 0.2s';
+    clone.style.transition = 'opacity 0.2s';
     return clone;
 }
 
