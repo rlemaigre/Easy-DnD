@@ -1,6 +1,6 @@
 <template>
     <transition-group :tag="tag" name="drop-list-transition"
-                      ref="tg" :duration="{enter: 0, leave: 0}" :css="false" :class="clazz" :style="cssStyle">
+                      ref="tg" :duration="{enter: 0, leave: 0}" :css="false" :class="clazz" :style="style">
         <template v-if="dropIn && dropAllowed">
             <template v-if="reordering">
                 <slot name="item" v-for="(item, index) in reorderedItems" :item="item"
@@ -152,6 +152,12 @@
                 'reordering': this.reordering === true,
                 'inserting': this.reordering === false,
                 ...(this.reordering === false ? this.cssClasses : {})
+            };
+        }
+
+        get style() {
+            return {
+                ...(this.reordering === false ? this.cssStyle : {})
             };
         }
 

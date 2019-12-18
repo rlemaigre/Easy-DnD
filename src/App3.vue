@@ -40,9 +40,9 @@
                     <v-col>
                         <drop-list class="list2" :items="items2" @reorder="$event.apply(items2)" @insert="insert2"
                                    mode="cut">
-                            <template v-slot:item="{item}">
+                            <template v-slot:item="{item,reorder}">
                                 <drag :key="item.title" class="chip" :data="item" @cut="remove(items2, item)">
-                                    <v-chip>{{item.title}}</v-chip>
+                                    <v-chip :color="reorder ? 'primary' : null">{{item.title}}</v-chip>
                                 </drag>
                             </template>
                             <template v-slot:feedback="{data}">
