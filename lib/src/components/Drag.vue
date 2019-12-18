@@ -5,7 +5,7 @@
             <slot :name="slot" v-bind="scope"/>
         </template>
         <div class="__drag-image" v-if="showDragImage" ref="drag-image">
-            <slot name="drag-image" :type="dragType" :data="dragData"></slot>
+            <slot name="drag-image"></slot>
         </div>
     </component>
 </template>

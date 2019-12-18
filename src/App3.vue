@@ -50,7 +50,7 @@
                                     <v-chip color="primary">{{data.title}}</v-chip>
                                 </div>
                             </template>
-                            <template v-slot:inserting-drag-image="{data}">
+                            <template v-slot:drag-image="{data}">
                                 <v-chip :key="data.title" style="transform: translate(-50%, -50%)">{{data.title}}
                                 </v-chip>
                             </template>

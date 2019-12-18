@@ -19,7 +19,7 @@
             <slot name="feedback" :data="dragData" :type="dragType"/>
         </drag-feedback>
         <div class="__drag-image" v-if="showInsertingDragImage" ref="drag-image" key="inserting-drag-image">
-            <slot name="inserting-drag-image" :type="dragType" :data="dragData"/>
+            <slot name="drag-image" :type="dragType" :data="dragData"/>
         </div>
         <div class="__drag-image" v-if="showReorderingDragImage" ref="drag-image" key="reordering-drag-image">
             <slot name="reordering-drag-image" :item="items[fromIndex]"/>

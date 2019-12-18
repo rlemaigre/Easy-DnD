@@ -79,7 +79,7 @@ https://codesandbox.io/s/example-2-r8n1k
 
 A drag operation **may** have a type. The type is a data structure (can be a simple string) that defines the kind of data being transfered. The type of a drag operation is defined by the Drag component that initiates it using the `type` prop.
 
-A Drop component is said to participate in a drag operation if it accepts its type (the default is to accept any type). The type(s) a Drop component accepts can be defined by mean of the `accept-type` prop (can be a string, an array of string or a function that takes the type as parameter and returns a boolean).
+A Drop component is said to participate in a drag operation if it accepts its type (the default is to accept any type). The type(s) a Drop component accepts can be defined by mean of the `accepts-type` prop (can be a string, an array of string or a function that takes the type as parameter and returns a boolean).
 
 As far as Easy-DnD is concerned, if a Drop component doesn't accept the type of the current drag operation, it behaves like any other part of the page that is not sensitive to drag and drop. It is ignored during the drag, no special CSS classes are applied, no special cursors / drag images are displayed and no special events are triggered.
 
@@ -91,29 +91,35 @@ https://codesandbox.io/s/example-3-g7io8
 
 ## Data validation
 
+Drop components can restrict the data they accept by mean of the `accepts-data` prop (a function that takes the data and type as parameter and returns a boolean).
+
 The following demo defines five Drag components that can be dragged into three Drop components, one that accepts even numbers, one that accepts odd numbers and one that accepts any number but removes them once the drag is complete.
 
 https://codesandbox.io/s/easy-dnd-demo-fo078
 
 ![demo](img/vid1.gif)
 
-### Mouse cursor
+## Mouse cursor
 
 If a drag isn't in progress, the cursor turns into `grab` when the mouse is over a Drag component. If a drag is in progress, the cursor turns into `grabbing`, unless it is over a Drop component that accepts the type of the current drag operation. Then, it turns into `pointer` if the Drop component accepts the data being dragged, and into `not-allowed` otherwise.
 
-### Drag image
+## Drag image
 
-During the drag, an image may move along the mouse cursor. Easy-DnD makes it so that this image is always on top of everything else. The Drag component provides a slot that can be used to set the default image displayed during the drag operation :
+During the drag, an image may move along the mouse cursor. Easy-DnD makes it so that this image is always on top of everything else.
+
+Drag components provide the `drag-image` slot that can be used to set the default image displayed during the drag operation :
 
 * if the slot isn't defined, the image is a clone of the Drag component.
 * if the slot is defined and empty, there is no image.
 * if the slot is not empty, a clone of its content is used.
 
-The Drop component provides a slot that can be used to set the image to be displayed when the mouse is over it, if the Drop component participates in the current drag operation (i.e. it accepts its type) :
+Drop and DropList components provide the `drag-image` slot (props : `data` and `type`) that can be used to set the image to be displayed when the mouse is over them, if they participates in the current drag operation (i.e. accept its type) :
 
 * if the slot isn't defined, the default image set by the Drag component is used.
 * if the slot is defined and empty, there is no image.
 * if the slot is not empty, a clone of its content is used.
+
+DropList components additionaly provide the `reordering-drag-image` slot (prop : `item` subject to reordering) that behaves the same way as `drag-image` but controls the drag image to be displayed during list reordering.
 
 The position of the drag image relative to the mouse cursor can be controlled by CSS using the transform property.
 
@@ -123,7 +129,7 @@ https://codesandbox.io/s/example-4-6h8zy
 
 ![demo](img/vid5.gif)
 
-### CSS classes
+## CSS classes
 
 A Drag component is assigned the class `drag-in` when the mouse is over it and a drag operation isn't in progress, `drag-out` otherwise.
 
@@ -133,10 +139,8 @@ During a drag operation, the Drop components on the page are assigned several CS
 * for the Drop components that participate in the drag operation (i.e. accepts its type) :
   * `drop-in` when the mouse is over one that is foremost at the current mouse position (remember Drop components can be nested), `drop-out` otherwise
   * `drop-allowed` when the Drop component accepts the data and the source of the drag accepts its mode, `drop-forbidden` otherwise
-
-## Components
   
-### DropMask component
+## DropMask component
 
 The following demo illustrates the use of a DropMask :
 
@@ -144,7 +148,7 @@ https://codesandbox.io/s/example-1-ngrlv
 
 ![demo](img/vid2.gif)
   
-### DropList component
+## DropList component
 
 The DropList component is a special Drop component so it inherits all the props and events of the Drop component. It can be used when the result of a drag operation is to import data into the component as an item in a list or to allow the user to reorder a list of items using drag and drop.
 
@@ -160,89 +164,22 @@ The `feedback` slot is used to render a placeholder to show the position where t
 
 The `drag-image` slot also gains a new property : `reorder`. That property is true when the list is being reordered. It can be used to provide a different drag image depending on whether the list is being drop into or reordered. Before the content of the `drag-image` slot is cloned to serve as a drag image, it is briefly inserted into the list so that its dimensions can depend on the ones of the list.
 
+## DragAwareMixin
 
-
-## Mixins
-
-### DragAwareMixin
-
-A mixin is available to make components sensitive to drag operations. It adds the following computed fields to components that incorporate it :
+A mixin is available to make components sensitive to drag operations. It adds the following computed fields to components that incorporate it, reflecting the current state of the drag :
 
 * `dragInProgress` : true if a drag operation is in progress, false otherwise
 * `dragType` : the type of the current drag operation
 * `dragData` : the data of the current drag operation
 * `dragPosition` : the current position of the mouse relative to the document
+* `dragSource` : the Drag component from which the drag operation originated
+* `dragTop` : the foremost Drop component under the mouse if any
 
 The following demo displays information about the current drag operation when it is in progress :
 
 https://codesandbox.io/s/example-5-j8qo9
 
 ![demo](img/vid6.gif)
-
-# API
-
-## Events
-
-Every event described in the following sections emits a data structure with the following fields :
-
-* `type` : the type of the current drag operation
-* `data` : the data of the current drag operation
-* `mouse` : the native mouse event that triggered this custom event
-
-## Drag
-
-### Props
-
-* `tag` : element used as root for the template of the Drag component
-  * default value : div
-  * type : String (for html tags) or Object (for Vue components)
-* `type` : type of the data being dragged when the drag operation originates from this component
-  * default value : null
-  * type : any
-* `data` : data being dragged when the drag operation originates from this component
-  * default value : null
-  * type : any
-
-### Slots
-
-* `drag-image` : content to be cloned and used as a drag image displayed along the mouse cursor during the drag
-
-### Events
-
-* `dragstart` : emitted when the drag starts, first event of all
-* `dragend` : emitted when the drag ends, last event of all
-* `cut` or `copy` (or any custom mode) depending on the mode of the Drop component that terminated the drag operation
-
-## Drop
-
-### Props
-
-* `tag` : element used as root for the template of the Drag component
-  * default value : div
-  * type : String (for html tags) or Object (for Vue components)
-* `accepts-type` : defines the type(s) that the Drop component accepts as import data
-  * default value : () => true (i.e. accepts any type)
-  * type : string, string[] or {(type) : boolean}
-* `accepts-data` : defines the data that the Drop component accepts as import data
-  * default value : () => true (i.e. accepts any data)
-  * type : {(data, type) : boolean}
-* `cursor` : the mouse cursor to use when the mouse is above the Drop component and the drop is allowed
-  * default value : `pointer`
-  * type : 
-* `mode` : the mode of the Drop component
-  * default value : `copy`
-  * type : string
-
-### Slots
-
-* `drag-image` : content to be cloned and used as a drag image displayed along the mouse cursor during the drag when the mouse cursor is above the Drop component
-
-### Events
-
-* `dragenter` : emitted during a drag operation when the mouse cursor enters a Drop component
-* `dragleave` : emitted during a drag operation when the mouse cursor leaves a Drop component
-* `dragover` : emitted during a drag operation when the mouse cursor move over a Drop component
-* `drop` : emitted when a drop operation completes in a Drop component
 
 ## Building from source
 
