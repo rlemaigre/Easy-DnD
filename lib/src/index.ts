@@ -9,7 +9,6 @@ import {dnd} from './ts/DnD';
 import {DragImagesManager} from './ts/DragImagesManager';
 import DropList from './components/DropList.vue';
 import {DnDEvent, InsertEvent, ReorderEvent} from './ts/events';
-import reorder from './ts/reorder';
 import {createDragImage} from './ts/createDragImage';
 
 export {
@@ -25,6 +24,5 @@ export {
     DnDEvent,
     InsertEvent,
     ReorderEvent,
-    reorder,
     createDragImage
 }
