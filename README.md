@@ -4,13 +4,19 @@ Easy-DnD is a drag and drop implementation for Vue.js 2 that uses only standard 
 
 Big work in progress. Expect frequent changes in the API.
 
-# Demo
+# Demos
 
-The following demo features list reordering, drag and drop between two lists and custom drag images.
+The following demo features list reordering, drag and drop between two lists, custom drag images and custom feedback when inserting new items. It uses Vuetify components.
 
 https://codesandbox.io/s/easy-dnd-demo-9mbij
 
 ![demo](img/vid7.gif)
+
+The following deme features drag and drop between a table and a list, custom drag images and a custom style for drop areas when the drop is allowed. It uses Vuetify components.
+
+https://codesandbox.io/s/easy-dnd-demo-2-ozs8b
+
+![demo](img/vid8.gif)
 
 # Manual
 
@@ -18,7 +24,7 @@ https://codesandbox.io/s/easy-dnd-demo-9mbij
 
 There are four components : Drag, Drop, DropMask and DropList. The Drag component is meant to define an area from which data can be exported. The Drop component is meant to define an area into which data can be imported. Drop components can be nested forming hierarchies of arbitrary depth. The DropMask component is meant to create an island insensitive to drag and drop on top of a Drop component. The DropList component is a special kind of drop component that displays a list of items that supports dragging into and reordering.
 
-The following demo illustrates the three components :
+The following demo illustrates the first three components :
 
 https://codesandbox.io/s/example-1-ngrlv
 
@@ -102,7 +108,7 @@ During a drag operation, the Drop components on the page are assigned several CS
   
 ## DropList component
 
-The DropList component is a special Drop component so it inherits all the props, events and slots of the Drop component. It can be used when the result of a drag operation is to import data into the component as an item in a list or to allow the user to reorder a list of items using drag and drop.
+The DropList component is a special Drop component so it inherits all the props and events of the Drop component. It can be used when the result of a drag operation is to import data into the component as an item in a list or to allow the user to reorder a list of items using drag and drop.
 
 Comparing to the Drop component, there are two more events :
 * `insert` : emitted when the user drops data into the DropList. The index where the new item should be inserted is available in the `index` property. If no listener is provided for this event, then the DropList can't be dropped into.
