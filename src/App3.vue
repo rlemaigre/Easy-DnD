@@ -9,7 +9,7 @@
                                 <template v-slot:item="{item, reorder}">
                                     <drag :key="item.title" :data="item" @cut="remove(items1, item)">
                                         <v-list-item style="background-color: white"
-                                                     :style="{borderLeft: reorder ? '2px solid #1976D2' : 'none'}">
+                                                     :style="reorder ? {borderLeft: '2px solid #1976D2', marginLeft:'-2px'} : {}">
                                             <v-list-item-avatar>
                                                 <v-img :src="item.avatar"/>
                                             </v-list-item-avatar>
@@ -21,11 +21,12 @@
                                         <v-divider/>
                                     </drag>
                                 </template>
-                                <template v-slot:drag-image="{data}">
+                                <template v-slot:inserting-drag-image="{data}">
                                     <v-list-item-avatar style="transform:translate(-50%, -50%) scale(1.5)">
                                         <img :src="data.avatar">
                                     </v-list-item-avatar>
                                 </template>
+                                <template v-slot:reordering-drag-image/>
                                 <template v-slot:feedback="{data}">
                                     <v-skeleton-loader
                                             type="list-item-avatar-three-line"
@@ -49,9 +50,11 @@
                                     <v-chip color="primary">{{data.title}}</v-chip>
                                 </div>
                             </template>
-                            <template v-slot:drag-image="{data}">
+                            <template v-slot:inserting-drag-image="{data}">
                                 <v-chip :key="data.title" style="transform: translate(-50%, -50%)">{{data.title}}
                                 </v-chip>
+                            </template>
+                            <template v-slot:reordering-drag-image="{item}">
                             </template>
                         </drop-list>
                     </v-col>

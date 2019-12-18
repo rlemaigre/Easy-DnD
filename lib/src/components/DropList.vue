@@ -15,7 +15,7 @@
         <template v-else>
             <slot name="item" v-for="item in items" :item="item" :reorder="false"/>
         </template>
-        <drag-feedback class="feedback" v-if="dragInProgress && typeAllowed" ref="feedback" key="drag-feedback">
+        <drag-feedback class="feedback" v-if="showDragFeedback" ref="feedback" key="drag-feedback">
             <slot name="feedback" :data="dragData" :type="dragType"/>
         </drag-feedback>
         <div class="__drag-image" v-if="showInsertingDragImage" ref="drag-image" key="inserting-drag-image">
@@ -155,12 +155,16 @@
             };
         }
 
+        get showDragFeedback() {
+            return this.dragInProgress && this.typeAllowed && !this.reordering;
+        }
+
         get showInsertingDragImage() {
-            return false; //this.operation === 'inserting' && this.effectiveAcceptsType(this.dragType) && this.$scopedSlots['inserting-drag-image'];
+            return this.dragInProgress && this.typeAllowed && !this.reordering && this.$scopedSlots.hasOwnProperty("inserting-drag-image");
         }
 
         get showReorderingDragImage() {
-            return false; //this.operation === 'reordering' && this.$scopedSlots['reordering-drag-image'];
+            return this.dragInProgress && this.reordering && this.$scopedSlots.hasOwnProperty("reordering-drag-image");
         }
 
         doDrop(event: DnDEvent) {

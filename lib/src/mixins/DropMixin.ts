@@ -166,7 +166,7 @@ export default class DropMixin extends DragAwareMixin {
     }
 
     /**
-     * Returns true if the current drop area is participates in the current drag operation.
+     * Returns true if the current drop area participates in the current drag operation.
      */
     candidate(type: any, data: any, source: Vue) {
         return this.effectiveAcceptsType(type);
