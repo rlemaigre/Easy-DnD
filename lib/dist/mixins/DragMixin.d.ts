@@ -4,6 +4,7 @@ export default class DragMixin extends DragAwareMixin {
     type: string;
     data: any;
     mouseIn: boolean;
+    created(): void;
     mounted(): void;
     readonly dragIn: boolean;
     readonly cssClasses: {

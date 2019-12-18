@@ -1,4 +1,4 @@
-Easy-DnD is a drag and drop implementation for Vue.js 2 that uses only standard mouse events instead of the HTML5 drag and drop API, which is [impossible to work with](https://www.quirksmode.org/blog/archives/2009/09/the_html5_drag.html). Think of it as a way to transfer data from some components to others using the mouse or support for a mouse assisted copy/cut - paste.
+Easy-DnD is a drag and drop implementation for Vue.js 2 that uses only standard mouse events instead of the HTML5 drag and drop API, which is [impossible to work with](https://www.quirksmode.org/blog/archives/2009/09/the_html5_drag.html). Think of it as a way to transfer data from some components to others using the mouse or support for a mouse assisted copy/cut - paste. It also allows for lists to be reordred by drag and drop.
 
 # Status
 
@@ -6,21 +6,7 @@ Big work in progress. Expect frequent changes in the API.
 
 # Demo
 
-The following demo defines five Drag components that can be dragged into three Drop components, one that accepts even numbers, one that accepts odd numbers and one that accepts any number but removes them once the drag is complete.
-
-https://codesandbox.io/s/easy-dnd-demo-fo078
-
-![demo](img/vid1.gif)
-
-Notice the following :
-
-* An image follows the mouse cursor during the drag (the content that is cloned to serve as a drag image is configurable and depends on what the mouse is on top of)
-* The mouse cursor takes four different shapes depending on what the mouse is on top of
-* Different CSS classes are applied to the drop area depending on whether :
-  * it accepts the drop or not
-  * the mouse is on top of it or not
-  
-The following demo features list reordering and drag and drop between two lists.
+The following demo features list reordering, drag and drop between two lists and custom drag images.
 
 https://codesandbox.io/s/easy-dnd-demo-9mbij
 
@@ -56,6 +42,12 @@ The following demo illustrates the two modes in action :
 https://codesandbox.io/s/example-2-r8n1k
 
 ![demo](img/vid3.gif)
+
+The following demo defines five Drag components that can be dragged into three Drop components, one that accepts even numbers, one that accepts odd numbers and one that accepts any number but removes them once the drag is complete.
+
+https://codesandbox.io/s/easy-dnd-demo-fo078
+
+![demo](img/vid1.gif)
 
 ## Type
 
