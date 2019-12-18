@@ -150,19 +150,24 @@ https://codesandbox.io/s/example-1-ngrlv
   
 ## DropList component
 
-The DropList component is a special Drop component so it inherits all the props and events of the Drop component. It can be used when the result of a drag operation is to import data into the component as an item in a list or to allow the user to reorder a list of items using drag and drop.
+The DropList component is a special Drop component so it inherits all the props and events of the Drop component. It can be used when the result of a drag operation is to import data into the component as an item in a list at a specific index or to allow the user to reorder a list of items using drag and drop.
 
 Comparing to the Drop component, there are two more events :
-* `insert` : emitted when the user drops data into the DropList. The index where the new item should be inserted is available in the `index` property. If no listener is provided for this event, then the DropList can't be dropped into.
-* `reorder` : emitted when the user reorders the list. The index to be removed is available in the propery `from` and the index where the item must be reinserted is available in the property `to`. The property `apply` contains a function that applies the required reordering to the given array. If no listener is provided for this event, then the DropList can't be reordred.
+* `insert` : emitted when the user drops data into the DropList. If no listener is provided for this event, the list cannot be inserted into.
+* `reorder` : emitted when the user reorders the list. If no listener is provided for this event, the list cannot be reordered.
 
-Comparing to the Drop component, there is two more slots : `item` and `feedback`.
+Comparing to the Drop component, there are three more slots :
+* `item` : used to render each list item. It has two properties, `item` and `reorder`. Reorder is true when the item is the one subject to reordering. **Don't forget to provide a key for the content of this slot !!**
+* `feedback` : used to render a placeholder to show the position where the new item would be inserted if the drag operation ended at the current mouse position. It has two properties : `type` and `data`. **Don't forget to provide a key for the content of this slot !!** 
+* `reordering-drag-image` : defines the drag image to be used when reordering the list (see drag image section above).
 
-The `item` slot is used to render each list item. It has two properties, `item` and `reorder`. Reorder is true when the item is the one subject to reordering.
+Keys of the items and feedback are used to prevent the disallow the drop if it would create duplicate and result in errors.
 
-The `feedback` slot is used to render a placeholder to show the position where the new item would be inserted if the drag operation ended in the current mouse position. It has two properties : `type` and `data`.
+The following demo features drag and drop from one list to another and list reordering.
 
-The `drag-image` slot also gains a new property : `reorder`. That property is true when the list is being reordered. It can be used to provide a different drag image depending on whether the list is being drop into or reordered. Before the content of the `drag-image` slot is cloned to serve as a drag image, it is briefly inserted into the list so that its dimensions can depend on the ones of the list.
+https://codesandbox.io/s/droplist-ozs8b
+
+![demo](img/vid9.gif)
 
 ## DragAwareMixin
 
