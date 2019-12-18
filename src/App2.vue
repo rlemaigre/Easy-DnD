@@ -2,17 +2,23 @@
     <v-app>
         <v-content>
             <v-container fluid class="wrapper">
-                <div class="list">
-                    <drag v-for="n in [1,2,3,4,5]" :data="n" class="item">{{n}}</drag>
-                </div>
-                <drop-list :items="items" class="list" @insert="onInsert">
-                    <template v-slot:item="{item}">
-                        <drag class="item" :key="item">{{item}}</drag>
-                    </template>
-                    <template v-slot:feedback="{data}">
-                        <div class="item feedback" :key="data">{{data}}</div>
-                    </template>
-                </drop-list>
+                <v-row>
+                    <v-col>
+                        <div class="list">
+                            <drag v-for="n in [1,2,3,4,5]" :data="n" class="item">{{n}}</drag>
+                        </div>
+                    </v-col>
+                    <v-col>
+                        <drop-list :items="items" class="list" @insert="onInsert" @reorder="$event.apply(items)">
+                            <template v-slot:item="{item}">
+                                <drag class="item" :key="item">{{item}}</drag>
+                            </template>
+                            <template v-slot:feedback="{data}">
+                                <div class="item feedback" :key="data">{{data}}</div>
+                            </template>
+                        </drop-list>
+                    </v-col>
+                </v-row>
             </v-container>
         </v-content>
     </v-app>
