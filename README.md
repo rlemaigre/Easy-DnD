@@ -56,6 +56,7 @@ DropList components emit the following events (in addition to the ones emitted b
 ## Data
 
 Export : the data being exported when a drag operation originates from a Drag component is defined by mean of its `data` property.
+
 Import : when a drag operation terminates in a Drop components, its `drop` event is triggered and the event carries the `data` to be imported.
 
 ## Modes
@@ -67,7 +68,9 @@ A drag and drop can occur in several possible modes, depending on its effect on 
 
 Drop components must declare what mode must be triggered when data is dropped into them using the `mode` property.
 
-Every Drag components support the `copy` mode and may declare a `@copy="..."` listener, but only Drag components that declare a `@cut="..."` listener support the `cut` mode. That listener will be called if a drag operation completes on a Drop component that declares the `cut` mode.
+When a drag operation completes on a Drop component that declares the `cut` (respectively `copy`) mode, a `cut` (respectively `copy`) event is emitted on the Drag component from which the drag operation originated. This gives the opportunity to the surroundings of the Drag component to react to the drop that just happened, for example by removing the data that has been dropped in case of the `cut` event.
+
+If a drag operation originates from a Drag components that doesn't declare a listener for the `cut` event, then dropping is forbidden on a Drop component that declares the `cut` mode.
 
 The following demo illustrates modes in action :
 
@@ -79,7 +82,7 @@ https://codesandbox.io/s/example-2-r8n1k
 
 A drag operation **may** have a type. The type is a data structure (can be a simple string) that defines the kind of data being transfered. The type of a drag operation is defined by the Drag component that initiates it using the `type` prop.
 
-A Drop component is said to participate in a drag operation if it accepts its type (the default is to accept any type). The type(s) a Drop component accepts can be defined by mean of the `accepts-type` prop (can be a string, an array of string or a function that takes the type as parameter and returns a boolean).
+A Drop component is said to participate in a drag operation if it accepts its type (the default is to accept any type). The type(s) a Drop component accepts can be defined by mean of the `accepts-type` prop (can be a string, an array of strings or a function that takes the type as parameter and returns a boolean).
 
 As far as Easy-DnD is concerned, if a Drop component doesn't accept the type of the current drag operation, it behaves like any other part of the page that is not sensitive to drag and drop. It is ignored during the drag, no special CSS classes are applied, no special cursors / drag images are displayed and no special events are triggered.
 
@@ -89,7 +92,7 @@ https://codesandbox.io/s/example-3-g7io8
 
 ![demo](img/vid4.gif)
 
-## Data validation
+## Restricting droppable data
 
 Drop components can restrict the data they accept by mean of the `accepts-data` prop (a function that takes the data and type as parameter and returns a boolean).
 
@@ -152,6 +155,9 @@ https://codesandbox.io/s/example-1-ngrlv
 
 The DropList component is a special Drop component so it inherits all the props and events of the Drop component. It can be used when the result of a drag operation is to import data into the component as an item in a list at a specific index or to allow the user to reorder a list of items using drag and drop.
 
+Comparing to the Drop component, there is one more prop :
+* `items` : the array of items to be rendered
+
 Comparing to the Drop component, there are two more events :
 * `insert` : emitted when the user drops data into the DropList. If no listener is provided for this event, the list cannot be inserted into.
 * `reorder` : emitted when the user reorders the list. If no listener is provided for this event, the list cannot be reordered.
@@ -161,13 +167,17 @@ Comparing to the Drop component, there are three more slots :
 * `feedback` : used to render a placeholder to show the position where the new item would be inserted if the drag operation ended at the current mouse position. It has two properties : `type` and `data`. **Don't forget to provide a key for the content of this slot !!** 
 * `reordering-drag-image` : defines the drag image to be used when reordering the list (see drag image section above).
 
-Keys of the items and feedback are used to prevent the disallow the drop if it would create duplicate and result in errors.
+Keys on items and feedback are used to disallow the drop if it would create duplicates and result in errors.
 
 The following demo features drag and drop from one list to another and list reordering.
 
 https://codesandbox.io/s/droplist-ozs8b
 
 ![demo](img/vid9.gif)
+
+## Tags
+
+Drag and Drop components support the `tag` prop that can be used to control the HTML tag (or Vue component) that will serve as root of the template. In case of tags that are Vue components, all props, listeners and slots function as they normally would.
 
 ## DragAwareMixin
 
@@ -185,14 +195,6 @@ The following demo displays information about the current drag operation when it
 https://codesandbox.io/s/example-5-j8qo9
 
 ![demo](img/vid6.gif)
-
-## Building from source
-
-At the root of the repository, execute the command `npm run build`. The result of the build is in the directory `lib/dist`.
-
-## Test application
-
-At the root of the repository is a webapp that can be used to test the components. To run it, execute the command `npm run serve` at the root of the repository.
 
 
 
