@@ -12,7 +12,7 @@ https://codesandbox.io/s/easy-dnd-demo-9mbij
 
 The following demo features drag and drop between a table and a list, custom drag images and a custom style for drop areas when the drop is allowed. It uses Vuetify components.
 
-https://codesandbox.io/s/easy-dnd-demo-2-ozs8b
+https://codesandbox.io/s/easy-dnd-demo-2-xnqbz
 
 ![demo](img/vid8.gif)
 
