@@ -4,7 +4,7 @@
         <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
             <slot :name="slot" v-bind="scope"/>
         </template>
-        <div class="__drag-image" v-if="showDragImage" ref="drag-image">
+        <div class="__drag-image" ref="drag-image">
             <slot name="drag-image"></slot>
         </div>
     </component>
@@ -22,10 +22,6 @@
          */
         @Prop({default: 'div', type: [String, Object]})
         tag: string | object;
-
-        get showDragImage() {
-            return this.dragInProgress && this.$scopedSlots['drag-image'];
-        }
 
     }
 </script>

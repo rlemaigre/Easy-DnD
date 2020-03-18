@@ -13,9 +13,9 @@
                                     show-select
                             >
                             </v-data-table>
-                            <template v-slot:drag-image="{data}">
+                            <template v-slot:drag-image>
                                 <v-badge color="red" style="transform: translate(10px, 5px)">
-                                    <template v-slot:badge>{{data.length}}</template>
+                                    <template v-slot:badge>{{selected.length}}</template>
                                     <v-icon large color="primary">mdi-food-variant</v-icon>
                                 </v-badge>
                             </template>
