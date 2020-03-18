@@ -11,6 +11,7 @@ export default class DropMixin extends DragAwareMixin {
     };
     cursor: string;
     mode: string;
+    dragImageOpacity: any;
     constructor();
     effectiveAcceptsType(type: string): boolean;
     effectiveAcceptsData(data: any, type: any): boolean;
