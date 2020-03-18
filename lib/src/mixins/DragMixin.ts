@@ -114,7 +114,7 @@ export default class DragMixin extends DragAwareMixin {
 
     createDragImage(selfTransform: string) {
         let image;
-        if (this.$refs['drag-image']) {
+        if (this.$scopedSlots['drag-image']) {
             let el = this.$refs['drag-image'] as HTMLElement;
             if (el.childElementCount !== 1) {
                 image = createDragImage(el);
