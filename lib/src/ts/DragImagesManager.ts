@@ -78,7 +78,8 @@ export class DragImagesManager extends Vue {
 
             if (activeClone !== null) {
                 activeClone.offsetWidth; // Forces broswer reflow
-                activeClone.style.opacity = "0.7";
+                activeClone.style.opacity = activeClone['__opacity'];
+                activeClone.style.visibility = 'visible';
             }
         });
     }

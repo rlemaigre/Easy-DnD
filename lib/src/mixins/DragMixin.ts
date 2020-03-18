@@ -14,6 +14,9 @@ export default class DragMixin extends DragAwareMixin {
     @Prop({default: null, type: null})
     data: any;
 
+    @Prop({default: 0.7, type: Number})
+    dragImageOpacity: any;
+
     mouseIn: boolean = null;
 
     created() {
@@ -84,9 +87,29 @@ export default class DragMixin extends DragAwareMixin {
 
     get cssClasses() {
         return {
+            'drag-source': this.dragInProgress && this.dragSource === this,
             'drag-in': this.dragIn,
-            'drag-out': !this.dragIn
+            'drag-out': !this.dragIn,
+            'drag-mode-copy': this.currentDropMode === 'copy',
+            'drag-mode-cut': this.currentDropMode === 'cut',
+            'drag-mode-reordering': this.currentDropMode === 'reordering',
         };
+    }
+
+    get currentDropMode() {
+        if (this.dragInProgress && this.dragSource === this) {
+            if (this.dragTop && this.dragTop['dropAllowed']) {
+                if (this.dragTop['reordering'])
+                    return 'reordering';
+                else
+                    return this.dragTop['mode'];
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+
     }
 
     createDragImage(selfTransform: string) {
@@ -102,6 +125,7 @@ export default class DragMixin extends DragAwareMixin {
             image = createDragImage(this.$el as HTMLElement);
             image.style.transform = selfTransform;
         }
+        image['__opacity'] = this.dragImageOpacity;
         return image;
     }
 

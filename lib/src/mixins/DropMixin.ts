@@ -21,6 +21,9 @@ export default class DropMixin extends DragAwareMixin {
     @Prop({default: 'copy'})
     mode: string;
 
+    @Prop({default: 0.7, type: Number})
+    dragImageOpacity: any;
+
     constructor() {
         super();
     }
@@ -181,6 +184,7 @@ export default class DropMixin extends DragAwareMixin {
             } else {
                 image = createDragImage(el.children.item(0) as HTMLElement);
             }
+            image['__opacity'] = this.dragImageOpacity;
         } else {
             image = 'source';
         }

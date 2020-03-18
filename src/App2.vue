@@ -11,13 +11,15 @@
                     <v-col>
                         <drop-list :items="items" class="list" @insert="onInsert" @reorder="$event.apply(items)">
                             <template v-slot:item="{item}">
-                                <drag class="item" :key="item">{{item}}</drag>
+                                <drag class="item" :key="item" :drag-image-opacity="1" @cut="() => {}">{{item}}</drag>
                             </template>
                             <template v-slot:feedback="{data}">
                                 <div class="item feedback" :key="data">{{data}}</div>
                             </template>
                         </drop-list>
                     </v-col>
+                    <drop tag="v-col" style="background-color: grey" mode="cut"></drop>
+
                 </v-row>
             </v-container>
         </v-content>
@@ -30,9 +32,10 @@
     import DropList from "../lib/src/components/DropList.vue";
     import {InsertEvent} from "../lib/src/ts/events";
     import "../lib/src/ts/DragImagesManager.ts";
+    import Drop from "../lib/src/components/Drop.vue";
 
     @Component({
-        components: {Drag, DropList}
+        components: {Drop, Drag, DropList}
     })
     export default class App2 extends Vue {
 
@@ -69,6 +72,14 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
+
+                &.drag-mode-reordering {
+                    visibility: hidden;
+                }
+
+                &.drag-mode-cut {
+                    display: none;
+                }
 
                 &.feedback {
                     background-color: rgb(255, 220, 220);

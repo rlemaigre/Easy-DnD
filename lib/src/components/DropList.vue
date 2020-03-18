@@ -1,5 +1,5 @@
 <template>
-    <transition-group :tag="tag" name="drop-list-transition"
+    <transition-group :tag="tag"
                       ref="tg" :duration="{enter: 0, leave: 0}" :css="false" :class="clazz" :style="style">
         <template v-if="dropIn && dropAllowed">
             <template v-if="reordering">
@@ -173,6 +173,7 @@
             return this.dragInProgress && this.reordering && this.$scopedSlots.hasOwnProperty("reordering-drag-image");
         }
 
+
         doDrop(event: DnDEvent) {
             if (this.reordering) {
                 if (this.fromIndex !== this.closestIndex) {
@@ -263,6 +264,12 @@
         top: -10000px;
         left: -10000px;
         will-change: left, top;
+    }
+
+    .drop-list:not(.drop-in) {
+        &::v-deep .drag-source {
+            transition: none !important;
+        }
     }
 </style>
 
