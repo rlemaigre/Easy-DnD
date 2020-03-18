@@ -134,7 +134,7 @@ https://codesandbox.io/s/example-4-6h8zy
 
 ## CSS classes
 
-A Drag component is assigned the class `drag-in` when the mouse is over it and a drag operation isn't in progress, `drag-out` otherwise.
+A Drag component is assigned the class `drag-in` when the mouse is over it and a drag operation isn't in progress, `drag-out` otherwise. Depending on the mode of the Drop component currently under the mouse cursor, the source Drag component is also assigned the classes `drag-mode-copy`, `drag-mode-cut` and `drag-mode-reordering`.
 
 During a drag operation, the Drop components on the page are assigned several CSS classes :
 
