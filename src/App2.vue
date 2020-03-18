@@ -11,7 +11,9 @@
                     <v-col>
                         <drop-list :items="items" class="list" @insert="onInsert" @reorder="$event.apply(items)">
                             <template v-slot:item="{item}">
-                                <drag class="item" :key="item" :drag-image-opacity="1" @cut="() => {}">{{item}}</drag>
+                                <drag class="item" :key="item" :drag-image-opacity="1"
+                                      @cut="items = items.filter(i => i !== item)">{{item}}
+                                </drag>
                             </template>
                             <template v-slot:feedback="{data}">
                                 <div class="item feedback" :key="data">{{data}}</div>
