@@ -1,6 +1,6 @@
 import "reflect-metadata"
 import Vue from 'vue'
-import App4 from './App2.vue'
+import App4 from './App.vue'
 import vuetify from './plugins/vuetify';
 import '@babel/polyfill'
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
