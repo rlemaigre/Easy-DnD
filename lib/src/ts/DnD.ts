@@ -26,8 +26,8 @@ export class DnD {
             x: event.pageX,
             y: event.pageY
         };
-        this.stack = this.ancestors(this.source);
         this.inProgress = true;
+        this.stack = this.ancestors(this.source);
         this.emit("dragstart");
         this.emit('dragtopchanged', {previousTop: null});
         this.emit('dragpositionchanged');
@@ -69,7 +69,7 @@ export class DnD {
          * The condition e.relatedTarget !== null is a fix for firefox triggering the mouseenter event several times. The
          * wrong events have a null relatedTarget in FF.
          */
-        if (this.inProgress && (enter['isDropMask'] || enter['effectiveAcceptsType'](this.type)) && event.relatedTarget !== null) {
+        if (this.inProgress && (enter['isDropMask'] || enter['effectiveAcceptsType'](this.type)) && event.relatedTarget !== null && (enter['candidate'](this.type, this.data, this.source))) {
             let from = this.top();
             this.stack.push(enter);
             this.emit('dragtopchanged', {previousTop: from});
