@@ -17,6 +17,9 @@ export default class DragMixin extends DragAwareMixin {
     @Prop({default: 0.7, type: Number})
     dragImageOpacity: any;
 
+    @Prop({default: false, type: Boolean})
+    disabled: boolean;
+
     mouseIn: boolean = null;
 
     created() {
@@ -48,14 +51,16 @@ export default class DragMixin extends DragAwareMixin {
         }
 
         function onMouseDown(e) {
-            initialUserSelect = document.body.style.userSelect;
-            document.documentElement.style.userSelect = 'none'; // Permet au drag de se poursuivre normalement même
-            // quand on quitte un élémént avec overflow: hidden.
-            dragStarted = false;
-            document.addEventListener('mousemove', doDrag);
-            document.addEventListener('mouseup', stopDragging);
-            document.addEventListener('selectstart', noop);
-            mouseDownEvent = e;
+            if (!comp.disabled) {
+                initialUserSelect = document.body.style.userSelect;
+                document.documentElement.style.userSelect = 'none'; // Permet au drag de se poursuivre normalement même
+                // quand on quitte un élémént avec overflow: hidden.
+                dragStarted = false;
+                document.addEventListener('mousemove', doDrag);
+                document.addEventListener('mouseup', stopDragging);
+                document.addEventListener('selectstart', noop);
+                mouseDownEvent = e;
+            }
         }
 
         function doDrag(e) {
@@ -86,14 +91,18 @@ export default class DragMixin extends DragAwareMixin {
     }
 
     get cssClasses() {
-        return {
-            'drag-source': this.dragInProgress && this.dragSource === this,
-            'drag-in': this.dragIn,
-            'drag-out': !this.dragIn,
-            'drag-mode-copy': this.currentDropMode === 'copy',
-            'drag-mode-cut': this.currentDropMode === 'cut',
-            'drag-mode-reordering': this.currentDropMode === 'reordering',
-        };
+        if (!this.disabled) {
+            return {
+                'drag-source': this.dragInProgress && this.dragSource === this,
+                'drag-in': this.dragIn,
+                'drag-out': !this.dragIn,
+                'drag-mode-copy': this.currentDropMode === 'copy',
+                'drag-mode-cut': this.currentDropMode === 'cut',
+                'drag-mode-reordering': this.currentDropMode === 'reordering',
+            };
+        } else {
+            return {};
+        }
     }
 
     get currentDropMode() {

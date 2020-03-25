@@ -1,5 +1,6 @@
 <template>
-    <component :is="tag" v-bind="$attrs" v-on="$listeners" :style="{cursor: 'grab'}" :class="cssClasses">
+    <component :is="tag" v-bind="$attrs" v-on="$listeners" :style="{cursor: disabled ? null : 'grab'}"
+               :class="cssClasses">
         <slot></slot>
         <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
             <slot :name="slot" v-bind="scope"/>
