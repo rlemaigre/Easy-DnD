@@ -4,6 +4,7 @@ export default class DragMixin extends DragAwareMixin {
     type: string;
     data: any;
     dragImageOpacity: any;
+    disabled: boolean;
     mouseIn: boolean;
     created(): void;
     mounted(): void;
@@ -15,6 +16,13 @@ export default class DragMixin extends DragAwareMixin {
         'drag-mode-copy': boolean;
         'drag-mode-cut': boolean;
         'drag-mode-reordering': boolean;
+    } | {
+        'drag-source'?: undefined;
+        'drag-in'?: undefined;
+        'drag-out'?: undefined;
+        'drag-mode-copy'?: undefined;
+        'drag-mode-cut'?: undefined;
+        'drag-mode-reordering'?: undefined;
     };
     readonly currentDropMode: any;
     createDragImage(selfTransform: string): any;

@@ -248,9 +248,11 @@
 </script>
 
 <style scoped lang="scss">
-    .drop-list {
-        &::v-deep > * {
-            transition: transform .2s;
+    .drag-in-progress {
+        .drop-list {
+            &::v-deep > * {
+                transition: transform .2s;
+            }
         }
     }
 
