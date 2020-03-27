@@ -76,8 +76,6 @@ export default class DragMixin extends DragAwareMixin {
             if (dragStarted) {
                 document.documentElement.classList.remove('drag-in-progress');
                 dnd.stopDrag();
-                e.stopPropagation();
-                e.preventDefault();
             }
             document.removeEventListener('mousemove', doDrag);
             document.removeEventListener('mouseup', stopDragging);
