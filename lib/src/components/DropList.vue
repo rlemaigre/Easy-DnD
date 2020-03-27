@@ -24,6 +24,9 @@
         <div class="__drag-image" v-if="showReorderingDragImage" ref="drag-image" key="reordering-drag-image">
             <slot name="reordering-drag-image" :item="items[fromIndex]"/>
         </div>
+        <div key="drop-list-content">
+            <slot/>
+        </div>
     </transition-group>
 </template>
 
