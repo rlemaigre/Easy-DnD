@@ -42,15 +42,11 @@ export class DnD {
             to: null
         });
         this.emit("dragend");
-        // This delay makes sure that when the click event that results from the mouseup is produced, the drag is still
-        // in progress. So by checking the flag inProgress, one can tell appart true clicks from drag and drop artefacts.
-        setTimeout(() => {
-            this.inProgress = false;
-            this.data = null;
-            this.source = null;
-            this.stack = null;
-            this.position = null;
-        }, 0);
+        this.inProgress = false;
+        this.data = null;
+        this.source = null;
+        this.stack = null;
+        this.position = null;
     }
 
     protected ancestors(comp: Vue) {

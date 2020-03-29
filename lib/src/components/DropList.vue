@@ -273,7 +273,7 @@
 
     .drop-list:not(.drop-in) {
         &::v-deep .drag-source {
-            transition: none !important;
+            // transition: none !important;
         }
     }
 </style>

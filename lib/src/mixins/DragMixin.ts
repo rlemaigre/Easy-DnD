@@ -73,14 +73,18 @@ export default class DragMixin extends DragAwareMixin {
         }
 
         function stopDragging(e) {
-            if (dragStarted) {
-                document.documentElement.classList.remove('drag-in-progress');
-                dnd.stopDrag();
-            }
-            document.removeEventListener('mousemove', doDrag);
-            document.removeEventListener('mouseup', stopDragging);
-            document.removeEventListener('selectstart', noop);
-            document.documentElement.style.userSelect = initialUserSelect;
+            // This delay makes sure that when the click event that results from the mouseup is produced, the drag is still
+            // in progress. So by checking the flag dnd.inProgress, one can tell appart true clicks from drag and drop artefacts.
+            setTimeout(() => {
+                if (dragStarted) {
+                    document.documentElement.classList.remove('drag-in-progress');
+                    dnd.stopDrag();
+                }
+                document.removeEventListener('mousemove', doDrag);
+                document.removeEventListener('mouseup', stopDragging);
+                document.removeEventListener('selectstart', noop);
+                document.documentElement.style.userSelect = initialUserSelect;
+            }, 0);
         }
     }
 

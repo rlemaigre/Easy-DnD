@@ -10,9 +10,10 @@
                     </v-col>
                     <v-col>
                         <drop-list :items="items" class="list" @insert="onInsert" @reorder="$event.apply(items)">
-                            <template v-slot:item="{item}">
+                            <template v-slot:item="{item, reorder}">
                                 <drag class="item" :key="item" :drag-image-opacity="1"
-                                      @cut="items = items.filter(i => i !== item)">{{item}}
+                                      @cut="items = items.filter(i => i !== item)" :style="{opacity: reorder ? 0 : 1}">
+                                    {{item}}
                                 </drag>
                             </template>
                             <template v-slot:feedback="{data}">
