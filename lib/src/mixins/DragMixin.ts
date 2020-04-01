@@ -20,7 +20,11 @@ export default class DragMixin extends DragAwareMixin {
     @Prop({default: false, type: Boolean})
     disabled: boolean;
 
+    @Prop({ required: false, type: String })
+    handle: string | undefined;
+
     mouseIn: boolean = null;
+    
 
     created() {
         dnd.on("dragstart", (event) => this.$emit("dragstart", event));
@@ -28,14 +32,33 @@ export default class DragMixin extends DragAwareMixin {
     }
 
     mounted() {
+        const isNodeList = (el: Element | NodeListOf<Element>): el is NodeListOf<Element> => {
+            return 'item' in el
+        }
+
         let comp = this;
-        let el = this.$el;
+        let el: Element | NodeListOf<Element> = this.$el;
         let dragStarted = false;
         let initialUserSelect;
         let mouseDownEvent = null;
-        el.addEventListener('mousedown', onMouseDown);
-        el.addEventListener('mouseenter', onMouseEnter);
-        el.addEventListener('mouseleave', onMouseLeave);
+
+        if (this.handle) {
+            el = this.$el.querySelectorAll(this.handle)
+            console.log('el', el)
+        }
+
+        if (isNodeList(el)) {
+            el.forEach((element) => {
+                element.addEventListener('mousedown', onMouseDown)
+                element.addEventListener('mouseenter', onMouseEnter)
+                element.addEventListener('mouseleave', onMouseLeave);
+            })
+        } else {
+            el.addEventListener('mousedown', onMouseDown);
+            el.addEventListener('mouseenter', onMouseEnter);
+            el.addEventListener('mouseleave', onMouseLeave);
+        }
+
 
         function onMouseEnter() {
             comp.mouseIn = true;
