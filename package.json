@@ -13,14 +13,14 @@
     "core-js": "^2.6.5",
     "roboto-fontface": "*",
     "vue": "^2.6.10",
-    "vue-class-component": "^7.0.2",
-    "vue-property-decorator": "^8.1.0",
+    "vue-class-component": "^7.2.3",
+    "vue-property-decorator": "^8.4.1",
     "vuetify": "^2.1.13"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.11.0",
-    "@vue/cli-plugin-typescript": "^3.11.0",
-    "@vue/cli-service": "^3.11.0",
+    "@vue/cli-plugin-babel": "^4.2.3",
+    "@vue/cli-plugin-typescript": "^4.2.3",
+    "@vue/cli-service": "^4.2.3",
     "reflect-metadata": "^0.1.13",
     "rollup": "^1.20.3",
     "rollup-plugin-buble": "^0.19.8",
@@ -33,7 +33,7 @@
     "sass": "^1.18.0",
     "sass-loader": "^7.1.0",
     "tslib": "^1.10.0",
-    "typescript": "^3.4.3",
+    "typescript": "^3.8.3",
     "vue-cli-plugin-vuetify": "^0.6.3",
     "vue-template-compiler": "^2.6.10"
   },
