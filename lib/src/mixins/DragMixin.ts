@@ -20,11 +20,11 @@ export default class DragMixin extends DragAwareMixin {
     @Prop({default: false, type: Boolean})
     disabled: boolean;
 
-    @Prop({ required: false, type: String })
+    @Prop({required: false, type: String})
     handle: string | undefined;
 
     mouseIn: boolean = null;
-    
+
 
     created() {
         dnd.on("dragstart", (event) => this.$emit("dragstart", event));
@@ -44,7 +44,6 @@ export default class DragMixin extends DragAwareMixin {
 
         if (this.handle) {
             el = this.$el.querySelectorAll(this.handle)
-            console.log('el', el)
         }
 
         if (isNodeList(el)) {
