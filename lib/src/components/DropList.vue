@@ -215,15 +215,19 @@
             let feedback = feedbackParent.children[0];
             let clone = feedback.cloneNode(true) as HTMLElement;
             let tg = this.$refs['tg']['$el'] as HTMLElement;
-            tg.append(clone);
-            let grid = new Grid(tg.children);
+            if (tg.children.length > this.items.length) {
+                tg.insertBefore(clone, tg.children[this.items.length]);
+            } else {
+                tg.append(clone);
+            }
+            let grid = new Grid(tg.children, this.items.length);
             clone.remove();
             return grid;
         }
 
         computeReorderingGrid() {
             let tg = this.$refs['tg']['$el'] as HTMLElement;
-            return new Grid(tg.children);
+            return new Grid(tg.children, this.items.length - 1);
         }
 
         createDragImage() {

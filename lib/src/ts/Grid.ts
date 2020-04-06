@@ -2,13 +2,16 @@ export default class Grid {
 
     centers: { x, y }[] = [];
 
-    constructor(collection: HTMLCollection) {
+    constructor(collection: HTMLCollection, upToIndex: number) {
+        let index = 0;
         for (let child of collection) {
+            if (index > upToIndex) break;
             let rect = child.getBoundingClientRect();
             this.centers.push({
                 x: rect.left + rect.width / 2,
                 y: rect.top + rect.height / 2
             });
+            index++;
         }
     }
 

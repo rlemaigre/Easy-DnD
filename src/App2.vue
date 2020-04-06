@@ -45,6 +45,7 @@
         items = ['a', 'b', 'c', 'd', 'e'];
 
         onInsert(event: InsertEvent) {
+            console.log(event);
             this.items.splice(event.index, 0, event.data);
         }
 
