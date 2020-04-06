@@ -196,7 +196,7 @@
         }
 
         candidate(): boolean {
-            let superCandidate = DropMixin['options'].methods.candidate.call(this);
+            let superCandidate = DropMixin['options'].methods.candidate.call(this, ...arguments);
             return (superCandidate && (this.$listeners.hasOwnProperty("insert") || this.$listeners.hasOwnProperty("drop"))) || this.reordering;
         }
 
