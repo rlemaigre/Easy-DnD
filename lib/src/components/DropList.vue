@@ -241,6 +241,7 @@
                 tg.append(clone);
                 image = createDragImage(clone);
                 clone.remove();
+                image['__opacity'] = this.dragImageOpacity;
             } else {
                 image = 'source';
             }
