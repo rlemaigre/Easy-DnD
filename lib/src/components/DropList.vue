@@ -197,7 +197,7 @@
 
         candidate(): boolean {
             let superCandidate = DropMixin['options'].methods.candidate.call(this);
-            return (superCandidate && this.$listeners.hasOwnProperty("insert")) || this.reordering;
+            return (superCandidate && (this.$listeners.hasOwnProperty("insert") || this.$listeners.hasOwnProperty("drop"))) || this.reordering;
         }
 
         computeForbiddenKeys() {
