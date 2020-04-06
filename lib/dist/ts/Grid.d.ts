@@ -3,7 +3,7 @@ export default class Grid {
         x: any;
         y: any;
     }[];
-    constructor(collection: HTMLCollection);
+    constructor(collection: HTMLCollection, upToIndex: number);
     closestIndex(position: {
         x: any;
         y: any;

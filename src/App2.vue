@@ -5,11 +5,12 @@
                 <v-row>
                     <v-col>
                         <div class="list">
-                            <drag v-for="n in [1,2,3,4,5]" :data="n" class="item">{{n}}</drag>
+                            <drag v-for="n in [1,2,3,4,5]" :data="n" class="item" type="test">{{n}}</drag>
                         </div>
                     </v-col>
                     <v-col>
-                        <drop-list :items="items" class="list" @insert="onInsert" @reorder="$event.apply(items)">
+                        <drop-list :items="items" class="list" @insert="onInsert" @reorder="$event.apply(items)"
+                                   accepts-type="test">
                             <template v-slot:item="{item, reorder}">
                                 <drag class="item" :key="item" :drag-image-opacity="1"
                                       @cut="items = items.filter(i => i !== item)" :style="{opacity: reorder ? 0 : 1}">
@@ -22,7 +23,6 @@
                         </drop-list>
                     </v-col>
                     <drop tag="v-col" style="background-color: grey" mode="cut"></drop>
-
                 </v-row>
             </v-container>
         </v-content>
@@ -45,7 +45,6 @@
         items = ['a', 'b', 'c', 'd', 'e'];
 
         onInsert(event: InsertEvent) {
-            console.log(event);
             this.items.splice(event.index, 0, event.data);
         }
 

@@ -66,17 +66,19 @@
         }
 
         onDragStart(event: DnDEvent) {
-            if (this.reordering) {
-                this.fromIndex = Array.prototype.indexOf.call(event.source.$el.parentElement.children, event.source.$el);
-                this.grid = this.computeReorderingGrid();
-            } else {
-                this.$nextTick(() => {
-                    // Presence of feedback node in the DOM and of keys in the virtual DOM required => delayed until what
-                    // depends on drag data has been processed.
-                    this.grid = this.computeInsertingGrid();
-                    this.feedbackKey = this.computeFeedbackKey();
-                    this.forbiddenKeys = this.computeForbiddenKeys();
-                });
+            if (this.candidate(dnd.type, dnd.data, dnd.source)) {
+                if (this.reordering) {
+                    this.fromIndex = Array.prototype.indexOf.call(event.source.$el.parentElement.children, event.source.$el);
+                    this.grid = this.computeReorderingGrid();
+                } else {
+                    this.$nextTick(() => {
+                        // Presence of feedback node in the DOM and of keys in the virtual DOM required => delayed until what
+                        // depends on drag data has been processed.
+                        this.grid = this.computeInsertingGrid();
+                        this.feedbackKey = this.computeFeedbackKey();
+                        this.forbiddenKeys = this.computeForbiddenKeys();
+                    });
+                }
             }
         }
 
@@ -195,7 +197,7 @@
             }
         }
 
-        candidate(): boolean {
+        candidate(type, data, source): boolean {
             let superCandidate = DropMixin['options'].methods.candidate.call(this, ...arguments);
             return (superCandidate && (this.$listeners.hasOwnProperty("insert") || this.$listeners.hasOwnProperty("drop"))) || this.reordering;
         }
