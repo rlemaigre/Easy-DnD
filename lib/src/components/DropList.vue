@@ -169,7 +169,7 @@
         }
 
         get showInsertingDragImage() {
-            return this.dragInProgress && this.typeAllowed && !this.reordering && this.$scopedSlots.hasOwnProperty("inserting-drag-image");
+            return this.dragInProgress && this.typeAllowed && !this.reordering && this.$scopedSlots.hasOwnProperty("drag-image");
         }
 
         get showReorderingDragImage() {
