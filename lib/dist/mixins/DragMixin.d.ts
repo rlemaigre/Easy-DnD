@@ -9,8 +9,8 @@ export default class DragMixin extends DragAwareMixin {
     mouseIn: boolean;
     created(): void;
     mounted(): void;
-    readonly dragIn: boolean;
-    readonly cssClasses: {
+    get dragIn(): boolean;
+    get cssClasses(): {
         'drag-source': boolean;
         'drag-in': boolean;
         'drag-out': boolean;
@@ -25,6 +25,6 @@ export default class DragMixin extends DragAwareMixin {
         'drag-mode-cut'?: undefined;
         'drag-mode-reordering'?: undefined;
     };
-    readonly currentDropMode: any;
+    get currentDropMode(): any;
     createDragImage(selfTransform: string): any;
 }

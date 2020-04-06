@@ -22,12 +22,12 @@ export default class DropMixin extends DragAwareMixin {
     onDrop(event: DnDEvent): void;
     doDrop(event: DnDEvent): void;
     mounted(): void;
-    readonly compatibleMode: boolean;
-    readonly dropIn: boolean;
-    readonly typeAllowed: boolean;
-    readonly dropAllowed: boolean;
-    readonly cssClasses: {};
-    readonly cssStyle: {
+    get compatibleMode(): boolean;
+    get dropIn(): boolean;
+    get typeAllowed(): boolean;
+    get dropAllowed(): boolean;
+    get cssClasses(): {};
+    get cssStyle(): {
         cursor: string;
     };
     /**

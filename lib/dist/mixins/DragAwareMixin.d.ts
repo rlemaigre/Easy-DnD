@@ -1,12 +1,12 @@
 import { Vue } from "vue-property-decorator";
 export default class DragAwareMixin extends Vue {
-    readonly dragInProgress: boolean;
-    readonly dragData: any;
-    readonly dragType: any;
-    readonly dragPosition: {
+    get dragInProgress(): boolean;
+    get dragData(): any;
+    get dragType(): any;
+    get dragPosition(): {
         x: number;
         y: number;
     };
-    readonly dragSource: Vue;
-    readonly dragTop: Vue;
+    get dragSource(): Vue;
+    get dragTop(): Vue;
 }

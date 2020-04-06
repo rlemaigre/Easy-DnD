@@ -12,21 +12,23 @@ export default class DropList extends DropMixin {
     destroyed(): void;
     onDragStart(event: DnDEvent): void;
     onDragEnd(): void;
-    readonly reordering: boolean;
-    readonly closestIndex: number;
-    readonly dropAllowed: boolean;
-    readonly itemsBeforeFeedback: any[];
-    readonly itemsAfterFeedback: any[];
-    readonly reorderedItems: any[];
-    readonly clazz: {
+    get reordering(): boolean;
+    get closestIndex(): number;
+    get dropAllowed(): boolean;
+    get itemsBeforeFeedback(): any[];
+    get itemsAfterFeedback(): any[];
+    get reorderedItems(): any[];
+    get clazz(): {
         'drop-list': boolean;
-        'reordering': boolean;
-        'inserting': boolean;
+        reordering: boolean;
+        inserting: boolean;
     };
-    readonly style: {};
-    readonly showDragFeedback: boolean;
-    readonly showInsertingDragImage: boolean;
-    readonly showReorderingDragImage: boolean;
+    get style(): {
+        cursor?: string;
+    };
+    get showDragFeedback(): boolean;
+    get showInsertingDragImage(): boolean;
+    get showReorderingDragImage(): boolean;
     doDrop(event: DnDEvent): void;
     candidate(): boolean;
     computeForbiddenKeys(): (string | number)[];
