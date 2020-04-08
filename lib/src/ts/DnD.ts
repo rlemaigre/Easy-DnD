@@ -11,7 +11,7 @@ export class DnD {
     public type: any = null;
     public data: any = null;
     public source: Vue = null;
-    public stack: Vue[] = null;
+    public top: Vue = null;
     public position: { x: number, y: number } = null;
     private eventBus = new Vue();
 
@@ -27,84 +27,63 @@ export class DnD {
             y: event.pageY
         };
         this.inProgress = true;
-        this.stack = this.ancestors(this.source);
         this.emit("dragstart");
         this.emit('dragtopchanged', {previousTop: null});
         this.emit('dragpositionchanged');
     }
 
     public stopDrag() {
-        if (this.top() !== null) {
+        if (this.top !== null) {
             this.emit("drop");
         }
         this.emit('dragtopchanged', {
-            previousTop: this.top(),
+            previousTop: this.top,
             to: null
         });
         this.emit("dragend");
         this.inProgress = false;
         this.data = null;
         this.source = null;
-        this.stack = null;
         this.position = null;
     }
 
-    protected ancestors(comp: Vue) {
-        let stack = [];
-        if (comp.$parent) {
-            stack.push(...this.ancestors(comp.$parent));
-        }
-        if (comp['isDrop']) {
-            if (comp['candidate'](this.type, this.data, this.source)) {
-                stack.push(comp);
+    public mouseMove(event, comp: Vue) {
+        if (this.inProgress) {
+            let prevent = false;
+            let previousTop = this.top;
+            if (comp === null) {
+                // The mouse move event reached the top of the document without hitting a drop component.
+                this.top = null;
+                prevent = true;
+            } else if (comp['isDropMask']) {
+                // The mouse move event bubbled until it reached a drop mask.
+                this.top = null;
+                prevent = true;
+            } else if (comp['candidate'](this.type, this.data, this.source)) {
+                // The mouse move event bubbled until it reached a drop component that participates in the current drag operation.
+                this.top = comp;
+                prevent = true;
             }
-        } else if (comp['isDropMask']) {
-            stack.push(comp);
+            if (prevent) {
+                // We prevent the mouse move event from bubbling further up the tree because it reached the foremost drop component and that component is all that matters.
+                event.stopPropagation();
+            }
+            if (this.top !== previousTop) {
+                this.emit('dragtopchanged', {previousTop: previousTop});
+            }
+            this.position = {
+                x: event.clientX,
+                y: event.clientY
+            };
+            this.emit('dragpositionchanged');
         }
-        return stack;
-    }
-
-    public mouseEnter(enter: Vue, event: MouseEvent) {
-        /*
-         * The condition e.relatedTarget !== null is a fix for firefox triggering the mouseenter event several times. The
-         * wrong events have a null relatedTarget in FF.
-         */
-        if (this.inProgress && (enter['isDropMask'] || enter['effectiveAcceptsType'](this.type)) && event.relatedTarget !== null && (enter['candidate'](this.type, this.data, this.source))) {
-            let from = this.top();
-            this.stack.push(enter);
-            this.emit('dragtopchanged', {previousTop: from});
-        }
-    }
-
-    public mouseLeave(leave: Vue, event: MouseEvent) {
-        /*
-         * The condition e.relatedTarget !== null is a fix for firefox triggering the mouseenter event several times. The
-         * wrong events have a null relatedTarget in FF.
-         */
-        if (this.inProgress && (leave['isDropMask'] || leave['effectiveAcceptsType'](this.type)) && event.relatedTarget !== null && (leave['candidate'](this.type, this.data, this.source))) {
-            let from = leave;
-            this.stack.pop();
-            this.emit('dragtopchanged', {previousTop: from});
-        }
-    }
-
-    public mouseMove(event) {
-        this.position = {
-            x: event.clientX,
-            y: event.clientY
-        };
-        this.emit('dragpositionchanged');
-    }
-
-    public top() {
-        return (this.stack === null || this.stack.length === 0) ? null : this.stack[this.stack.length - 1];
     }
 
     private emit(event, data?) {
         this.eventBus.$emit(event, {
             type: this.type,
             data: this.data,
-            top: this.top(),
+            top: this.top,
             source: this.source,
             position: this.position,
             ...data

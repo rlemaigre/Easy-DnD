@@ -30,7 +30,7 @@ export default class DropList extends DropMixin {
     get showInsertingDragImage(): boolean;
     get showReorderingDragImage(): boolean;
     doDrop(event: DnDEvent): void;
-    candidate(): boolean;
+    candidate(type: any, data: any, source: any): boolean;
     computeForbiddenKeys(): (string | number)[];
     computeFeedbackKey(): any;
     computeInsertingGrid(): Grid;

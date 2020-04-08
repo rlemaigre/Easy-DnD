@@ -91,7 +91,7 @@ export default class DragMixin extends DragAwareMixin {
                 dnd.startDrag(comp, mouseDownEvent, comp.type, comp.data);
                 document.documentElement.classList.add('drag-in-progress');
             }
-            dnd.mouseMove(e);
+            dnd.mouseMove(e, null);
         }
 
         function stopDragging(e) {

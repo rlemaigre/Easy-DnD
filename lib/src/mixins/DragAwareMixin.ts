@@ -25,7 +25,7 @@ export default class DragAwareMixin extends Vue {
     }
 
     get dragTop() {
-        return dnd.top();
+        return dnd.top;
     }
 
 }

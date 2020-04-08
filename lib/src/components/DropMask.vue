@@ -23,17 +23,11 @@
         mounted() {
             let el = this.$el;
             let comp = this;
-            el.addEventListener('mouseenter', onMouseEnter);
-            el.addEventListener('mouseleave', onMouseLeave);
+            el.addEventListener('mousemove', onMouseMove);
 
-            function onMouseEnter(e) {
-                dnd.mouseEnter(comp, e);
+            function onMouseMove(e) {
+                dnd.mouseMove(e, comp);
             }
-
-            function onMouseLeave(e) {
-                dnd.mouseLeave(comp, e);
-            }
-
         }
 
         createDragImage() {
