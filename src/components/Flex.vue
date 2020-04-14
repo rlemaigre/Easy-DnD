@@ -3,7 +3,7 @@
         <drop-list :items="items" class="dl" :style="{flexDirection: direction}" @insert="onInsert"
                    @reorder="onReorder" mode="cut" :row="direction === 'row'" :column="direction === 'column'">
             <template v-slot:item="{item}">
-                <drag tag="generic" :model="item" :key="key(item)" :data="item" @mousedown.native.stop=""
+                <drag tag="generic" :model="item" :key="key(item)" :data="item"
                       @cut="remove(item)">
                     <template v-slot:drag-image>
                         <div class="drag-image">DRAG</div>
@@ -86,6 +86,10 @@
             flex: 0 0 0;
             outline: 1px solid blue;
             align-self: stretch;
+        }
+
+        .drag-source {
+            outline: 2px dashed black;
         }
     }
 </style>
