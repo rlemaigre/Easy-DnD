@@ -3,11 +3,11 @@
         <v-content>
             <v-container fluid class="wrapper">
                 sdqf
-                <drop-list @reorder="" :items="[1,2]">
+                <drop-list @reorder="" :items="[1,2]" column>
                     <template v-slot:item="{item}">
                         <drag v-if="item === 1" :key="item">testx</drag>
                         <drag v-else :key="item">
-                            <drop-list :items="['a','b']" @reorder="">
+                            <drop-list :items="['a','b']" @reorder="" column>
                                 <template v-slot:item="{item}">
                                     <drag v-if="item === 'a'" :key="item">test1</drag>
                                     <drag v-else :key="item">test2</drag>

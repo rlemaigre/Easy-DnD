@@ -60,7 +60,7 @@
         @Prop({default: null})
         row: boolean;
 
-        @Prop({default: null})
+        @Prop({default: null, type: Boolean})
         column: boolean;
 
         grid: Grid = null;
@@ -76,7 +76,7 @@
         get direction() {
             if (this.row) return 'row';
             if (this.column) return 'column';
-            throw new Error("Easy-DnD error : a drop list is missing one of these attributes : 'row' or 'column'.");
+            return 'auto';
         }
 
         destroyed() {
@@ -261,14 +261,14 @@
             } else {
                 tg.append(clone);
             }
-            let grid = new Grid(tg.children, this.items.length, this.direction === 'row', null);
+            let grid = new Grid(tg.children, this.items.length, this.direction, null);
             clone.remove();
             return grid;
         }
 
         computeReorderingGrid() {
             let tg = this.$refs['tg']['$el'] as HTMLElement;
-            return new Grid(tg.children, this.items.length - 1, this.direction === 'row', this.fromIndex);
+            return new Grid(tg.children, this.items.length - 1, this.direction, this.fromIndex);
         }
 
         createDragImage() {
