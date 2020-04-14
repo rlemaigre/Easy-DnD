@@ -82,6 +82,8 @@ export default class DragMixin extends DragAwareMixin {
                 document.addEventListener('mouseup', stopDragging);
                 document.addEventListener('selectstart', noop);
                 mouseDownEvent = e;
+                // Prevents event from bubbling to ancestor drag components and initiate several drags at the same time.
+                e.stopPropagation();
             }
         }
 
