@@ -9,7 +9,7 @@ export declare class DnD {
     type: any;
     data: any;
     source: Vue;
-    stack: Vue[];
+    top: Vue;
     position: {
         x: number;
         y: number;
@@ -18,11 +18,7 @@ export declare class DnD {
     constructor();
     startDrag(source: Vue, event: MouseEvent, type: any, data: any): void;
     stopDrag(): void;
-    protected ancestors(comp: Vue): any[];
-    mouseEnter(enter: Vue, event: MouseEvent): void;
-    mouseLeave(leave: Vue, event: MouseEvent): void;
-    mouseMove(event: any): void;
-    top(): Vue;
+    mouseMove(event: any, comp: Vue): void;
     private emit;
     on(event: any, callback: any): void;
     off(event: any, callback: any): void;

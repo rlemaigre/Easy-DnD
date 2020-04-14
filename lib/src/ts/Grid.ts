@@ -1,26 +1,70 @@
 export default class Grid {
 
-    centers: { x, y }[] = [];
+    magnets: { x, y }[] = [];
 
-    constructor(collection: HTMLCollection, upToIndex: number) {
+    constructor(collection: HTMLCollection, upToIndex: number, row: boolean, fromIndex: number) {
         let index = 0;
         for (let child of collection) {
             if (index > upToIndex) break;
             let rect = child.getBoundingClientRect();
-            this.centers.push({
-                x: rect.left + rect.width / 2,
-                y: rect.top + rect.height / 2
-            });
+            let hasNestedDrop = child.classList.contains("dnd-drop") || child.getElementsByClassName("dnd-drop").length > 0;
+            if (fromIndex === null) {
+                // Inserting mode.
+                this.magnets.push(hasNestedDrop ? this.before(rect, row) : this.center(rect));
+            } else {
+                // Reordering mode.
+                this.magnets.push(hasNestedDrop ? (
+                    fromIndex < index ? this.after : this.before
+                )(rect, row) : this.center(rect));
+            }
+            // Debug : show magnets :
+            //document.body.insertAdjacentHTML("beforeend", "<div style='background-color: red; position: fixed; width: 1px; height: 1px; top:" + this.magnets[index].y + "px; left:" + this.magnets[index].x + "px;' ></div>")
             index++;
         }
+    }
+
+    /**
+     * Returns the center of the rectangle.
+     */
+    center(rect: DOMRect) {
+        return {
+            x: rect.left + rect.width / 2,
+            y: rect.top + rect.height / 2
+        };
+    }
+
+    /**
+     * When horizontal is true / false, returns middle of the left / top side of the rectangle.
+     */
+    before(rect: DOMRect, horizontal: boolean) {
+        return horizontal ? {
+            x: rect.left,
+            y: rect.top + rect.height / 2
+        } : {
+            x: rect.left + rect.width / 2,
+            y: rect.top
+        };
+    }
+
+    /**
+     * When horizontal is true / false, returns middle of the right / bottom side of the rectangle.
+     */
+    after(rect: DOMRect, horizontal: boolean) {
+        return horizontal ? {
+            x: rect.left + rect.width,
+            y: rect.top + rect.height / 2
+        } : {
+            x: rect.left + rect.width / 2,
+            y: rect.top + rect.height
+        };
     }
 
     closestIndex(position: { x, y }) {
         let minDist = 999999;
         let index = -1;
-        for (let i = 0; i < this.centers.length; i++) {
-            let center = this.centers[i];
-            let dist = Math.sqrt(Math.pow(center.x - position.x, 2) + Math.pow(center.y - position.y, 2));
+        for (let i = 0; i < this.magnets.length; i++) {
+            let magnet = this.magnets[i];
+            let dist = Math.sqrt(Math.pow(magnet.x - position.x, 2) + Math.pow(magnet.y - position.y, 2));
             if (dist < minDist) {
                 minDist = dist;
                 index = i;

@@ -1,7 +1,7 @@
 <template>
     <div class="Flex">
         <drop-list :items="items" class="dl" :style="{flexDirection: direction}" @insert="onInsert"
-                   @reorder="onReorder" mode="cut">
+                   @reorder="onReorder" mode="cut" :row="direction === 'row'" :column="direction === 'column'">
             <template v-slot:item="{item}">
                 <drag tag="generic" :model="item" :key="key(item)" :data="item" @mousedown.native.stop=""
                       @cut="remove(item)">
@@ -11,7 +11,10 @@
                 </drag>
             </template>
             <template v-slot:feedback="{data}">
-                <span :key="key(data)">feedback</span>
+                <div class="feedback" :key="key(data)"/>
+            </template>
+            <template v-slot:reordering-feedback="{item}">
+                <div class="reordering-feedback" key="feedback"/>
             </template>
         </drop-list>
     </div>
@@ -77,6 +80,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .reordering-feedback, .feedback {
+            flex: 0 0 0;
+            outline: 1px solid blue;
+            align-self: stretch;
         }
     }
 </style>

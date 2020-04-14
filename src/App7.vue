@@ -38,6 +38,7 @@
                         items: [
                             this.genNum(),
                             this.genNum(),
+                            this.genNum(),
                             {
                                 key: this.genNum(),
                                 type: 'col',
@@ -46,8 +47,7 @@
                                     this.genNum(),
                                     this.genNum()
                                 ]
-                            },
-                            this.genNum()
+                            }
                         ]
                     },
                     this.genNum(),

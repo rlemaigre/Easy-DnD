@@ -3,8 +3,15 @@
                       ref="tg" :duration="{enter: 0, leave: 0}" :css="false" :class="clazz" :style="style">
         <template v-if="dropIn && dropAllowed">
             <template v-if="reordering">
-                <slot name="item" v-for="(item, index) in reorderedItems" :item="item"
-                      :reorder="index === closestIndex"/>
+                <template v-if="hasReorderingFeedback">
+                    <slot name="item" v-for="item in itemsBeforeReorderingFeedback" :item="item"/>
+                    <slot name="reordering-feedback" :item="items[fromIndex]"/>
+                    <slot name="item" v-for="item in itemsAfterReorderingFeedback" :item="item"/>
+                </template>
+                <template v-else>
+                    <slot name="item" v-for="(item, index) in reorderedItems" :item="item"
+                          :reorder="index === closestIndex"/>
+                </template>
             </template>
             <template v-else>
                 <slot name="item" v-for="item in itemsBeforeFeedback" :item="item" :reorder="false"/>
@@ -50,6 +57,12 @@
         @Prop()
         items: any[];
 
+        @Prop({default: null})
+        row: boolean;
+
+        @Prop({default: null})
+        column: boolean;
+
         grid: Grid = null;
         forbiddenKeys = [];
         feedbackKey = null;
@@ -58,6 +71,12 @@
         created() {
             dnd.on("dragstart", this.onDragStart);
             dnd.on("dragend", this.onDragEnd);
+        }
+
+        get direction() {
+            if (this.row) return 'row';
+            if (this.column) return 'column';
+            throw new Error("Easy-DnD error : a drop list is missing one of these attributes : 'row' or 'column'.");
         }
 
         destroyed() {
@@ -108,7 +127,7 @@
         get dropAllowed() {
             if (this.dragInProgress) {
                 if (this.reordering) {
-                    return true;
+                    return this.items.length > 1;
                 } else {
                     let superDropAllowed = DropMixin['options'].computed.dropAllowed.get.call(this);
                     if (!superDropAllowed) {
@@ -142,6 +161,22 @@
             }
         }
 
+        get itemsBeforeReorderingFeedback() {
+            if (this.closestIndex <= this.fromIndex) {
+                return this.items.slice(0, this.closestIndex);
+            } else {
+                return this.items.slice(0, this.closestIndex + 1);
+            }
+        }
+
+        get itemsAfterReorderingFeedback() {
+            if (this.closestIndex <= this.fromIndex) {
+                return this.items.slice(this.closestIndex);
+            } else {
+                return this.items.slice(this.closestIndex + 1);
+            }
+        }
+
         get reorderedItems() {
             let toIndex = this.closestIndex;
             let reordered = [...this.items];
@@ -156,7 +191,7 @@
                 'drop-list': true,
                 'reordering': this.reordering === true,
                 'inserting': this.reordering === false,
-                ...(this.reordering === false ? this.cssClasses : {})
+                ...(this.reordering === false ? this.cssClasses : {'dnd-drop': true})
             };
         }
 
@@ -212,6 +247,10 @@
             return this.$refs['feedback']['$slots']['default'][0]['key'];
         }
 
+        get hasReorderingFeedback() {
+            return this.$scopedSlots.hasOwnProperty("reordering-feedback");
+        }
+
         computeInsertingGrid() {
             let feedbackParent = this.$refs['feedback']['$el'] as HTMLElement;
             let feedback = feedbackParent.children[0];
@@ -222,14 +261,14 @@
             } else {
                 tg.append(clone);
             }
-            let grid = new Grid(tg.children, this.items.length);
+            let grid = new Grid(tg.children, this.items.length, this.direction === 'row', null);
             clone.remove();
             return grid;
         }
 
         computeReorderingGrid() {
             let tg = this.$refs['tg']['$el'] as HTMLElement;
-            return new Grid(tg.children, this.items.length - 1);
+            return new Grid(tg.children, this.items.length - 1, this.direction === 'row', this.fromIndex);
         }
 
         createDragImage() {

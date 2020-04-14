@@ -129,7 +129,9 @@ export default class DropMixin extends DragAwareMixin {
     }
 
     get cssClasses() {
-        let clazz = {};
+        let clazz = {
+            'dnd-drop': true
+        } as any;
         if (this.dropIn !== null) {
             clazz = {
                 ...clazz,
