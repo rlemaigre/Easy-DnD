@@ -23,8 +23,8 @@ export class DnD {
         this.data = data;
         this.source = source;
         this.position = {
-            x: event.pageX,
-            y: event.pageY
+            x: event.clientX,
+            y: event.clientY
         };
         this.inProgress = true;
         this.emit("dragstart");

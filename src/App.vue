@@ -137,11 +137,12 @@
             }
 
             &.drop-zone1 {
-                position: fixed;
-                top: 200px;
-                left: 200px;
-                right: 200px;
-                bottom: 200px;
+                margin-top: 1000px;
+                width: 1500px;
+                height: 1500px;
+                margin-left: auto;
+                margin-right: auto;
+                position: relative;
             }
 
             &.drop-zone2 {
