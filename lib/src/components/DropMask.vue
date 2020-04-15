@@ -23,7 +23,7 @@
         mounted() {
             let el = this.$el;
             let comp = this;
-            el.addEventListener('mousemove', onMouseMove);
+            el.addEventListener('easy-dnd-move', onMouseMove);
 
             function onMouseMove(e) {
                 dnd.mouseMove(e, comp);

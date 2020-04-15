@@ -72,8 +72,8 @@ export class DnD {
                 this.emit('dragtopchanged', {previousTop: previousTop});
             }
             this.position = {
-                x: event.clientX,
-                y: event.clientY
+                x: event.detail.x,
+                y: event.detail.y
             };
             this.emit('dragpositionchanged');
         }
