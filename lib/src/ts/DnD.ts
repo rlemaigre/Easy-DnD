@@ -26,20 +26,16 @@ export class DnD {
             x: event.clientX,
             y: event.clientY
         };
+        this.top = null;
         this.inProgress = true;
         this.emit("dragstart");
-        this.emit('dragtopchanged', {previousTop: null});
-        this.emit('dragpositionchanged');
+        this.emit("dragtopchanged", {previousTop: null});
     }
 
     public stopDrag() {
         if (this.top !== null) {
             this.emit("drop");
         }
-        this.emit('dragtopchanged', {
-            previousTop: this.top,
-            to: null
-        });
         this.emit("dragend");
         this.inProgress = false;
         this.data = null;
