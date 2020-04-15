@@ -4,11 +4,14 @@ import { DnDEvent } from "../ts/events";
 export default class DropList extends DropMixin {
     tag: string | object;
     items: any[];
+    row: boolean;
+    column: boolean;
     grid: Grid;
     forbiddenKeys: any[];
     feedbackKey: any;
     fromIndex: number;
     created(): void;
+    get direction(): "row" | "column" | "auto";
     destroyed(): void;
     onDragStart(event: DnDEvent): void;
     onDragEnd(): void;
@@ -17,12 +20,10 @@ export default class DropList extends DropMixin {
     get dropAllowed(): boolean;
     get itemsBeforeFeedback(): any[];
     get itemsAfterFeedback(): any[];
+    get itemsBeforeReorderingFeedback(): any[];
+    get itemsAfterReorderingFeedback(): any[];
     get reorderedItems(): any[];
-    get clazz(): {
-        'drop-list': boolean;
-        reordering: boolean;
-        inserting: boolean;
-    };
+    get clazz(): any;
     get style(): {
         cursor?: string;
     };
@@ -33,6 +34,7 @@ export default class DropList extends DropMixin {
     candidate(type: any, data: any, source: any): boolean;
     computeForbiddenKeys(): (string | number)[];
     computeFeedbackKey(): any;
+    get hasReorderingFeedback(): boolean;
     computeInsertingGrid(): Grid;
     computeReorderingGrid(): Grid;
     createDragImage(): any;

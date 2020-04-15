@@ -26,7 +26,7 @@ export default class DropMixin extends DragAwareMixin {
     get dropIn(): boolean;
     get typeAllowed(): boolean;
     get dropAllowed(): boolean;
-    get cssClasses(): {};
+    get cssClasses(): any;
     get cssStyle(): {
         cursor: string;
     };
