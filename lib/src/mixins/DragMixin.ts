@@ -23,6 +23,9 @@ export default class DragMixin extends DragAwareMixin {
     @Prop({required: false, type: String})
     handle: string | undefined;
 
+    @Prop({type: Number, default: 3})
+    delta: number;
+
     mouseIn: boolean = null;
 
 
@@ -40,7 +43,8 @@ export default class DragMixin extends DragAwareMixin {
         let el: Element | NodeListOf<Element> = this.$el;
         let dragStarted = false;
         let initialUserSelect;
-        let mouseDownEvent = null;
+        let downEvent: TouchEvent | MouseEvent = null;
+        let startPosition = null;
 
         if (this.handle) {
             el = this.$el.querySelectorAll(this.handle)
@@ -75,31 +79,44 @@ export default class DragMixin extends DragAwareMixin {
         }
 
         function onMouseDown(e) {
-            if (!comp.disabled) {
+            if (!comp.disabled && downEvent === null) {
                 initialUserSelect = document.body.style.userSelect;
                 document.documentElement.style.userSelect = 'none'; // Permet au drag de se poursuivre normalement même
                 // quand on quitte un élémént avec overflow: hidden.
                 dragStarted = false;
+                downEvent = e;
+                if (downEvent.type === 'mousedown') {
+                    const mouse = event as MouseEvent;
+                    startPosition = {
+                        x: mouse.clientX,
+                        y: mouse.clientY
+                    };
+                } else {
+                    const touch = event as TouchEvent;
+                    startPosition = {
+                        x: touch.touches[0].clientX,
+                        y: touch.touches[0].clientY
+                    };
+                }
                 document.addEventListener('mousemove', onMouseMove);
-                document.addEventListener('touchmove', onMouseMove);
+                document.addEventListener('touchmove', onMouseMove, {passive: false});
                 document.addEventListener('easy-dnd-move', onEasyDnDMove);
                 document.addEventListener('mouseup', onMouseUp);
                 document.addEventListener('touchend', onMouseUp);
                 document.addEventListener('selectstart', noop);
-                mouseDownEvent = e;
                 // Prevents event from bubbling to ancestor drag components and initiate several drags at the same time
                 e.stopPropagation();
                 // Prevents touchstart event to be converted to mousedown
-                e.preventDefault();
+                //e.preventDefault();
             }
         }
 
         function onMouseMove(e: TouchEvent | MouseEvent) {
-            if (!dragStarted) {
-                dragStarted = true;
-                dnd.startDrag(comp, mouseDownEvent, comp.type, comp.data);
-                document.documentElement.classList.add('drag-in-progress');
-            }
+            // We ignore the mousemove event that follows touchend :
+            if (downEvent === null) return;
+
+            // On touch devices, we ignore fake mouse events and deal with touch events only.
+            if (downEvent.type === 'touchstart' && e.type === 'mousemove') return;
 
             // Find out event target and pointer position :
             let target: Element;
@@ -117,30 +134,50 @@ export default class DragMixin extends DragAwareMixin {
                 target = mouse.target as Element;
             }
 
+            // Distance between current event and start position :
+            let dist = Math.sqrt(Math.pow(startPosition.x - x, 2) + Math.pow(startPosition.y - y, 2));
+
+            // If the drag has not begun yet and distance from initial point is greater than delta, we start the drag :
+            if (!dragStarted && dist > comp.delta) {
+                dragStarted = true;
+                dnd.startDrag(comp, downEvent, startPosition.x, startPosition.y, comp.type, comp.data);
+                document.documentElement.classList.add('drag-in-progress');
+            }
+
             // Dispatch custom easy-dnd-move event :
-            let custom = new CustomEvent("easy-dnd-move", {
-                bubbles: true,
-                cancelable: true,
-                detail: {
-                    x,
-                    y,
-                    native: e
-                }
-            });
-            target.dispatchEvent(custom);
+            if (dragStarted) {
+                let custom = new CustomEvent("easy-dnd-move", {
+                    bubbles: true,
+                    cancelable: true,
+                    detail: {
+                        x,
+                        y,
+                        native: e
+                    }
+                });
+                target.dispatchEvent(custom);
+            }
+
+            // Prevent scroll on touch devices :
+            e.preventDefault();
         }
 
         function onEasyDnDMove(e) {
             dnd.mouseMove(e, null);
         }
 
-        function onMouseUp(e) {
+        function onMouseUp(e: MouseEvent | TouchEvent) {
+            // On touch devices, we ignore fake mouse events and deal with touch events only.
+            if (downEvent.type === 'touchstart' && e.type === 'mouseup') return;
+
+            downEvent = null;
+
             // This delay makes sure that when the click event that results from the mouseup is produced, the drag is still
             // in progress. So by checking the flag dnd.inProgress, one can tell appart true clicks from drag and drop artefacts.
             setTimeout(() => {
                 if (dragStarted) {
                     document.documentElement.classList.remove('drag-in-progress');
-                    dnd.stopDrag();
+                    dnd.stopDrag(e);
                 }
                 document.removeEventListener('mousemove', onMouseMove);
                 document.removeEventListener('touchmove', onMouseMove);

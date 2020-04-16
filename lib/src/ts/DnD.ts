@@ -18,25 +18,25 @@ export class DnD {
     constructor() {
     }
 
-    public startDrag(source: Vue, event: MouseEvent, type, data) {
+    public startDrag(source: Vue, event: MouseEvent | TouchEvent, x, y, type, data) {
         this.type = type;
         this.data = data;
         this.source = source;
         this.position = {
-            x: event.clientX,
-            y: event.clientY
+            x,
+            y
         };
         this.top = null;
         this.inProgress = true;
-        this.emit("dragstart");
-        this.emit("dragtopchanged", {previousTop: null});
+        this.emit(event, "dragstart");
+        this.emit(event, "dragtopchanged", {previousTop: null});
     }
 
-    public stopDrag() {
+    public stopDrag(event: MouseEvent | TouchEvent) {
         if (this.top !== null) {
-            this.emit("drop");
+            this.emit(event, "drop");
         }
-        this.emit("dragend");
+        this.emit(event, "dragend");
         this.inProgress = false;
         this.data = null;
         this.source = null;
@@ -65,23 +65,24 @@ export class DnD {
                 event.stopPropagation();
             }
             if (this.top !== previousTop) {
-                this.emit('dragtopchanged', {previousTop: previousTop});
+                this.emit(event.detail.native, 'dragtopchanged', {previousTop: previousTop});
             }
             this.position = {
                 x: event.detail.x,
                 y: event.detail.y
             };
-            this.emit('dragpositionchanged');
+            this.emit(event.detail.native, 'dragpositionchanged');
         }
     }
 
-    private emit(event, data?) {
+    private emit(native, event, data?) {
         this.eventBus.$emit(event, {
             type: this.type,
             data: this.data,
             top: this.top,
             source: this.source,
             position: this.position,
+            native,
             ...data
         });
     }

@@ -8,6 +8,7 @@ export class DnDEvent {
     previousTop: Vue;
     source: Vue;
     position: { x, y };
+    native: TouchEvent | MouseEvent;
 
 }
 
