@@ -94,7 +94,7 @@ export default class DropMixin extends DragAwareMixin {
 
     get compatibleMode() {
         if (this.dragInProgress) {
-            return this.mode === 'copy' || dnd.source.$listeners.hasOwnProperty(this.mode);
+            return this.mode === 'copy' || dnd.sourceListeners.hasOwnProperty(this.mode);
         } else {
             return null;
         }

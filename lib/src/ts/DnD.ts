@@ -14,6 +14,8 @@ export class DnD {
     public top: Vue = null;
     public position: { x: number, y: number } = null;
     private eventBus = new Vue();
+    public sourceListeners = null;
+
 
     constructor() {
     }
@@ -27,6 +29,7 @@ export class DnD {
             y
         };
         this.top = null;
+        this.sourceListeners = source.$listeners;
         this.inProgress = true;
         this.emit(event, "dragstart");
         this.emit(event, "dragtopchanged", {previousTop: null});
