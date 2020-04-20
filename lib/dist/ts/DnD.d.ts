@@ -15,6 +15,7 @@ export declare class DnD {
         y: number;
     };
     private eventBus;
+    sourceListeners: any;
     constructor();
     startDrag(source: Vue, event: MouseEvent | TouchEvent, x: any, y: any, type: any, data: any): void;
     stopDrag(event: MouseEvent | TouchEvent): void;
