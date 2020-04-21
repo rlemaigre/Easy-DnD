@@ -297,11 +297,9 @@
 </script>
 
 <style scoped lang="scss">
-    .drag-in-progress {
-        .drop-list {
-            &::v-deep > * {
-                transition: transform .2s;
-            }
+    .drop-list {
+        &::v-deep > * {
+            transition: transform .2s;
         }
     }
 
