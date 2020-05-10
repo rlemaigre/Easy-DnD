@@ -175,6 +175,9 @@ https://codesandbox.io/s/droplist-ozs8b
 
 ![demo](img/vid9.gif)
 
+https://codesandbox.io/s/multidraganddropmultiplelists-w2426
+![demo with multiple items](img/vid10.gif)
+
 ## Tags
 
 Drag and Drop components support the `tag` prop that can be used to control the HTML tag (or Vue component) that will serve as root of the template. In case of tags that are Vue components, all props, listeners and slots function as they normally would.
