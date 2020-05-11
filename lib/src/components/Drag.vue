@@ -21,7 +21,7 @@
         /**
          * Tag to be used as root of this component. Defaults to div.
          */
-        @Prop({default: 'div', type: [String, Object,Function]})
+        @Prop({default: 'div', type: [String, Object, Function]})
         tag: any;
 
     }
