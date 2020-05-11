@@ -17,8 +17,8 @@
     @Component({})
     export default class Drop extends DropMixin {
 
-        @Prop({default: 'div', type: [String, Object]})
-        tag: string | object;
+        @Prop({default: 'div', type: [String, Object,Function]})
+        tag: any;
 
         get showDragImage() {
             return this.dragInProgress && this.typeAllowed && this.$scopedSlots['drag-image'];

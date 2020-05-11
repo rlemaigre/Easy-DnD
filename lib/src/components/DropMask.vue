@@ -17,7 +17,7 @@
 
         isDropMask = true;
 
-        @Prop({default: 'div', type: [String, Object]})
+        @Prop({default: 'div', type: [String, Object,Function]})
         tag: any;
 
         mounted() {
