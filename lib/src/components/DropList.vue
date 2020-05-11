@@ -1,6 +1,5 @@
 <template>
-    <transition-group :tag="tag"
-                      ref="tg" :duration="{enter: 0, leave: 0}" :css="false" :class="clazz" :style="style">
+    <component :is="rootTag" v-bind="rootProps" v-on="rootListeners" :class="clazz" :style="style">
         <template v-if="dropIn && dropAllowed">
             <template v-if="reordering">
                 <template v-if="hasReorderingFeedback">
@@ -22,7 +21,7 @@
         <template v-else>
             <slot name="item" v-for="item in items" :item="item" :reorder="false"/>
         </template>
-        <drag-feedback class="feedback" v-if="showDragFeedback" ref="feedback" key="drag-feedback">
+        <drag-feedback class="__feedback" v-if="showDragFeedback" ref="feedback" key="drag-feedback">
             <slot name="feedback" :data="dragData" :type="dragType"/>
         </drag-feedback>
         <div class="__drag-image" v-if="showInsertingDragImage" ref="drag-image" key="inserting-drag-image">
@@ -34,7 +33,7 @@
         <div key="drop-list-content">
             <slot/>
         </div>
-    </transition-group>
+    </component>
 </template>
 
 <script lang="ts">
@@ -51,7 +50,7 @@
     })
     export default class DropList extends DropMixin {
 
-        @Prop({default: 'div', type: String})
+        @Prop({default: 'div', type: [String, Object, Function]})
         tag: string;
 
         @Prop()
@@ -63,10 +62,41 @@
         @Prop({default: null, type: Boolean})
         column: boolean;
 
+        @Prop({default: false, type: Boolean})
+        noAnimations: boolean;
+
         grid: Grid = null;
         forbiddenKeys = [];
         feedbackKey = null;
         fromIndex: number = null;
+
+        get rootTag() {
+            if (this.noAnimations) {
+                return this.tag ? this.tag : 'div';
+            } else {
+                return "transition-group";
+            }
+        }
+
+        get rootProps() {
+            if (this.noAnimations) {
+                return this.$attrs;
+            } else {
+                return {
+                    tag: this.tag,
+                    duration: {enter: 0, leave: 0},
+                    css: false
+                }
+            }
+        }
+
+        get rootListeners() {
+            if (this.noAnimations) {
+                return this.$listeners;
+            } else {
+                return {};
+            }
+        }
 
         created() {
             dnd.on("dragstart", this.onDragStart);
@@ -238,7 +268,8 @@
         }
 
         computeForbiddenKeys() {
-            return this.$children[0].$vnode.context.$children[0].$slots.default
+            let vnodes = this.noAnimations ? [] : this.$children[0].$vnode.context.$children[0].$slots.default;
+            return vnodes
                 .map(vn => vn.key)
                 .filter(k => k !== undefined && k !== 'drag-image' && k !== 'drag-feedback');
         }
@@ -255,7 +286,7 @@
             let feedbackParent = this.$refs['feedback']['$el'] as HTMLElement;
             let feedback = feedbackParent.children[0];
             let clone = feedback.cloneNode(true) as HTMLElement;
-            let tg = this.$refs['tg']['$el'] as HTMLElement;
+            let tg = this.$el as HTMLElement;
             if (tg.children.length > this.items.length) {
                 tg.insertBefore(clone, tg.children[this.items.length]);
             } else {
@@ -267,7 +298,7 @@
         }
 
         computeReorderingGrid() {
-            let tg = this.$refs['tg']['$el'] as HTMLElement;
+            let tg = this.$el as HTMLElement;
             return new Grid(tg.children, this.items.length - 1, this.direction, this.fromIndex);
         }
 
@@ -303,7 +334,7 @@
         }
     }
 
-    .feedback {
+    .__feedback {
         display: none;
     }
 

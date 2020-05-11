@@ -1,7 +1,8 @@
 <template>
     <div class="Flex">
         <drop-list :items="items" class="dl" :style="{flexDirection: direction}" @insert="onInsert"
-                   @reorder="onReorder" mode="cut" :row="direction === 'row'" :column="direction === 'column'">
+                   @reorder="onReorder" mode="cut" :row="direction === 'row'" :column="direction === 'column'"
+                   :tag="root" no-animations>
             <template v-slot:item="{item}">
                 <drag tag="generic" :model="item" :key="key(item)" :data="item"
                       @cut="remove(item)">
@@ -25,6 +26,7 @@
     import Drag from "../../lib/src/components/Drag.vue";
     import {Component, Prop, Vue} from "vue-property-decorator";
     import {InsertEvent, ReorderEvent} from "../../lib/src/ts/events";
+    import MyDiv from "@/components/MyDiv.vue";
 
     @Component({
         name: 'Flex',
@@ -37,6 +39,10 @@
 
         @Prop()
         direction: string;
+
+        get root() {
+            return MyDiv;
+        }
 
         key(item) {
             if (typeof item === "object") {
