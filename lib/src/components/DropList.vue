@@ -51,7 +51,7 @@
     export default class DropList extends DropMixin {
 
         @Prop({default: 'div', type: [String, Object, Function]})
-        tag: string;
+        tag: any;
 
         @Prop()
         items: any[];
