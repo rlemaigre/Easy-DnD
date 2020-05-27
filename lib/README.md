@@ -16,6 +16,22 @@ https://codesandbox.io/s/easy-dnd-demo-2-xnqbz
 
 ![demo](img/vid8.gif)
 
+The following demo features nested drop lists and a custom drag image. It is a tool to design dashboards by WYSIWYG. New widgets can be dragged into the dashboard from the palette on the left and widgets can be moved around by drag and drop.
+
+![demo](img/vid10.gif)
+
+# Installation
+
+Install via [npm](https://npmjs.com) or [yarn](https://yarnpkg.com)
+
+```bash
+# Use npm
+npm install vue-easy-dnd --save
+
+# Use yarn
+yarn add vue-easy-dnd
+```
+
 # Manual
 
 ## Overview
@@ -28,18 +44,19 @@ The Drag component is meant to define an area from which data can be exported. T
 
 All events carry the current state of the drag operation by means of the following properties :
 
-* `type` : the type of the data being transfered
-* `data` : the data being transfered
+* `type` : the type of the data being transferred
+* `data` : the data being transferred
 * `position` : the current position of the mouse cursor
 * `top` : the foremost Drop component currently under the mouse cursor if any
 * `previousTop` : for dragenter and dragleave, the previous value of top if any 
 * `source` : the Drag component where the drag originated
+* `native` : the associated mouse event (or touch event). Can be mousedown/touchstart, mousemove/touchmove or mouseup/touchend.
 
 Drag components emit the following events :
 
 * `dragstart` : triggered when a drag operation starts
-* `dragend` : triggered when a drag operation terminates (whether successfuly or not)
-* `cut` / `copy` : triggered when a drag operation completes successfuly on a Drop component that requires the data to be removed / copied
+* `dragend` : triggered when a drag operation terminates (whether successfully or not)
+* `cut` / `copy` : triggered when a drag operation completes successfully on a Drop component that requires the data to be removed / copied
 
 Drop components emit the following events :
 
@@ -155,19 +172,25 @@ https://codesandbox.io/s/example-1-ngrlv
 
 The DropList component is a special Drop component so it inherits all the props and events of the Drop component. It can be used when the result of a drag operation is to import data into the component as an item in a list at a specific index or to allow the user to reorder a list of items using drag and drop.
 
-Comparing to the Drop component, there is one more prop :
+Comparing to the Drop component, there are two more props :
 * `items` : the array of items to be rendered
+* `no-animations` : when set to true, disables animations
 
 Comparing to the Drop component, there are two more events :
 * `insert` : emitted when the user drops data into the DropList. If no listener is provided for this event, the list cannot be inserted into.
 * `reorder` : emitted when the user reorders the list. If no listener is provided for this event, the list cannot be reordered.
 
-Comparing to the Drop component, there are three more slots :
+Comparing to the Drop component, there are four more slots :
 * `item` : used to render each list item. It has two properties, `item` and `reorder`. Reorder is true when the item is the one subject to reordering. **Don't forget to provide a key for the content of this slot !!**
 * `feedback` : used to render a placeholder to show the position where the new item would be inserted if the drag operation ended at the current mouse position. It has two properties : `type` and `data`. **Don't forget to provide a key for the content of this slot !!** 
 * `reordering-drag-image` : defines the drag image to be used when reordering the list (see drag image section above).
+* `reordering-feedback` : used to control the feedback used during reordering
+  * if this slot isn't defined, then the items switch positions during reordering to display in real time the order that will be achieved if the drag terminates at the current position
+  * if this slot is defined, then its content is inserted into the list to display the new location of the item being dragged (for an example of this, see nested drop lists)
 
 Keys on items and feedback are used to disallow the drop if it would create duplicates and result in errors.
+
+The `tag` prop can be used to customize the root of the template, just like it can be with drop components, but it can only refer to an HTML element, not a Vue component (this is a restriction of Vue transition-groups - there is nothing I can do about it). However, when the no-animations prop is set to true, this restriction is lifted, and you can use any Vue component.
 
 The following demo features drag and drop from one list to another and list reordering.
 
@@ -175,13 +198,27 @@ https://codesandbox.io/s/droplist-ozs8b
 
 ![demo](img/vid9.gif)
 
+### Nested DropLists
+
+Drop lists can be nested at the condition you respect the following :
+
+* the `row` or `column` props must be defined to inform the drop list components of the direction the items are lining up (mandatory)
+* for lists that support reordering, the `reordering-feedback` slot must be defined (advisable)
+* both the `feedback` and `reordering-feedback` slots must take no space in the layout (for example, `flex: 0 0 0; align-self: strech; outline: 1px solid blue;`) (advisable)
+
+Example :
+
+https://codesandbox.io/s/nested-drop-lists-nw605
+
+![demo](img/vid11.gif)
+
 ## Tags
 
 Drag and Drop components support the `tag` prop that can be used to control the HTML tag (or Vue component) that will serve as root of the template. In case of tags that are Vue components, all props, listeners and slots function as they normally would.
 
 ## DragAwareMixin
 
-A mixin is available to make components sensitive to drag operations. It adds the following computed fields to components that incorporate it, reflecting the current state of the drag :
+A mixin is available to make components sensitive to drag operations. It adds the following computed to components that incorporate it, reflecting the current state of the drag :
 
 * `dragInProgress` : true if a drag operation is in progress, false otherwise
 * `dragType` : the type of the current drag operation
@@ -195,6 +232,26 @@ The following demo displays information about the current drag operation when it
 https://codesandbox.io/s/example-5-j8qo9
 
 ![demo](img/vid6.gif)
+
+## Miscellaneous
+
+The `disabled` prop can be used to temporarily disable drag on Drag components.
+
+# Faq
+
+## Does it support IE 11 ?
+
+Not at the moment but it will have to eventually (need it for work).
+
+## Does it support touch devices ?
+
+Yes (but only tested in desktop Chrome emulator so far).
+
+## Does it support SSR ?
+
+Not at the moment.
+
+
 
 
 
