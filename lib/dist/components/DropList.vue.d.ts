@@ -2,7 +2,7 @@ import DropMixin from "../mixins/DropMixin";
 import Grid from "../ts/Grid";
 import { DnDEvent } from "../ts/events";
 export default class DropList extends DropMixin {
-    tag: string;
+    tag: any;
     items: any[];
     row: boolean;
     column: boolean;
@@ -11,9 +11,9 @@ export default class DropList extends DropMixin {
     forbiddenKeys: any[];
     feedbackKey: any;
     fromIndex: number;
-    get rootTag(): string;
+    get rootTag(): any;
     get rootProps(): Record<string, string> | {
-        tag: string;
+        tag: any;
         duration: {
             enter: number;
             leave: number;
