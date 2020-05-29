@@ -7,11 +7,17 @@ export declare class DragImagesManager extends Vue {
     selfTransform: string;
     clones: Map<Vue, HTMLElement>;
     source: Vue;
+    sourcePos: {
+        x: number;
+        y: number;
+    };
     sourceClone: HTMLElement;
     constructor();
     onDragStart(event: any): void;
     onDragEnd(event: any): void;
+    cleanUp(): void;
     onDragTopChanged(event: any): void;
+    switch(top: any): any;
     getSourceClone(): HTMLElement;
     onDragPositionChanged(event: any): void;
 }

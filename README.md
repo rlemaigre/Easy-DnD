@@ -50,6 +50,7 @@ All events carry the current state of the drag operation by means of the followi
 * `top` : the foremost Drop component currently under the mouse cursor if any
 * `previousTop` : for dragenter and dragleave, the previous value of top if any 
 * `source` : the Drag component where the drag originated
+* `success` : whether the drag completed successfully or not
 * `native` : the associated mouse event (or touch event). Can be mousedown/touchstart, mousemove/touchmove or mouseup/touchend.
 
 Drag components emit the following events :
@@ -164,7 +165,7 @@ During a drag operation, the Drop components on the page are assigned several CS
 
 The following demo illustrates the use of a DropMask :
 
-https://codesandbox.io/s/example-1-ngrlv
+https://codesandbox.io/s/example-1-gvwsw
 
 ![demo](img/vid2.gif)
   
@@ -240,6 +241,10 @@ The `disabled` prop can be used to temporarily disable drag on Drag components.
 On Drag and Drop components, the `drag-image-opacity` prop can be used to control the opacity of the drag image.
 
 On Drag components, if the `go-back` prop is set to true, then if a drag is not successful, the drag image will go back to where the drag originated.
+
+https://codesandbox.io/s/example-1-l6p54
+
+![demo](img/vid12.gif)
 
 # Faq
 

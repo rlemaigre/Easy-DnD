@@ -9,6 +9,7 @@ export declare class DnDEvent {
         x: any;
         y: any;
     };
+    success: Boolean;
     native: TouchEvent | MouseEvent;
 }
 export declare class ReorderEvent {

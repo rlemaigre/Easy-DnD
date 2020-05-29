@@ -5,6 +5,7 @@ export default class DragMixin extends DragAwareMixin {
     data: any;
     dragImageOpacity: any;
     disabled: boolean;
+    goBack: boolean;
     handle: string | undefined;
     delta: number;
     mouseIn: boolean;
