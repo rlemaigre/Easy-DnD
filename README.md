@@ -200,7 +200,7 @@ https://codesandbox.io/s/droplist-ozs8b
 
 ### Nested DropLists
 
-Drop lists can be nested at the condition you respect the following :
+Drop lists can be nested providing the following conditions are satisfied :
 
 * the `row` or `column` props must be defined to inform the drop list components of the direction the items are lining up (mandatory)
 * for lists that support reordering, the `reordering-feedback` slot must be defined (advisable)
@@ -236,6 +236,10 @@ https://codesandbox.io/s/example-5-j8qo9
 ## Miscellaneous
 
 The `disabled` prop can be used to temporarily disable drag on Drag components.
+
+On Drag and Drop components, the `drag-image-opacity` prop can be used to control the opacity of the drag image.
+
+On Drag components, if the `go-back` prop is set to true, then if a drag is not successful, the drag image will go back to where the drag originated.
 
 # Faq
 

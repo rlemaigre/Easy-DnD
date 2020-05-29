@@ -11,6 +11,7 @@ export class DragImagesManager extends Vue {
     selfTransform: string = null;
     clones: Map<Vue, HTMLElement> = null;
     source: Vue = null;
+    sourcePos: { x: number, y: number } = null;
     sourceClone: HTMLElement = null;
 
     constructor() {
@@ -22,33 +23,60 @@ export class DragImagesManager extends Vue {
     }
 
     onDragStart(event) {
-        let sourcePos = {
+        this.sourcePos = {
             x: event.source.$el.getBoundingClientRect().left,
             y: event.source.$el.getBoundingClientRect().top
         };
-        this.selfTransform = "translate(-" + (event.position.x - sourcePos.x) + "px, -" + (event.position.y - sourcePos.y) + "px)";
+        this.selfTransform = "translate(-" + (event.position.x - this.sourcePos.x) + "px, -" + (event.position.y - this.sourcePos.y) + "px)";
         this.clones = new Map<Vue, HTMLElement>();
         this.source = event.source;
     }
 
     onDragEnd(event) {
         Vue.nextTick(() => {
-            this.clones.forEach((clone) => {
-                clone.remove();
-            });
-            if (this.sourceClone !== null) {
-                this.sourceClone.remove();
+            if (!event.success && this.source['goBack']) {
+                // Restore the drag image that is active when hovering outside any drop zone :
+                let img = this.switch(null) as HTMLElement;
+
+                // Move it back to its original place :
+                window.requestAnimationFrame(() => {
+                    img.style.transition = "all 0.5s";
+                    window.requestAnimationFrame(() => {
+                        img.style.left = this.sourcePos.x + "px";
+                        img.style.top = this.sourcePos.y + "px";
+                        img.style.transform = "translate(0,0)";
+                        let handler = () => {
+                            this.cleanUp();
+                            img.removeEventListener("transitionend", handler);
+                        };
+                        img.addEventListener("transitionend", handler);
+                    })
+                })
+            } else {
+                this.cleanUp();
             }
-            this.selfTransform = null;
-            this.clones = null;
-            this.source = null;
-            this.sourceClone = null;
         });
     }
 
-    onDragTopChanged(event) {
-        let top = event.top;
+    cleanUp() {
+        this.clones.forEach((clone) => {
+            clone.remove();
+        });
+        if (this.sourceClone !== null) {
+            this.sourceClone.remove();
+        }
+        this.selfTransform = null;
+        this.clones = null;
+        this.source = null;
+        this.sourceClone = null;
+        this.sourcePos = null;
+    }
 
+    onDragTopChanged(event) {
+        this.switch(event.top);
+    }
+
+    switch(top) {
         this.clones.forEach(clone => {
             clone.style.opacity = "0";
         });
@@ -78,6 +106,8 @@ export class DragImagesManager extends Vue {
             activeClone.style.opacity = activeClone['__opacity'];
             activeClone.style.visibility = 'visible';
         }
+
+        return activeClone;
     }
 
     getSourceClone() {

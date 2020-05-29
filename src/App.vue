@@ -9,7 +9,7 @@
                         </div>
                     </template>
                     <drop-mask class="palette">
-                        <drag class="drag" type="number" :data="1">1</drag>
+                        <drag class="drag" type="number" :data="1" go-back>1</drag>
                         <drag class="drag" type="number" :data="2">2</drag>
                         <drag class="drag" type="number" :data="3">3</drag>
                         <drag class="drag" type="number" :data="4">4

@@ -15,7 +15,7 @@ export class DnD {
     public position: { x: number, y: number } = null;
     private eventBus = new Vue();
     public sourceListeners = null;
-
+    public success: Boolean = null;
 
     constructor() {
     }
@@ -36,6 +36,7 @@ export class DnD {
     }
 
     public stopDrag(event: MouseEvent | TouchEvent) {
+        this.success = this.top !== null && this.top['compatibleMode'] && this.top['dropAllowed'];
         if (this.top !== null) {
             this.emit(event, "drop");
         }
@@ -44,6 +45,7 @@ export class DnD {
         this.data = null;
         this.source = null;
         this.position = null;
+        this.success = null;
     }
 
     public mouseMove(event, comp: Vue) {
@@ -85,6 +87,7 @@ export class DnD {
             top: this.top,
             source: this.source,
             position: this.position,
+            success: this.success,
             native,
             ...data
         });

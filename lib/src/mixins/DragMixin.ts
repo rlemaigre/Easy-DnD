@@ -20,6 +20,9 @@ export default class DragMixin extends DragAwareMixin {
     @Prop({default: false, type: Boolean})
     disabled: boolean;
 
+    @Prop({default: false, type: Boolean})
+    goBack: boolean;
+
     @Prop({required: false, type: String})
     handle: string | undefined;
 
