@@ -33,8 +33,16 @@ export default class DragMixin extends DragAwareMixin {
 
 
     created() {
-        dnd.on("dragstart", (event) => this.$emit("dragstart", event));
-        dnd.on("dragend", (event) => this.$emit("dragend", event));
+        this.reEmit("dragstart");
+        this.reEmit("dragend");
+    }
+
+    reEmit(eventName: string) {
+        dnd.on(eventName, (ev) => {
+            if (ev.source === this) {
+                this.$emit(eventName, ev);
+            }
+        });
     }
 
     mounted() {
