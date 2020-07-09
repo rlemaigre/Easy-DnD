@@ -1,6 +1,6 @@
 import "reflect-metadata"
 import Vue from 'vue'
-import App4 from './App.vue'
+import App from './App.vue'
 import vuetify from './plugins/vuetify';
 import '@babel/polyfill'
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
@@ -13,5 +13,5 @@ Vue.component("generic", Generic);
 
 new Vue({
     vuetify,
-    render: h => h(App4)
+    render: h => h(App)
 }).$mount('#app')

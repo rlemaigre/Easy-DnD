@@ -10,6 +10,7 @@ export default class DragMixin extends DragAwareMixin {
     delta: number;
     mouseIn: boolean;
     created(): void;
+    reEmit(eventName: string): void;
     mounted(): void;
     get dragIn(): boolean;
     get cssClasses(): {

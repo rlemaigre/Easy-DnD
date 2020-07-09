@@ -12,7 +12,7 @@ export default class DropMixin extends DragAwareMixin {
     @Prop({default: () => () => true, type: [String, Array, Function]})
     acceptsType: string | string[] | { (type: any): boolean };
 
-    @Prop({default: () => () => true, type: Function})
+    @Prop({default: () => true, type: Function})
     acceptsData: { (data: any, type: string): boolean };
 
     @Prop({default: 'pointer'})
