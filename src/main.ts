@@ -1,3 +1,6 @@
+import 'core-js/stable'
+import 'regenerator-runtime/runtime'
+import 'custom-event-polyfill'
 import "reflect-metadata"
 import Vue from 'vue'
 import App from './App.vue'

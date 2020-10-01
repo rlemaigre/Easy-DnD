@@ -15,9 +15,6 @@ export default class DropMixin extends DragAwareMixin {
     @Prop({default: () => true, type: Function})
     acceptsData: { (data: any, type: string): boolean };
 
-    @Prop({default: 'pointer'})
-    cursor: string;
-
     @Prop({default: 'copy'})
     mode: string;
 
@@ -157,11 +154,7 @@ export default class DropMixin extends DragAwareMixin {
     }
 
     get cssStyle() {
-        if (this.dropAllowed && this.dropIn) {
-            return {cursor: this.cursor + ' !important'};
-        } else {
-            return {cursor: 'inherit'};
-        }
+        return {};
     }
 
     /**

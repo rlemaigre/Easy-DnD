@@ -60,10 +60,14 @@ export class DragImagesManager extends Vue {
 
     cleanUp() {
         this.clones.forEach((clone) => {
-            clone.remove();
+            if (clone.parentNode === document.body) {
+                document.body.removeChild(clone);
+            }
         });
         if (this.sourceClone !== null) {
-            this.sourceClone.remove();
+            if (this.sourceClone.parentNode === document.body) {
+                document.body.removeChild(this.sourceClone);
+            }
         }
         this.selfTransform = null;
         this.clones = null;
@@ -94,7 +98,7 @@ export class DragImagesManager extends Vue {
                     clone = this.getSourceClone();
                 } else if (clone !== null) {
                     clone.style.opacity = '0';
-                    document.body.append(clone);
+                    document.body.appendChild(clone);
                 }
                 this.clones.set(top, clone);
             }
@@ -114,7 +118,7 @@ export class DragImagesManager extends Vue {
         if (this.sourceClone === null) {
             this.sourceClone = this.source['createDragImage'](this.selfTransform);
             this.sourceClone.style.opacity = '0';
-            document.body.append(this.sourceClone);
+            document.body.appendChild(this.sourceClone);
         }
         return this.sourceClone;
     }

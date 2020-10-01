@@ -206,17 +206,24 @@ export default class DragMixin extends DragAwareMixin {
     }
 
     get cssClasses() {
+        let clazz = {
+            'dnd-drag': true
+        } as any;
         if (!this.disabled) {
             return {
+                ...clazz,
                 'drag-source': this.dragInProgress && this.dragSource === this,
                 'drag-in': this.dragIn,
                 'drag-out': !this.dragIn,
                 'drag-mode-copy': this.currentDropMode === 'copy',
                 'drag-mode-cut': this.currentDropMode === 'cut',
                 'drag-mode-reordering': this.currentDropMode === 'reordering',
+                'drag-no-handle': !this.handle
             };
         } else {
-            return {};
+            return {
+                ...clazz
+            };
         }
     }
 

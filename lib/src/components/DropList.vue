@@ -290,10 +290,10 @@
             if (tg.children.length > this.items.length) {
                 tg.insertBefore(clone, tg.children[this.items.length]);
             } else {
-                tg.append(clone);
+                tg.appendChild(clone);
             }
             let grid = new Grid(tg.children, this.items.length, this.direction, null);
-            clone.remove();
+            tg.removeChild(clone);
             return grid;
         }
 
@@ -314,9 +314,9 @@
                 }
                 let clone = model.cloneNode(true) as HTMLElement;
                 let tg = this.$el as HTMLElement;
-                tg.append(clone);
+                tg.appendChild(clone);
                 image = createDragImage(clone);
-                clone.remove();
+                tg.removeChild(clone);
                 image['__opacity'] = this.dragImageOpacity;
             } else {
                 image = 'source';

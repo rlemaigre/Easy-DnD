@@ -1,5 +1,5 @@
 <template>
-    <component :is="tag" v-bind="$attrs" v-on="$listeners" :style="{cursor: disabled || handle ? null : 'grab'}"
+    <component :is="tag" v-bind="$attrs" v-on="$listeners"
                :class="cssClasses">
         <slot></slot>
         <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
@@ -12,45 +12,51 @@
 </template>
 
 <script lang="ts">
-    import {Component, Prop} from "vue-property-decorator";
-    import DragMixin from "../mixins/DragMixin";
+import {Component, Prop} from "vue-property-decorator";
+import DragMixin from "../mixins/DragMixin";
 
-    @Component({})
-    export default class Drag extends DragMixin {
+@Component({})
+export default class Drag extends DragMixin {
 
-        /**
-         * Tag to be used as root of this component. Defaults to div.
-         */
-        @Prop({default: 'div', type: [String, Object, Function]})
-        tag: any;
+    /**
+     * Tag to be used as root of this component. Defaults to div.
+     */
+    @Prop({default: 'div', type: [String, Object, Function]})
+    tag: any;
 
-    }
+}
 </script>
 
 <style lang="scss">
-    .drop-allowed.drop-in * {
-        cursor: inherit !important;
-    }
+.drop-allowed.drop-in * {
+  cursor: inherit !important;
+}
 
-    .drop-forbidden.drop-in {
-        &, * {
-            cursor: no-drop !important;
-        }
-    }
+.drop-forbidden.drop-in {
+  &, * {
+    cursor: no-drop !important;
+  }
+}
+
+.drag-no-handle.drag-in {
+  cursor: move;
+  cursor: grab;
+}
 </style>
 
 <style lang="scss">
-    html.drag-in-progress * {
-        cursor: grabbing !important;
-    }
+html.drag-in-progress * {
+  cursor: move !important;
+  cursor: grabbing !important;
+}
 </style>
 
 <style lang="scss" scoped>
-    /* Places a drag image out of sight while keeping its computed styles accessibles. */
-    .__drag-image {
-        position: fixed;
-        top: -10000px;
-        left: -10000px;
-        will-change: left, top;
-    }
+/* Places a drag image out of sight while keeping its computed styles accessibles. */
+.__drag-image {
+  position: fixed;
+  top: -10000px;
+  left: -10000px;
+  will-change: left, top;
+}
 </style>

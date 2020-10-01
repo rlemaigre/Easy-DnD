@@ -10,7 +10,9 @@
     "@babel/polyfill": "^7.4.4",
     "@mdi/font": "^3.6.95",
     "@segi/template": "file:lib",
-    "core-js": "^2.6.5",
+    "core-js": "^3.6.5",
+    "custom-event-polyfill": "^1.0.7",
+    "regenerator-runtime": "^0.13.7",
     "roboto-fontface": "*",
     "vue": "^2.6.10",
     "vue-class-component": "^7.2.3",
@@ -18,6 +20,7 @@
     "vuetify": "^2.1.13"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.11.5",
     "@vue/cli-plugin-babel": "^4.2.3",
     "@vue/cli-plugin-typescript": "^4.2.3",
     "@vue/cli-service": "^4.2.3",
@@ -45,6 +48,7 @@
   "browserslist": [
     "> 1%",
     "last 2 versions",
-    "not ie <= 10"
+    "not ie <= 10",
+    "ie 11"
   ]
 }

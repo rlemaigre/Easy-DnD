@@ -11,40 +11,42 @@
 </template>
 
 <script lang="ts">
-    import {Component, Prop} from "vue-property-decorator";
-    import DropMixin from "../mixins/DropMixin";
+import {Component, Prop} from "vue-property-decorator";
+import DropMixin from "../mixins/DropMixin";
 
-    @Component({})
-    export default class Drop extends DropMixin {
+@Component({})
+export default class Drop extends DropMixin {
 
-        @Prop({default: 'div', type: [String, Object,Function]})
-        tag: any;
+    @Prop({default: 'div', type: [String, Object, Function]})
+    tag: any;
 
-        get showDragImage() {
-            return this.dragInProgress && this.typeAllowed && this.$scopedSlots['drag-image'];
-        }
-
+    get showDragImage() {
+        return this.dragInProgress && this.typeAllowed && this.$scopedSlots['drag-image'];
     }
+
+}
 </script>
 
 <style lang="scss">
-    .drop-allowed.drop-in * {
-        cursor: inherit !important;
-    }
+.drop-allowed.drop-in {
+  &, * {
+    cursor: pointer !important;
+  }
+}
 
-    .drop-forbidden.drop-in {
-        &, * {
-            cursor: no-drop !important;
-        }
-    }
+.drop-forbidden.drop-in {
+  &, * {
+    cursor: no-drop !important;
+  }
+}
 </style>
 
 <style lang="scss" scoped>
-    /* Places a drag image out of sight while keeping its computed styles accessibles. */
-    .__drag-image {
-        position: fixed;
-        top: -10000px;
-        left: -10000px;
-        will-change: left, top;
-    }
+/* Places a drag image out of sight while keeping its computed styles accessibles. */
+.__drag-image {
+  position: fixed;
+  top: -10000px;
+  left: -10000px;
+  will-change: left, top;
+}
 </style>
