@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "target": "esnext",
+    "target": "ES5",
+    "downlevelIteration": true,
     "module": "esnext",
     "strict": false,
     "jsx": "preserve",

@@ -35,9 +35,7 @@ export default class DropList extends DropMixin {
     get itemsAfterReorderingFeedback(): any[];
     get reorderedItems(): any[];
     get clazz(): any;
-    get style(): {
-        cursor?: string;
-    };
+    get style(): {};
     get showDragFeedback(): boolean;
     get showInsertingDragImage(): boolean;
     get showReorderingDragImage(): boolean;

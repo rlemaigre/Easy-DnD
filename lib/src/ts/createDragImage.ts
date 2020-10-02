@@ -37,7 +37,7 @@ function deepClone(el: HTMLElement): HTMLElement {
  */
 function copyStyle(src: HTMLElement, destination: HTMLElement) {
     const computedStyle = window.getComputedStyle(src);
-    Array.from(computedStyle).forEach(key => {
+    for (const key of computedStyle) {
         if (key === 'width') {
             // IE11
             let width = computedStyle.getPropertyValue("box-sizing") === 'border-box' ?
@@ -53,6 +53,6 @@ function copyStyle(src: HTMLElement, destination: HTMLElement) {
         } else {
             destination.style.setProperty(key, computedStyle.getPropertyValue(key), computedStyle.getPropertyPriority(key))
         }
-    });
+    }
     destination.style.pointerEvents = 'none';
 }

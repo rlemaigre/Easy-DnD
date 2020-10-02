@@ -9,7 +9,6 @@ export default class DropMixin extends DragAwareMixin {
     acceptsData: {
         (data: any, type: string): boolean;
     };
-    cursor: string;
     mode: string;
     dragImageOpacity: any;
     constructor();
@@ -27,9 +26,7 @@ export default class DropMixin extends DragAwareMixin {
     get typeAllowed(): boolean;
     get dropAllowed(): boolean;
     get cssClasses(): any;
-    get cssStyle(): {
-        cursor: string;
-    };
+    get cssStyle(): {};
     /**
      * Returns true if the current drop area participates in the current drag operation.
      */

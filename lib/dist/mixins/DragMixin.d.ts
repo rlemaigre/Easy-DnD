@@ -13,21 +13,7 @@ export default class DragMixin extends DragAwareMixin {
     reEmit(eventName: string): void;
     mounted(): void;
     get dragIn(): boolean;
-    get cssClasses(): {
-        'drag-source': boolean;
-        'drag-in': boolean;
-        'drag-out': boolean;
-        'drag-mode-copy': boolean;
-        'drag-mode-cut': boolean;
-        'drag-mode-reordering': boolean;
-    } | {
-        'drag-source'?: undefined;
-        'drag-in'?: undefined;
-        'drag-out'?: undefined;
-        'drag-mode-copy'?: undefined;
-        'drag-mode-cut'?: undefined;
-        'drag-mode-reordering'?: undefined;
-    };
+    get cssClasses(): any;
     get currentDropMode(): any;
     createDragImage(selfTransform: string): any;
 }
