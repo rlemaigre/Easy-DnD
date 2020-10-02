@@ -1,8 +1,15 @@
 export default class Grid {
 
+    reference: HTMLElement;
+    referenceOriginalPosition: { x, y };
     magnets: { x, y }[] = [];
 
     constructor(collection: HTMLCollection, upToIndex: number, row: string, fromIndex: number) {
+        this.reference = collection.item(0).parentNode as HTMLElement;
+        this.referenceOriginalPosition = {
+            x: this.reference.getBoundingClientRect().left,
+            y: this.reference.getBoundingClientRect().top,
+        };
         let index = 0;
         for (let child of collection) {
             if (index > upToIndex) break;
@@ -68,12 +75,26 @@ export default class Grid {
         };
     }
 
+    /**
+     * In case the user scrolls during the drag, the position of the magnets are not what they used to be when the drag
+     * started. A correction must be applied that takes into account the amount of scroll. This correction is the
+     * difference between the current position of the parent element and its position when the drag started.
+     */
+    correction(): { x, y } {
+        return {
+            x: this.reference.getBoundingClientRect().left - this.referenceOriginalPosition.x,
+            y: this.reference.getBoundingClientRect().top - this.referenceOriginalPosition.y,
+        };
+    }
+
     closestIndex(position: { x, y }) {
+        let x = position.x - this.correction().x;
+        let y = position.y - this.correction().y;
         let minDist = 999999;
         let index = -1;
         for (let i = 0; i < this.magnets.length; i++) {
             let magnet = this.magnets[i];
-            let dist = Math.sqrt(Math.pow(magnet.x - position.x, 2) + Math.pow(magnet.y - position.y, 2));
+            let dist = Math.sqrt(Math.pow(magnet.x - x, 2) + Math.pow(magnet.y - y, 2));
             if (dist < minDist) {
                 minDist = dist;
                 index = i;
