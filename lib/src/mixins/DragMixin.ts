@@ -138,6 +138,10 @@ export default class DragMixin extends DragAwareMixin {
                 x = touch.touches[0].clientX;
                 y = touch.touches[0].clientY;
                 target = document.elementFromPoint(x, y);
+                if (!target) {
+                    // Mouse going off screen. Ignore event.
+                    return;
+                }
             } else {
                 let mouse = e as MouseEvent;
                 x = mouse.clientX;
