@@ -1,4 +1,9 @@
 export default class Grid {
+    reference: HTMLElement;
+    referenceOriginalPosition: {
+        x: any;
+        y: any;
+    };
     magnets: {
         x: any;
         y: any;
@@ -24,6 +29,15 @@ export default class Grid {
     after(rect: DOMRect, horizontal: boolean): {
         x: number;
         y: number;
+    };
+    /**
+     * In case the user scrolls during the drag, the position of the magnets are not what they used to be when the drag
+     * started. A correction must be applied that takes into account the amount of scroll. This correction is the
+     * difference between the current position of the parent element and its position when the drag started.
+     */
+    correction(): {
+        x: any;
+        y: any;
     };
     closestIndex(position: {
         x: any;
