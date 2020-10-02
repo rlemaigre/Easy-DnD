@@ -250,11 +250,11 @@ https://codesandbox.io/s/example-1-l6p54
 
 ## Does it support IE 11 ?
 
-Not at the moment but it will have to eventually (need it for work).
+Yes with a polyfill for custom events such as https://www.npmjs.com/package/custom-event-polyfill 
 
 ## Does it support touch devices ?
 
-Yes (but only tested in desktop Chrome emulator so far).
+Yes.
 
 ## Does it support SSR ?
 
