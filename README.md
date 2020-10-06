@@ -258,7 +258,7 @@ Yes.
 
 ## Does it support SSR ?
 
-Not at the moment.
+Yes.
 
 
 
