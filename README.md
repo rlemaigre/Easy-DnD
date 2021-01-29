@@ -215,7 +215,7 @@ https://codesandbox.io/s/nested-drop-lists-nw605
 
 ## Tags
 
-Drag and Drop components support the `tag` prop that can be used to control the HTML tag (or Vue component) that will serve as root of the template. In case of tags that are Vue components, all props, listeners and slots function as they normally would.
+Drag and Drop components support the `tag` prop that can be used to control the HTML tag (or Vue component) that will serve as root of the template. In case of tags that are Vue components, all props, listeners and slots function as they normally would. When using Vue components as tags, make sure their templates have a default slot defined (`<slot/>`).
 
 ## DragAwareMixin
 
