@@ -18,8 +18,7 @@
     "vue-property-decorator": "^8.1.0",
     "reflect-metadata": "^0.1.13"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "browserslist": [
     "> 1%",
     "last 2 versions",

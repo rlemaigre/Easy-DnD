@@ -9,17 +9,20 @@
                 </template>
                 <template v-else>
                     <slot name="item" v-for="(item, index) in reorderedItems" :item="item"
-                          :reorder="index === closestIndex"/>
+                        :index="index"
+                        :reorder="index === closestIndex"/>
                 </template>
             </template>
             <template v-else>
-                <slot name="item" v-for="item in itemsBeforeFeedback" :item="item" :reorder="false"/>
+                <slot name="item" v-for="(item, index) in itemsBeforeFeedback" :item="item" :reorder="false"
+                     :index="index"/>
                 <slot name="feedback" :data="dragData" :type="dragType"/>
-                <slot name="item" v-for="item in itemsAfterFeedback" :item="item" :reorder="false"/>
+                <slot name="item" v-for="(item, index) in itemsAfterFeedback" :item="item" :reorder="false"
+                     :index="index"/>
             </template>
         </template>
         <template v-else>
-            <slot name="item" v-for="item in items" :item="item" :reorder="false"/>
+            <slot name="item" v-for="(item, index) in items" :item="item" :reorder="false" :index="index"/>
         </template>
         <drag-feedback class="__feedback" v-if="showDragFeedback" ref="feedback" key="drag-feedback">
             <slot name="feedback" :data="dragData" :type="dragType"/>
