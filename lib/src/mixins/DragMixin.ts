@@ -90,7 +90,7 @@ export default class DragMixin extends DragAwareMixin {
         }
 
         function onMouseDown(e) {
-            if (!comp.disabled && downEvent === null) {
+            if (!comp.disabled && downEvent === null && e.buttons === 1) {
                 initialUserSelect = document.body.style.userSelect;
                 document.documentElement.style.userSelect = 'none'; // Permet au drag de se poursuivre normalement même
                 // quand on quitte un élémént avec overflow: hidden.
