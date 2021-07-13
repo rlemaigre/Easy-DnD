@@ -46,35 +46,17 @@ export default class DragMixin extends DragAwareMixin {
     }
 
     mounted() {
-        const isNodeList = (el: Element | NodeListOf<Element>): el is NodeListOf<Element> => {
-            return 'item' in el
-        }
-
         let comp = this;
-        let el: Element | NodeListOf<Element> = this.$el;
+        let el = this.$el as HTMLElement;
         let dragStarted = false;
         let initialUserSelect;
         let downEvent: TouchEvent | MouseEvent = null;
         let startPosition = null;
 
-        if (this.handle) {
-            el = this.$el.querySelectorAll(this.handle)
-        }
-
-        if (isNodeList(el)) {
-            el.forEach((element) => {
-                element.addEventListener('mousedown', onMouseDown)
-                element.addEventListener('touchstart', onMouseDown);
-                element.addEventListener('mouseenter', onMouseEnter)
-                element.addEventListener('mouseleave', onMouseLeave);
-            })
-        } else {
-            el.addEventListener('mousedown', onMouseDown);
-            el.addEventListener('touchstart', onMouseDown);
-            el.addEventListener('mouseenter', onMouseEnter);
-            el.addEventListener('mouseleave', onMouseLeave);
-        }
-
+        el.addEventListener('mousedown', onMouseDown);
+        el.addEventListener('touchstart', onMouseDown);
+        el.addEventListener('mouseenter', onMouseEnter);
+        el.addEventListener('mouseleave', onMouseLeave);
 
         function onMouseEnter() {
             comp.mouseIn = true;
@@ -89,8 +71,9 @@ export default class DragMixin extends DragAwareMixin {
             e.preventDefault();
         }
 
-        function onMouseDown(e) {
-            if (!comp.disabled && downEvent === null && e.buttons === 1) {
+        function onMouseDown(e: MouseEvent) {
+            let onHandle = !comp.handle || (e.target as HTMLElement).matches(comp.handle + ', ' + comp.handle + ' *');
+            if (!comp.disabled && downEvent === null && e.buttons === 1 && onHandle) {
                 initialUserSelect = document.body.style.userSelect;
                 document.documentElement.style.userSelect = 'none'; // Permet au drag de se poursuivre normalement même
                 // quand on quitte un élémént avec overflow: hidden.
@@ -187,8 +170,9 @@ export default class DragMixin extends DragAwareMixin {
 
             downEvent = null;
 
-            // This delay makes sure that when the click event that results from the mouseup is produced, the drag is still
-            // in progress. So by checking the flag dnd.inProgress, one can tell appart true clicks from drag and drop artefacts.
+            // This delay makes sure that when the click event that results from the mouseup is produced, the drag is
+            // still in progress. So by checking the flag dnd.inProgress, one can tell appart true clicks from drag and
+            // drop artefacts.
             setTimeout(() => {
                 if (dragStarted) {
                     document.documentElement.classList.remove('drag-in-progress');
