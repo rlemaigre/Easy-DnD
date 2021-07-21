@@ -230,7 +230,7 @@ A mixin is available to make components sensitive to drag operations. It adds th
 
 The following demo displays information about the current drag operation when it is in progress :
 
-https://codesandbox.io/s/example-5-j8qo9
+[Example 5 (CodeSandbox)](https://codesandbox.io/s/example-5-forked-4zoot)
 
 ![demo](img/vid6.gif)
 
