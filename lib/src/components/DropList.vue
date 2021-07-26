@@ -25,6 +25,9 @@
         </template>
         <template v-else>
             <slot name="item" v-for="(item, index) in items" :item="item" :reorder="false" :index="index"/>
+            <div key="empty" v-if="items.length < 1">
+              <slot name="empty" />
+            </div>
         </template>
         <drag-feedback class="__feedback" v-if="showDragFeedback" ref="feedback" key="drag-feedback">
             <slot name="feedback" :data="dragData" :type="dragType"/>

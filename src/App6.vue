@@ -7,6 +7,7 @@
                         <v-list three-line class="list1">
                             <drop-list
                                     :items="items1"
+                                    mode="cut"
                                     @reorder="$event.apply(items1)"
                                     @insert="insert1"
                             >
@@ -42,6 +43,13 @@
                                             :key="data.title"
                                             style="border-left: 2px solid #1976D2; margin-left: -2px;"
                                     />
+                                </template>
+                                <template v-slot:empty>
+                                    <v-list-item>
+                                        <v-list-item-content>
+                                            No items to display in this list
+                                        </v-list-item-content>
+                                    </v-list-item>
                                 </template>
                             </drop-list>
                         </v-list>
