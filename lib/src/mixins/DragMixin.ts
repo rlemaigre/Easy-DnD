@@ -72,6 +72,7 @@ export default class DragMixin extends DragAwareMixin {
         }
 
         function onMouseDown(e: MouseEvent | TouchEvent) {
+            console.log('mouse down')
             let target: HTMLElement;
             let goodButton: boolean;
             if (e.type === 'mousedown') {

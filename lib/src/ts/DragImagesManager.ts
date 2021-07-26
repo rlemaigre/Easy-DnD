@@ -34,7 +34,7 @@ export class DragImagesManager extends Vue {
 
     onDragEnd(event) {
         Vue.nextTick(() => {
-            if (!event.success && this.source['goBack']) {
+            if (!event.success && this.source && this.source['goBack']) {
                 // Restore the drag image that is active when hovering outside any drop zone :
                 let img = this.switch(null) as HTMLElement;
 

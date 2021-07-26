@@ -120,19 +120,23 @@ export default class DropList extends DropMixin {
         dnd.off("dragend", this.onDragEnd);
     }
 
+    // Presence of feedback node in the DOM and of keys in the virtual DOM required => delayed until what
+    // depends on drag data has been processed.
+    refresh () {
+      this.$nextTick(() => {
+        this.grid = this.computeInsertingGrid();
+        this.feedbackKey = this.computeFeedbackKey();
+        this.forbiddenKeys = this.computeForbiddenKeys();
+      });
+    }
+
     onDragStart(event: DnDEvent) {
         if (this.candidate(dnd.type, dnd.data, dnd.source)) {
             if (this.reordering) {
                 this.fromIndex = Array.prototype.indexOf.call(event.source.$el.parentElement.children, event.source.$el);
                 this.grid = this.computeReorderingGrid();
             } else {
-                this.$nextTick(() => {
-                    // Presence of feedback node in the DOM and of keys in the virtual DOM required => delayed until what
-                    // depends on drag data has been processed.
-                    this.grid = this.computeInsertingGrid();
-                    this.feedbackKey = this.computeFeedbackKey();
-                    this.forbiddenKeys = this.computeForbiddenKeys();
-                });
+              this.refresh()
             }
         }
     }
