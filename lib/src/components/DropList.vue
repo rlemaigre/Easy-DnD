@@ -3,9 +3,11 @@
         <template v-if="dropIn && dropAllowed">
             <template v-if="reordering">
                 <template v-if="hasReorderingFeedback">
-                    <slot name="item" v-for="item in itemsBeforeReorderingFeedback" :item="item"/>
+                    <slot name="item" v-for="(item, index) in itemsBeforeReorderingFeedback" :item="item"
+                        :index="index" />
                     <slot name="reordering-feedback" :item="items[fromIndex]"/>
-                    <slot name="item" v-for="item in itemsAfterReorderingFeedback" :item="item"/>
+                    <slot name="item" v-for="(item, index) in itemsAfterReorderingFeedback" :item="item"
+                        :index="itemsBeforeReorderingFeedback.length + index" />
                 </template>
                 <template v-else>
                     <slot name="item" v-for="(item, index) in reorderedItems" :item="item"
@@ -18,7 +20,7 @@
                      :index="index"/>
                 <slot name="feedback" :data="dragData" :type="dragType"/>
                 <slot name="item" v-for="(item, index) in itemsAfterFeedback" :item="item" :reorder="false"
-                     :index="index"/>
+                     :index="itemsBeforeFeedback.length + index"/>
             </template>
         </template>
         <template v-else>

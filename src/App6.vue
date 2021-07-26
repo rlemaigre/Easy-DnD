@@ -9,9 +9,8 @@
                                     :items="items1"
                                     @reorder="$event.apply(items1)"
                                     @insert="insert1"
-                                    mode="cut"
                             >
-                                <template v-slot:item="{item, reorder}">
+                                <template v-slot:item="{item, reorder, index}">
                                     <drag :key="item.title" :data="item" @cut="remove(items1, item)" handle=".handle">
                                         <v-list-item
                                                 style="background-color: white; user-select: none"
@@ -25,7 +24,7 @@
                                                 <v-list-item-subtitle v-html="item.subtitle"/>
                                             </v-list-item-content>
                                             <v-list-item-avatar class="handle">
-                                                <v-img :src="item.avatar"/>
+                                              {{ index }}
                                             </v-list-item-avatar>
                                         </v-list-item>
                                         <v-divider/>
@@ -125,6 +124,30 @@
                         title: "Recipe to try",
                         subtitle:
                             "<span class='text--primary'>Britta Holt</span> &mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos."
+                    },
+                    {
+                      avatar: "https://cdn.vuetifyjs.com/images/lists/4.jpg",
+                      title: "Birthday gift 2",
+                      subtitle:
+                          "<span class='text--primary'>Trevor Hansen</span> &mdash; Have any ideas about what we should get Heidi for her birthday?"
+                    },
+                    {
+                      avatar: "https://cdn.vuetifyjs.com/images/lists/5.jpg",
+                      title: "Recipe to try 2",
+                      subtitle:
+                          "<span class='text--primary'>Britta Holt</span> &mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos."
+                    },
+                    {
+                      avatar: "https://cdn.vuetifyjs.com/images/lists/4.jpg",
+                      title: "Birthday gift 3",
+                      subtitle:
+                          "<span class='text--primary'>Trevor Hansen</span> &mdash; Have any ideas about what we should get Heidi for her birthday?"
+                    },
+                    {
+                      avatar: "https://cdn.vuetifyjs.com/images/lists/5.jpg",
+                      title: "Recipe to try 3",
+                      subtitle:
+                          "<span class='text--primary'>Britta Holt</span> &mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos."
                     }
                 ]
             };
