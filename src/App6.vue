@@ -16,6 +16,7 @@
                                         <v-list-item
                                                 style="background-color: white; user-select: none"
                                                 :style="reorder ? {borderLeft: '2px solid #1976D2', marginLeft:'-2px'} : {}"
+                                                @click="onClickItem($event, item, index)"
                                         >
                                             <v-list-item-avatar class="handle">
                                                 <v-img :src="item.avatar"/>
@@ -62,9 +63,9 @@
                                 @insert="insert2"
                                 mode="cut"
                         >
-                            <template v-slot:item="{item,reorder}">
+                            <template v-slot:item="{item,reorder,index}">
                                 <drag :key="item.title" class="chip" :data="item" @cut="remove(items2, item)">
-                                    <v-chip :color="reorder ? 'primary' : null">{{item.title}}</v-chip>
+                                    <v-chip :color="reorder ? 'primary' : null" @click="onClickItem($event, item, index)">{{item.title}}</v-chip>
                                 </drag>
                             </template>
                             <template v-slot:feedback="{data}">
@@ -170,6 +171,9 @@
             remove(array, value) {
                 let index = array.indexOf(value);
                 array.splice(index, 1);
+            },
+            onClickItem (e, item, index) {
+              alert(`Clicked ${item.title}. (Index ${index}) \nThis should not appear if the user has just dragged the element`);
             }
         }
     };

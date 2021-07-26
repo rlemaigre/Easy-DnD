@@ -59,11 +59,13 @@ export class DragImagesManager extends Vue {
     }
 
     cleanUp() {
-        this.clones.forEach((clone) => {
-            if (clone.parentNode === document.body) {
-                document.body.removeChild(clone);
-            }
-        });
+        if (this.clones) {
+            this.clones.forEach((clone) => {
+                if (clone.parentNode === document.body) {
+                    document.body.removeChild(clone);
+                }
+            });
+        }
         if (this.sourceClone !== null) {
             if (this.sourceClone.parentNode === document.body) {
                 document.body.removeChild(this.sourceClone);

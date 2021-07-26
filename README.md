@@ -182,7 +182,7 @@ Comparing to the Drop component, there are two more events :
 * `reorder` : emitted when the user reorders the list. If no listener is provided for this event, the list cannot be reordered.
 
 Comparing to the Drop component, there are five more slots :
-* `item` : used to render each list item. It has two properties, `item` and `reorder`. Reorder is true when the item is the one subject to reordering. **Don't forget to provide a key for the content of this slot !!**
+* `item` : used to render each list item. It has three properties, `item` , `index` and `reorder`. Reorder is true when the item is the one subject to reordering. **Don't forget to provide a key for the content of this slot !!**
 * `feedback` : used to render a placeholder to show the position where the new item would be inserted if the drag operation ended at the current mouse position. It has two properties : `type` and `data`. **Don't forget to provide a key for the content of this slot !!** 
 * `reordering-drag-image` : defines the drag image to be used when reordering the list (see drag image section above).
 * `reordering-feedback` : used to control the feedback used during reordering
