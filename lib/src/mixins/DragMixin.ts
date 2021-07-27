@@ -29,6 +29,9 @@ export default class DragMixin extends DragAwareMixin {
     @Prop({type: Number, default: 3})
     delta: number;
 
+    @Prop({type: Number, default: 0})
+    delay: number;
+
     mouseIn: boolean = null;
 
 
@@ -53,6 +56,8 @@ export default class DragMixin extends DragAwareMixin {
         let initialUserSelect;
         let downEvent: TouchEvent | MouseEvent = null;
         let startPosition = null;
+        let delayTimer = null;
+        let hasPassedDelay = true;
 
         el.addEventListener('mousedown', onMouseDown);
         el.addEventListener('touchstart', onMouseDown);
@@ -104,6 +109,15 @@ export default class DragMixin extends DragAwareMixin {
                         y: touch.touches[0].clientY
                     };
                 }
+
+                if (!!comp.delay) {
+                    hasPassedDelay = false;
+                    clearTimeout(delayTimer);
+                    delayTimer = setTimeout(() => {
+                        hasPassedDelay = true;
+                    }, comp.delay);
+                }
+
                 document.addEventListener('click', onMouseClick, true);
                 document.addEventListener('mousemove', onMouseMove);
                 document.addEventListener('touchmove', onMouseMove, {passive: false});
@@ -111,6 +125,7 @@ export default class DragMixin extends DragAwareMixin {
                 document.addEventListener('mouseup', onMouseUp);
                 document.addEventListener('touchend', onMouseUp);
                 document.addEventListener('selectstart', noop);
+
                 // Prevents event from bubbling to ancestor drag components and initiate several drags at the same time
                 e.stopPropagation();
                 // Prevents touchstart event to be converted to mousedown
@@ -162,8 +177,12 @@ export default class DragMixin extends DragAwareMixin {
 
             // If the drag has not begun yet and distance from initial point is greater than delta, we start the drag :
             if (!dragStarted && dist > comp.delta) {
-                // TODO this is the if statement which will handle touch delay
-                if (dist > comp.delta) {
+                // If they have dragged greater than the delta before the delay period has ended,
+                // It means that they attempted to perform another action (such as scrolling) on the page
+                if (!hasPassedDelay) {
+                    clearTimeout(delayTimer);
+                }
+                else {
                     ignoreNextClick = true;
                     dragStarted = true;
                     dnd.startDrag(comp, downEvent, startPosition.x, startPosition.y, comp.type, comp.data);
@@ -185,8 +204,10 @@ export default class DragMixin extends DragAwareMixin {
                 target.dispatchEvent(custom);
             }
 
-            // Prevent scroll on touch devices :
-            e.preventDefault();
+            // Prevent scroll on touch devices if they were performing a drag
+            if (hasPassedDelay && e.cancelable) {
+                e.preventDefault();
+            }
         }
 
         function onEasyDnDMove(e) {
@@ -194,6 +215,9 @@ export default class DragMixin extends DragAwareMixin {
         }
 
         function onMouseUp(e: MouseEvent | TouchEvent) {
+            hasPassedDelay = true;
+            clearTimeout(delayTimer);
+
             // On touch devices, we ignore fake mouse events and deal with touch events only.
             if (downEvent.type === 'touchstart' && e.type === 'mouseup') return;
 
