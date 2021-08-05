@@ -32,6 +32,9 @@ export default class DragMixin extends DragAwareMixin {
     @Prop({type: Number, default: 0})
     delay: number;
 
+    @Prop({type: String, default: null})
+    dragClass: String;
+
     mouseIn: boolean = null;
 
 
@@ -298,6 +301,10 @@ export default class DragMixin extends DragAwareMixin {
             image = createDragImage(this.$el as HTMLElement);
             image.style.transform = selfTransform;
         }
+        if (this.dragClass) {
+            image.classList.add(this.dragClass)
+        }
+        image.classList.add('dnd-ghost')
         image['__opacity'] = this.dragImageOpacity;
         return image;
     }

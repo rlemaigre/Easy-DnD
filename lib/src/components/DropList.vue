@@ -331,10 +331,11 @@ export default class DropList extends DropMixin {
             image = createDragImage(clone);
             tg.removeChild(clone);
             image['__opacity'] = this.dragImageOpacity;
+            image.classList.add('dnd-ghost')
         } else {
             image = 'source';
         }
-        return image;
+      return image;
     }
 
 }

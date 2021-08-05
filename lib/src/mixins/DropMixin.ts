@@ -174,6 +174,7 @@ export default class DropMixin extends DragAwareMixin {
                 image = createDragImage(el.children.item(0) as HTMLElement);
             }
             image['__opacity'] = this.dragImageOpacity;
+            image.classList.add('dnd-ghost')
         } else {
             image = 'source';
         }
