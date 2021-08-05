@@ -8,6 +8,8 @@ export default class DragMixin extends DragAwareMixin {
     goBack: boolean;
     handle: string | undefined;
     delta: number;
+    delay: number;
+    dragClass: String;
     mouseIn: boolean;
     created(): void;
     reEmit(eventName: string): void;

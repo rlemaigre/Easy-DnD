@@ -3,9 +3,11 @@
         <template v-if="dropIn && dropAllowed">
             <template v-if="reordering">
                 <template v-if="hasReorderingFeedback">
-                    <slot name="item" v-for="item in itemsBeforeReorderingFeedback" :item="item"/>
+                    <slot name="item" v-for="(item, index) in itemsBeforeReorderingFeedback" :item="item"
+                        :index="index" />
                     <slot name="reordering-feedback" :item="items[fromIndex]"/>
-                    <slot name="item" v-for="item in itemsAfterReorderingFeedback" :item="item"/>
+                    <slot name="item" v-for="(item, index) in itemsAfterReorderingFeedback" :item="item"
+                        :index="itemsBeforeReorderingFeedback.length + index" />
                 </template>
                 <template v-else>
                     <slot name="item" v-for="(item, index) in reorderedItems" :item="item"
@@ -18,11 +20,14 @@
                      :index="index"/>
                 <slot name="feedback" :data="dragData" :type="dragType"/>
                 <slot name="item" v-for="(item, index) in itemsAfterFeedback" :item="item" :reorder="false"
-                     :index="index"/>
+                     :index="itemsBeforeFeedback.length + index"/>
             </template>
         </template>
         <template v-else>
             <slot name="item" v-for="(item, index) in items" :item="item" :reorder="false" :index="index"/>
+            <div key="empty" v-if="items.length < 1">
+              <slot name="empty" />
+            </div>
         </template>
         <drag-feedback class="__feedback" v-if="showDragFeedback" ref="feedback" key="drag-feedback">
             <slot name="feedback" :data="dragData" :type="dragType"/>
@@ -118,19 +123,23 @@ export default class DropList extends DropMixin {
         dnd.off("dragend", this.onDragEnd);
     }
 
+    // Presence of feedback node in the DOM and of keys in the virtual DOM required => delayed until what
+    // depends on drag data has been processed.
+    refresh () {
+      this.$nextTick(() => {
+        this.grid = this.computeInsertingGrid();
+        this.feedbackKey = this.computeFeedbackKey();
+        this.forbiddenKeys = this.computeForbiddenKeys();
+      });
+    }
+
     onDragStart(event: DnDEvent) {
         if (this.candidate(dnd.type, dnd.data, dnd.source)) {
             if (this.reordering) {
                 this.fromIndex = Array.prototype.indexOf.call(event.source.$el.parentElement.children, event.source.$el);
                 this.grid = this.computeReorderingGrid();
             } else {
-                this.$nextTick(() => {
-                    // Presence of feedback node in the DOM and of keys in the virtual DOM required => delayed until what
-                    // depends on drag data has been processed.
-                    this.grid = this.computeInsertingGrid();
-                    this.feedbackKey = this.computeFeedbackKey();
-                    this.forbiddenKeys = this.computeForbiddenKeys();
-                });
+              this.refresh()
             }
         }
     }
@@ -322,10 +331,11 @@ export default class DropList extends DropMixin {
             image = createDragImage(clone);
             tg.removeChild(clone);
             image['__opacity'] = this.dragImageOpacity;
+            image.classList.add('dnd-ghost')
         } else {
             image = 'source';
         }
-        return image;
+      return image;
     }
 
 }
