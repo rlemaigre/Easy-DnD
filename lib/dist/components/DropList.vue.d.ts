@@ -24,6 +24,7 @@ export default class DropList extends DropMixin {
     created(): void;
     get direction(): "row" | "column" | "auto";
     destroyed(): void;
+    refresh(): void;
     onDragStart(event: DnDEvent): void;
     onDragEnd(): void;
     get reordering(): boolean;

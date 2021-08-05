@@ -154,6 +154,8 @@ https://codesandbox.io/s/example-4-6h8zy
 
 A Drag component is assigned the class `drag-in` when the mouse is over it and a drag operation isn't in progress, `drag-out` otherwise. Depending on the mode of the Drop component currently under the mouse cursor, the source Drag component is also assigned the classes `drag-mode-copy`, `drag-mode-cut` and `drag-mode-reordering`.
 
+If a drag is in progress, `dnd-ghost` will be bound to the ghost. The Drag component can also optionally accept an additional class (`drag-class` prop) to bind to the ghost. When using a DropList, the `dnd-ghost` class and `drag-class` prop will both **NOT** be bound if the `drag-image` slot is defined.
+
 During a drag operation, the Drop components on the page are assigned several CSS classes :
 
 * for all Drop components : `type-allowed` if the Drop component accepts the type of the drag operation, `type-forbidden` otherwise
@@ -181,13 +183,14 @@ Comparing to the Drop component, there are two more events :
 * `insert` : emitted when the user drops data into the DropList. If no listener is provided for this event, the list cannot be inserted into.
 * `reorder` : emitted when the user reorders the list. If no listener is provided for this event, the list cannot be reordered.
 
-Comparing to the Drop component, there are four more slots :
-* `item` : used to render each list item. It has two properties, `item` and `reorder`. Reorder is true when the item is the one subject to reordering. **Don't forget to provide a key for the content of this slot !!**
+Comparing to the Drop component, there are five more slots :
+* `item` : used to render each list item. It has three properties, `item` , `index` and `reorder`. Reorder is true when the item is the one subject to reordering. **Don't forget to provide a key for the content of this slot !!**
 * `feedback` : used to render a placeholder to show the position where the new item would be inserted if the drag operation ended at the current mouse position. It has two properties : `type` and `data`. **Don't forget to provide a key for the content of this slot !!** 
 * `reordering-drag-image` : defines the drag image to be used when reordering the list (see drag image section above).
 * `reordering-feedback` : used to control the feedback used during reordering
   * if this slot isn't defined, then the items switch positions during reordering to display in real time the order that will be achieved if the drag terminates at the current position
   * if this slot is defined, then its content is inserted into the list to display the new location of the item being dragged (for an example of this, see nested drop lists)
+* `empty` : defined content to display if the list is empty and not being dragged into
 
 Keys on items and feedback are used to disallow the drop if it would create duplicates and result in errors.
 
