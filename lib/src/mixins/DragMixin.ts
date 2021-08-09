@@ -214,7 +214,8 @@ export default class DragMixin extends DragAwareMixin {
             // Dispatch custom easy-dnd-move event :
             if (dragStarted) {
                 // If cursor is at edge of container, perform scroll if available
-                performEdgeScroll(e, scrollContainer, x, y);
+                // If comp.dragTop is defined, it means they are dragging on top of another DropList/EasyDnd component
+                performEdgeScroll(e, comp.dragTop ? scrollparent(comp.dragTop.$el) : scrollContainer, x, y);
 
                 let custom = new CustomEvent("easy-dnd-move", {
                     bubbles: true,
