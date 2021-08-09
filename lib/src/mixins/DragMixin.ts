@@ -37,6 +37,9 @@ export default class DragMixin extends DragAwareMixin {
     @Prop({type: String, default: null})
     dragClass: String;
 
+    @Prop({type: Number, default: 0})
+    vibration: number;
+
     mouseIn: boolean = null;
 
 
@@ -83,6 +86,13 @@ export default class DragMixin extends DragAwareMixin {
             e.preventDefault();
         }
 
+        function performVibration () {
+            // If browser can perform vibration and user has defined a vibration, perform it
+            if (comp.vibration > 0 && window.navigator && window.navigator.vibrate) {
+                window.navigator.vibrate(comp.vibration);
+            }
+        }
+
         function onMouseDown(e: MouseEvent | TouchEvent) {
             let target: HTMLElement;
             let goodButton: boolean;
@@ -122,7 +132,11 @@ export default class DragMixin extends DragAwareMixin {
                     clearTimeout(delayTimer);
                     delayTimer = setTimeout(() => {
                         hasPassedDelay = true;
+                        performVibration();
                     }, comp.delay);
+                }
+                else {
+                    performVibration();
                 }
 
                 document.addEventListener('click', onMouseClick, true);
@@ -199,7 +213,9 @@ export default class DragMixin extends DragAwareMixin {
 
             // Dispatch custom easy-dnd-move event :
             if (dragStarted) {
-                const isPerformingScroll = performEdgeScroll(e, scrollContainer, x, y);
+                // If cursor is at edge of container, perform scroll if available
+                performEdgeScroll(e, scrollContainer, x, y);
+
                 let custom = new CustomEvent("easy-dnd-move", {
                     bubbles: true,
                     cancelable: true,

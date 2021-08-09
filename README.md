@@ -257,7 +257,7 @@ Yes with a polyfill for custom events such as https://www.npmjs.com/package/cust
 
 ## Does it support touch devices ?
 
-Yes.
+Yes, including tap `vibration` prop on Drag component.
 
 ## Does it support SSR ?
 
