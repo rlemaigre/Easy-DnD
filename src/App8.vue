@@ -1,6 +1,7 @@
 <template>
     <v-app>
         <v-content>
+          <div id="scroller">
             <v-container fluid>
                 <v-row align-content="stretch">
                     <v-col>
@@ -77,7 +78,12 @@
                         </drop-list>
                     </v-col>
                 </v-row>
+
+              <div ref="bottomRight" class="mouseovercontainer" @mouseenter="onMouseEnterBottomRight" @mouseleave="onMouseLeaveBottomRight">
+
+              </div>
             </v-container>
+          </div>
         </v-content>
     </v-app>
 </template>
@@ -117,6 +123,14 @@
             remove(array, value) {
                 let index = array.indexOf(value);
                 array.splice(index, 1);
+            },
+            onMouseEnterBottomRight () {
+              console.log('triggered enter')
+                this.$refs.bottomRight.style.background = 'green';
+            },
+            onMouseLeaveBottomRight () {
+              console.log('triggered leave')
+              this.$refs.bottomRight.style.background = 'purple';
             }
         }
     };
@@ -148,5 +162,26 @@
 
     .handle {
         cursor: grab;
+    }
+
+    .mouseovercontainer {
+      position: fixed;
+      bottom: 8px;
+      right: 8px;
+      width: 200px;
+      height: 200px;
+      background: purple;
+    }
+
+    #scroller {
+      height: 90vh;
+      width: 85vw;
+      margin: auto;
+      overflow: auto;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
     }
 </style>
