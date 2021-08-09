@@ -10,6 +10,7 @@
                             <drop-list
                                 :items="items1"
                                 mode="cut"
+                                default-slot-class="default-slot"
                                 @reorder="$event.apply(items1)"
                                 @insert="insert1"
                             >
@@ -208,6 +209,10 @@
 
     .handle {
         cursor: grab;
+    }
+
+    .default-slot {
+      background-color: lightpink;
     }
 
     .mouseovercontainer {
