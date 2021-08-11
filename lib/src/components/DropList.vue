@@ -25,7 +25,7 @@
         </template>
         <template v-else>
             <slot name="item" v-for="(item, index) in items" :item="item" :reorder="false" :index="index"/>
-            <div key="empty" v-if="items.length < 1">
+            <div key="empty" v-if="items.length < 1" :class="defaultSlotClass">
               <slot name="empty" />
             </div>
         </template>
@@ -38,7 +38,7 @@
         <div class="__drag-image" v-if="showReorderingDragImage" ref="drag-image" key="reordering-drag-image">
             <slot name="reordering-drag-image" :item="items[fromIndex]"/>
         </div>
-        <div key="drop-list-content">
+        <div key="drop-list-content" :class="defaultSlotClass">
             <slot/>
         </div>
     </component>
@@ -73,6 +73,9 @@ export default class DropList extends DropMixin {
 
     @Prop({default: false, type: Boolean})
     noAnimations: boolean;
+
+    @Prop({default: null, type: [String, Object]})
+    defaultSlotClass;
 
     grid: Grid = null;
     forbiddenKeys = [];

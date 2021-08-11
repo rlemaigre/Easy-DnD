@@ -2,6 +2,8 @@ import {Component, Prop} from "vue-property-decorator";
 import DragAwareMixin from "./DragAwareMixin";
 import {createDragImage} from "../ts/createDragImage";
 import {dnd} from "../ts/DnD";
+import scrollparent from './../js/scrollparent'
+import {cancelScrollAction, performEdgeScroll} from './../js/edgescroller'
 
 @Component({})
 export default class DragMixin extends DragAwareMixin {
@@ -35,6 +37,9 @@ export default class DragMixin extends DragAwareMixin {
     @Prop({type: String, default: null})
     dragClass: String;
 
+    @Prop({type: Number, default: 0})
+    vibration: number;
+
     mouseIn: boolean = null;
 
 
@@ -60,6 +65,7 @@ export default class DragMixin extends DragAwareMixin {
         let downEvent: TouchEvent | MouseEvent = null;
         let startPosition = null;
         let delayTimer = null;
+        let scrollContainer = null;
         let hasPassedDelay = true;
 
         el.addEventListener('mousedown', onMouseDown);
@@ -80,6 +86,13 @@ export default class DragMixin extends DragAwareMixin {
             e.preventDefault();
         }
 
+        function performVibration () {
+            // If browser can perform vibration and user has defined a vibration, perform it
+            if (comp.vibration > 0 && window.navigator && window.navigator.vibrate) {
+                window.navigator.vibrate(comp.vibration);
+            }
+        }
+
         function onMouseDown(e: MouseEvent | TouchEvent) {
             let target: HTMLElement;
             let goodButton: boolean;
@@ -94,6 +107,7 @@ export default class DragMixin extends DragAwareMixin {
             }
             let goodTarget = !comp.handle || target.matches(comp.handle + ', ' + comp.handle + ' *');
             if (!comp.disabled && downEvent === null && goodButton && goodTarget) {
+                scrollContainer = scrollparent(target);
                 initialUserSelect = document.body.style.userSelect;
                 document.documentElement.style.userSelect = 'none'; // Permet au drag de se poursuivre normalement même
                 // quand on quitte un élémént avec overflow: hidden.
@@ -118,7 +132,11 @@ export default class DragMixin extends DragAwareMixin {
                     clearTimeout(delayTimer);
                     delayTimer = setTimeout(() => {
                         hasPassedDelay = true;
+                        performVibration();
                     }, comp.delay);
+                }
+                else {
+                    performVibration();
                 }
 
                 document.addEventListener('click', onMouseClick, true);
@@ -195,6 +213,10 @@ export default class DragMixin extends DragAwareMixin {
 
             // Dispatch custom easy-dnd-move event :
             if (dragStarted) {
+                // If cursor is at edge of container, perform scroll if available
+                // If comp.dragTop is defined, it means they are dragging on top of another DropList/EasyDnd component
+                performEdgeScroll(e, comp.dragTop ? scrollparent(comp.dragTop.$el) : scrollContainer, x, y);
+
                 let custom = new CustomEvent("easy-dnd-move", {
                     bubbles: true,
                     cancelable: true,
@@ -220,11 +242,13 @@ export default class DragMixin extends DragAwareMixin {
         function onMouseUp(e: MouseEvent | TouchEvent) {
             hasPassedDelay = true;
             clearTimeout(delayTimer);
+            cancelScrollAction()
 
             // On touch devices, we ignore fake mouse events and deal with touch events only.
             if (downEvent.type === 'touchstart' && e.type === 'mouseup') return;
 
             downEvent = null;
+            scrollContainer = null;
 
             // This delay makes sure that when the click event that results from the mouseup is produced, the drag is
             // still in progress. So by checking the flag dnd.inProgress, one can tell apart true clicks from drag and

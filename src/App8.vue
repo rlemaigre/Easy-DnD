@@ -1,19 +1,21 @@
 <template>
     <v-app>
         <v-content>
+          <div id="scroller">
             <v-container fluid>
                 <v-row align-content="stretch">
                     <v-col>
-                      Hold down on items for 500ms before they will be draggable
+                      Hold down on items for 500ms before they will be draggable. Short tap vibration will happen on mobile
                         <v-list three-line class="list1">
                             <drop-list
                                 :items="items1"
                                 mode="cut"
+                                default-slot-class="default-slot"
                                 @reorder="$event.apply(items1)"
                                 @insert="insert1"
                             >
                                 <template v-slot:item="{item, reorder, index}">
-                                    <drag :key="`item-${item}`" :data="item" @cut="remove(items1, item)" :delay="500">
+                                    <drag :key="`item-${item}`" :data="item" @cut="remove(items1, item)" :delay="500" :vibration="5">
                                         <v-list-item
                                             style="background-color: white; user-select: none"
                                             :style="reorder ? {borderLeft: '2px solid #1976D2', marginLeft:'-2px'} : {}"
@@ -77,7 +79,58 @@
                         </drop-list>
                     </v-col>
                 </v-row>
+
+              <div ref="bottomRight" class="mouseovercontainer" @mouseenter="onMouseEnterBottomRight" @mouseleave="onMouseLeaveBottomRight">
+
+              </div>
             </v-container>
+
+            <div id="overlapper">
+              <drop-list
+                  :items="items1"
+                  mode="cut"
+                  @reorder="$event.apply(items1)"
+                  @insert="insert1"
+              >
+                <template v-slot:item="{item, reorder, index}">
+                  <drag :key="`item-${item}`" :data="item" @cut="remove(items1, item)" :delay="500" :vibration="5">
+                    <v-list-item
+                        style="background-color: white; user-select: none"
+                        :style="reorder ? {borderLeft: '2px solid #1976D2', marginLeft:'-2px'} : {}"
+                    >
+                      <v-list-item-avatar>
+                        {{ index }}
+                      </v-list-item-avatar>
+                      <v-list-item-content>
+                        <v-list-item-title v-html="item"/>
+                      </v-list-item-content>
+                    </v-list-item>
+                    <v-divider/>
+                  </drag>
+                </template>
+                <template v-slot:inserting-drag-image="{data}">
+                  <v-list-item-avatar style="transform:translate(-50%, -50%) scale(1.5)">
+                    <img :src="data"/>
+                  </v-list-item-avatar>
+                </template>
+                <template v-slot:reordering-drag-image/>
+                <template v-slot:feedback="{data}">
+                  <v-skeleton-loader
+                      type="list-item-avatar-three-line"
+                      :key="data"
+                      style="border-left: 2px solid #1976D2; margin-left: -2px;"
+                  />
+                </template>
+                <template v-slot:empty>
+                  <v-list-item>
+                    <v-list-item-content>
+                      No items to display in this list
+                    </v-list-item-content>
+                  </v-list-item>
+                </template>
+              </drop-list>
+            </div>
+          </div>
         </v-content>
     </v-app>
 </template>
@@ -117,6 +170,14 @@
             remove(array, value) {
                 let index = array.indexOf(value);
                 array.splice(index, 1);
+            },
+            onMouseEnterBottomRight () {
+              console.log('triggered enter')
+                this.$refs.bottomRight.style.background = 'green';
+            },
+            onMouseLeaveBottomRight () {
+              console.log('triggered leave')
+              this.$refs.bottomRight.style.background = 'purple';
             }
         }
     };
@@ -148,5 +209,43 @@
 
     .handle {
         cursor: grab;
+    }
+
+    .default-slot {
+      background-color: lightpink;
+    }
+
+    .mouseovercontainer {
+      position: fixed;
+      bottom: 8px;
+      right: 8px;
+      width: 200px;
+      height: 200px;
+      background: purple;
+    }
+
+    #scroller {
+      height: 90vh;
+      width: 85vw;
+      margin: auto;
+      overflow: auto;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+
+    #overlapper {
+      background-color: lightblue;
+      height: 30vh;
+      width: 35vw;
+      margin: auto;
+      overflow: auto;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
     }
 </style>
