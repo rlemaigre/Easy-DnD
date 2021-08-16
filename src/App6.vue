@@ -46,7 +46,7 @@
                                     />
                                 </template>
                                 <template v-slot:empty>
-                                    <v-list-item>
+                                    <v-list-item key="empty">
                                         <v-list-item-content>
                                             No items to display in this list
                                         </v-list-item-content>
