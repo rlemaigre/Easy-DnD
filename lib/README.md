@@ -190,8 +190,8 @@ Comparing to the Drop component, there are six more slots :
 * `reordering-feedback` : used to control the feedback used during reordering
   * if this slot isn't defined, then the items switch positions during reordering to display in real time the order that will be achieved if the drag terminates at the current position
   * if this slot is defined, then its content is inserted into the list to display the new location of the item being dragged (for an example of this, see nested drop lists)
-* `empty` : defined content to display if the list is empty and not being dragged into. (To alter the outer div for the empty slot, use `default-slot-class` prop)
-* `default` : default content to add at the end of the DropList. (To alter the outer div for the default slot, use `default-slot-class` prop)
+* `empty` : defined content to display if the list is empty and not being dragged into. Make sure to define a `key` prop for each element directly inside this slot.
+* `default` : default content to add at the end of the DropList. Make sure to define a `key` prop for each element directly inside this slot.
 
 Keys on items and feedback are used to disallow the drop if it would create duplicates and result in errors.
 

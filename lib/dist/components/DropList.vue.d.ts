@@ -7,7 +7,6 @@ export default class DropList extends DropMixin {
     row: boolean;
     column: boolean;
     noAnimations: boolean;
-    defaultSlotClass: any;
     grid: Grid;
     forbiddenKeys: any[];
     feedbackKey: any;

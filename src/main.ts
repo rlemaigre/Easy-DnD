@@ -3,7 +3,7 @@ import 'regenerator-runtime/runtime'
 import 'custom-event-polyfill'
 import "reflect-metadata"
 import Vue from 'vue'
-import App from './App9.vue'
+import App from './App8.vue'
 import vuetify from './plugins/vuetify';
 import '@babel/polyfill'
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
