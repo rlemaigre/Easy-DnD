@@ -10,7 +10,6 @@
                             <drop-list
                                 :items="items1"
                                 mode="cut"
-                                default-slot-class="default-slot"
                                 @reorder="$event.apply(items1)"
                                 @insert="insert1"
                             >
@@ -44,7 +43,7 @@
                                     />
                                 </template>
                                 <template v-slot:empty>
-                                    <v-list-item>
+                                    <v-list-item key="empty">
                                         <v-list-item-content>
                                             No items to display in this list
                                         </v-list-item-content>
@@ -122,7 +121,7 @@
                   />
                 </template>
                 <template v-slot:empty>
-                  <v-list-item>
+                  <v-list-item key="empty">
                     <v-list-item-content>
                       No items to display in this list
                     </v-list-item-content>
