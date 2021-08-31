@@ -178,6 +178,7 @@ The DropList component is a special Drop component so it inherits all the props 
 Comparing to the Drop component, there are two more props :
 * `items` : the array of items to be rendered
 * `no-animations` : when set to true, disables animations
+* `scrolling-edge-size` : the bounding edges of the DropList where a dragging element will force scroll up/down/left/right (disabled by default - uses value set on `Drag` element)
 
 Comparing to the Drop component, there are two more events :
 * `insert` : emitted when the user drops data into the DropList. If no listener is provided for this event, the list cannot be inserted into.
@@ -252,7 +253,7 @@ https://codesandbox.io/s/example-1-l6p54
 
 ![demo](img/vid12.gif)
 
-# Faq
+# FAQ
 
 ## Does it support IE 11 ?
 
@@ -266,9 +267,13 @@ Yes, including tap `vibration` prop on Drag component.
 
 Yes.
 
+## Does it support keyboard events?
 
+Yes. ESC key can be pressed to cancel the drag.
 
+## Does it support Vue 3?
 
+Not at the moment. (This is a community development, so feel free to chip in!)
 
 
 

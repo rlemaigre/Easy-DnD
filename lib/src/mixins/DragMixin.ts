@@ -4,6 +4,7 @@ import {createDragImage} from "../ts/createDragImage";
 import {dnd} from "../ts/DnD";
 import scrollparent from './../js/scrollparent'
 import {cancelScrollAction, performEdgeScroll} from './../js/edgescroller'
+import options from './../options'
 
 @Component({})
 export default class DragMixin extends DragAwareMixin {
@@ -16,31 +17,31 @@ export default class DragMixin extends DragAwareMixin {
     @Prop({default: null, type: null})
     data: any;
 
-    @Prop({default: 0.7, type: Number})
+    @Prop({default: options['drag.dragImageOpacity'], type: Number})
     dragImageOpacity: any;
 
     @Prop({default: false, type: Boolean})
     disabled: boolean;
 
-    @Prop({default: false, type: Boolean})
+    @Prop({default: options['drag.goBack'], type: Boolean})
     goBack: boolean;
 
-    @Prop({required: false, type: String})
+    @Prop({default: options['drag.handle'], required: false, type: String})
     handle: string | undefined;
 
-    @Prop({type: Number, default: 3})
+    @Prop({type: Number, default: options['drag.delta']})
     delta: number;
 
-    @Prop({type: Number, default: 0})
+    @Prop({type: Number, default: options['drag.delay']})
     delay: number;
 
-    @Prop({type: String, default: null})
+    @Prop({type: String, default: options['drag.dragClass']})
     dragClass: String;
 
-    @Prop({type: Number, default: 0})
+    @Prop({type: Number, default: options['drag.vibration']})
     vibration: number;
 
-    @Prop ({type: Number, default: 100})
+    @Prop ({type: Number, default: options['drag.scrollingEdgeSize']})
     scrollingEdgeSize: number;
 
     mouseIn: boolean = null;
