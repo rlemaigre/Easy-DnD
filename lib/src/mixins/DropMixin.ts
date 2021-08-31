@@ -3,7 +3,6 @@ import DragAwareMixin from "./DragAwareMixin";
 import {createDragImage} from "../ts/createDragImage";
 import {DnDEvent} from "../ts/events";
 import {dnd} from "../ts/DnD";
-import options from './../options'
 
 @Component({})
 export default class DropMixin extends DragAwareMixin {
@@ -16,10 +15,10 @@ export default class DropMixin extends DragAwareMixin {
     @Prop({default: () => true, type: Function})
     acceptsData: { (data: any, type: string): boolean };
 
-    @Prop({default: options['drop.mode']})
+    @Prop({default: 'copy'})
     mode: string;
 
-    @Prop({default: options['drop.dragImageOpacity'], type: Number})
+    @Prop({default: 0.7, type: Number})
     dragImageOpacity: any;
 
     constructor() {

@@ -10,7 +10,6 @@ import {DragImagesManager} from './ts/DragImagesManager';
 import DropList from './components/DropList.vue';
 import {DnDEvent, InsertEvent, ReorderEvent} from './ts/events';
 import {createDragImage} from './ts/createDragImage';
-import { setOptions } from "./options";
 
 export {
     Drag,
@@ -26,10 +25,4 @@ export {
     InsertEvent,
     ReorderEvent,
     createDragImage
-}
-
-export default {
-    install (Vue, options = {}) {
-        setOptions(options);
-    }
 }

@@ -48,7 +48,6 @@ import Grid from "../ts/Grid";
 import {DnDEvent, InsertEvent, ReorderEvent} from "../ts/events";
 import {createDragImage} from "../ts/createDragImage"
 import {dnd} from "../ts/DnD";
-import options from './../options'
 
 @Component({
     components: {DragFeedback},
@@ -68,10 +67,10 @@ export default class DropList extends DropMixin {
     @Prop({default: null, type: Boolean})
     column: boolean;
 
-    @Prop({default: options['components.dropList.noAnimations'], type: Boolean})
+    @Prop({default: false, type: Boolean})
     noAnimations: boolean;
 
-    @Prop ({type: Number, default: options['components.dropList.scrollingEdgeSize']})
+    @Prop ({type: Number, default: undefined})
     scrollingEdgeSize: number;
 
     grid: Grid = null;
