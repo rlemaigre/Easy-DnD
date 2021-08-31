@@ -70,6 +70,9 @@ export default class DropList extends DropMixin {
     @Prop({default: false, type: Boolean})
     noAnimations: boolean;
 
+    @Prop ({type: Number, default: undefined})
+    scrollingEdgeSize: number;
+
     grid: Grid = null;
     forbiddenKeys = [];
     feedbackKey = null;
