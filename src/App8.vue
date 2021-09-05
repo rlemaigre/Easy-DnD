@@ -9,6 +9,7 @@
                         <v-list three-line class="list1">
                             <drop-list
                                 :items="items1"
+                                :scrolling-edge-size="0"
                                 mode="cut"
                                 @reorder="$event.apply(items1)"
                                 @insert="insert1"
@@ -83,53 +84,53 @@
 
               </div>
             </v-container>
-
-            <div id="overlapper">
-              <drop-list
-                  :items="items1"
-                  mode="cut"
-                  @reorder="$event.apply(items1)"
-                  @insert="insert1"
-              >
-                <template v-slot:item="{item, reorder, index}">
-                  <drag :key="`item-${item}`" :data="item" @cut="remove(items1, item)" :delay="500" :vibration="5">
-                    <v-list-item
-                        style="background-color: white; user-select: none"
-                        :style="reorder ? {borderLeft: '2px solid #1976D2', marginLeft:'-2px'} : {}"
-                    >
-                      <v-list-item-avatar>
-                        {{ index }}
-                      </v-list-item-avatar>
-                      <v-list-item-content>
-                        <v-list-item-title v-html="item"/>
-                      </v-list-item-content>
-                    </v-list-item>
-                    <v-divider/>
-                  </drag>
-                </template>
-                <template v-slot:inserting-drag-image="{data}">
-                  <v-list-item-avatar style="transform:translate(-50%, -50%) scale(1.5)">
-                    <img :src="data"/>
-                  </v-list-item-avatar>
-                </template>
-                <template v-slot:reordering-drag-image/>
-                <template v-slot:feedback="{data}">
-                  <v-skeleton-loader
-                      type="list-item-avatar-three-line"
-                      :key="data"
-                      style="border-left: 2px solid #1976D2; margin-left: -2px;"
-                  />
-                </template>
-                <template v-slot:empty>
-                  <v-list-item key="empty">
-                    <v-list-item-content>
-                      No items to display in this list
-                    </v-list-item-content>
-                  </v-list-item>
-                </template>
-              </drop-list>
-            </div>
           </div>
+
+          <drop-list
+              class="overlapper"
+              :items="items1"
+              :scrolling-edge-size="0"
+              mode="cut"
+              @reorder="$event.apply(items1)"
+              @insert="insert1"
+          >
+            <template v-slot:item="{item, reorder, index}">
+              <drag :key="`item-${item}`" :data="item" @cut="remove(items1, item)" :delay="500" :vibration="5" :scrolling-edge-size="100">
+                <v-list-item
+                    style="background-color: white; user-select: none"
+                    :style="reorder ? {borderLeft: '2px solid #1976D2', marginLeft:'-2px'} : {}"
+                >
+                  <v-list-item-avatar>
+                    {{ index }}
+                  </v-list-item-avatar>
+                  <v-list-item-content>
+                    <v-list-item-title v-html="item"/>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-divider/>
+              </drag>
+            </template>
+            <template v-slot:inserting-drag-image="{data}">
+              <v-list-item-avatar style="transform:translate(-50%, -50%) scale(1.5)">
+                <img :src="data"/>
+              </v-list-item-avatar>
+            </template>
+            <template v-slot:reordering-drag-image/>
+            <template v-slot:feedback="{data}">
+              <v-skeleton-loader
+                  type="list-item-avatar-three-line"
+                  :key="data"
+                  style="border-left: 2px solid #1976D2; margin-left: -2px;"
+              />
+            </template>
+            <template v-slot:empty>
+              <v-list-item key="empty">
+                <v-list-item-content>
+                  No items to display in this list
+                </v-list-item-content>
+              </v-list-item>
+            </template>
+          </drop-list>
         </v-content>
     </v-app>
 </template>
@@ -235,7 +236,7 @@
       right: 0;
     }
 
-    #overlapper {
+    .overlapper {
       background-color: lightblue;
       height: 30vh;
       width: 35vw;

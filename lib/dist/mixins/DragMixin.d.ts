@@ -11,6 +11,7 @@ export default class DragMixin extends DragAwareMixin {
     delay: number;
     dragClass: String;
     vibration: number;
+    scrollingEdgeSize: number;
     mouseIn: boolean;
     created(): void;
     reEmit(eventName: string): void;

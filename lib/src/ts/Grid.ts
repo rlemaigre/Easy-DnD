@@ -7,8 +7,8 @@ export default class Grid {
     constructor(collection: HTMLCollection, upToIndex: number, row: string, fromIndex: number) {
         this.reference = collection.item(0).parentNode as HTMLElement;
         this.referenceOriginalPosition = {
-            x: this.reference.getBoundingClientRect().left,
-            y: this.reference.getBoundingClientRect().top,
+            x: this.reference.getBoundingClientRect().left - this.reference.scrollLeft,
+            y: this.reference.getBoundingClientRect().top - this.reference.scrollTop,
         };
         let index = 0;
         for (let child of collection) {
@@ -82,8 +82,8 @@ export default class Grid {
      */
     correction(): { x, y } {
         return {
-            x: this.reference.getBoundingClientRect().left - this.referenceOriginalPosition.x,
-            y: this.reference.getBoundingClientRect().top - this.referenceOriginalPosition.y,
+            x: this.reference.getBoundingClientRect().left  - this.reference.scrollLeft - this.referenceOriginalPosition.x,
+            y: this.reference.getBoundingClientRect().top - this.reference.scrollTop - this.referenceOriginalPosition.y,
         };
     }
 

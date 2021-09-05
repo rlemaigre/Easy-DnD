@@ -24,15 +24,20 @@ export class DnD {
         this.type = type;
         this.data = data;
         this.source = source;
-        this.position = {
-            x,
-            y
-        };
+        this.position = { x, y };
         this.top = null;
         this.sourceListeners = source.$listeners;
         this.inProgress = true;
         this.emit(event, "dragstart");
         this.emit(event, "dragtopchanged", {previousTop: null});
+    }
+
+    private resetVariables () {
+        this.inProgress = false;
+        this.data = null;
+        this.source = null;
+        this.position = null;
+        this.success = null;
     }
 
     public stopDrag(event: MouseEvent | TouchEvent) {
@@ -41,11 +46,13 @@ export class DnD {
             this.emit(event, "drop");
         }
         this.emit(event, "dragend");
-        this.inProgress = false;
-        this.data = null;
-        this.source = null;
-        this.position = null;
-        this.success = null;
+        this.resetVariables();
+    }
+
+    public cancelDrag (event: KeyboardEvent) {
+        this.success = false;
+        this.emit(event, "dragend");
+        this.resetVariables();
     }
 
     public mouseMove(event, comp: Vue) {

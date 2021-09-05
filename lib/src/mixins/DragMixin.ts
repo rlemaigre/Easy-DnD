@@ -40,6 +40,9 @@ export default class DragMixin extends DragAwareMixin {
     @Prop({type: Number, default: 0})
     vibration: number;
 
+    @Prop ({type: Number, default: 100})
+    scrollingEdgeSize: number;
+
     mouseIn: boolean = null;
 
 
@@ -146,6 +149,7 @@ export default class DragMixin extends DragAwareMixin {
                 document.addEventListener('mouseup', onMouseUp);
                 document.addEventListener('touchend', onMouseUp);
                 document.addEventListener('selectstart', noop);
+                document.addEventListener('keyup', onKeyUp)
 
                 // Prevents event from bubbling to ancestor drag components and initiate several drags at the same time
                 e.stopPropagation();
@@ -213,9 +217,20 @@ export default class DragMixin extends DragAwareMixin {
 
             // Dispatch custom easy-dnd-move event :
             if (dragStarted) {
-                // If cursor is at edge of container, perform scroll if available
+                // If cursor/touch is at edge of container, perform scroll if available
                 // If comp.dragTop is defined, it means they are dragging on top of another DropList/EasyDnd component
-                performEdgeScroll(e, comp.dragTop ? scrollparent(comp.dragTop.$el) : scrollContainer, x, y);
+                // if dropTop is a DropList, use the scrollingEdgeSize of that container if it exists, otherwise use the scrollingEdgeSize of the Drag component
+                const currEdgeSize = comp.dragTop && comp.dragTop.$props.scrollingEdgeSize !== undefined ?
+                    comp.dragTop.$props.scrollingEdgeSize :
+                    comp.scrollingEdgeSize;
+
+                if (!!currEdgeSize) {
+                    const currScrollContainer = comp.dragTop ? scrollparent(comp.dragTop.$el) : scrollContainer;
+                    performEdgeScroll(e, currScrollContainer, x, y, currEdgeSize);
+                }
+                else {
+                    cancelScrollAction();
+                }
 
                 let custom = new CustomEvent("easy-dnd-move", {
                     bubbles: true,
@@ -240,33 +255,56 @@ export default class DragMixin extends DragAwareMixin {
         }
 
         function onMouseUp(e: MouseEvent | TouchEvent) {
-            hasPassedDelay = true;
-            clearTimeout(delayTimer);
-            cancelScrollAction()
+            cancelDragActions();
 
             // On touch devices, we ignore fake mouse events and deal with touch events only.
             if (downEvent.type === 'touchstart' && e.type === 'mouseup') return;
-
-            downEvent = null;
-            scrollContainer = null;
 
             // This delay makes sure that when the click event that results from the mouseup is produced, the drag is
             // still in progress. So by checking the flag dnd.inProgress, one can tell apart true clicks from drag and
             // drop artefacts.
             setTimeout(() => {
                 if (dragStarted) {
-                    document.documentElement.classList.remove('drag-in-progress');
                     dnd.stopDrag(e);
                 }
-                document.removeEventListener('click', onMouseClick, true);
-                document.removeEventListener('mousemove', onMouseMove);
-                document.removeEventListener('touchmove', onMouseMove);
-                document.removeEventListener('easy-dnd-move', onEasyDnDMove);
-                document.removeEventListener('mouseup', onMouseUp);
-                document.removeEventListener('touchend', onMouseUp);
-                document.removeEventListener('selectstart', noop);
-                document.documentElement.style.userSelect = initialUserSelect;
+                finishDrag();
             }, 0);
+        }
+
+        function onKeyUp (e: KeyboardEvent) {
+            // If ESC is pressed, cancel the drag
+            if (e.key === 'Escape') {
+                cancelDragActions();
+
+                setTimeout(() => {
+                    dnd.cancelDrag(e);
+                    finishDrag();
+                }, 0);
+            }
+        }
+
+        function cancelDragActions () {
+            hasPassedDelay = true;
+            clearTimeout(delayTimer);
+            cancelScrollAction();
+        }
+
+        function finishDrag () {
+            downEvent = null;
+            scrollContainer = null;
+
+            if (dragStarted) {
+                document.documentElement.classList.remove('drag-in-progress');
+            }
+            document.removeEventListener('click', onMouseClick, true);
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('touchmove', onMouseMove);
+            document.removeEventListener('easy-dnd-move', onEasyDnDMove);
+            document.removeEventListener('mouseup', onMouseUp);
+            document.removeEventListener('touchend', onMouseUp);
+            document.removeEventListener('selectstart', noop);
+            document.removeEventListener('keyup', onKeyUp);
+            document.documentElement.style.userSelect = initialUserSelect;
         }
     }
 

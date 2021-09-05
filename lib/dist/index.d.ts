@@ -11,3 +11,7 @@ import DropList from './components/DropList.vue';
 import { DnDEvent, InsertEvent, ReorderEvent } from './ts/events';
 import { createDragImage } from './ts/createDragImage';
 export { Drag, Drop, DropList, DropMask, DragAwareMixin, DragMixin, DropMixin, DragImagesManager, dnd, DnDEvent, InsertEvent, ReorderEvent, createDragImage };
+declare const _default: {
+    install(Vue: any, options?: {}): void;
+};
+export default _default;
