@@ -184,6 +184,7 @@ Event Name | Description
 `@dragenter` | Triggered when the mouse enters a Drop component
 `@dragleave` | Triggered when the mouse leaves a Drop component
 `@dragover` | Triggered when the mouse moves over a Drop component
+`@dragend` | Triggered when a drag event is finished while a Drag element is hovered over this Drop component. (Including if ESC is pressed while a Drag element was over the top of this Drop component)
 `@drop` | Triggered when a drop operation completes on a Drop component
 
 ### Props
@@ -274,7 +275,7 @@ Prop Name | Type / Default | Description
 `row` | Boolean (`null`) | Defining the direction of the DropList as horizontally-flowing. (Necessary for Nested DropLists) (Refer to **Nested Droplists** section below)
 `column` | Boolean (`null`) | Defining the direction of the DropList as vertically-flowing. (Necessary for Nested DropLists) (Refer to **Nested Droplists** section below)
 `no-animations` | Boolean (`false`) | Disable animations on the DropList (necessary if the tag is a custom Vue component)
-`scrolling-edge-size` | Number (`undefined`px) | When dragging this element to the edge of this DropList, the pixel amount defines how close to the edge of the DropList it will automatically scroll up/down/left/right (`0` = no scrolling on this DropList). `Undefined` default value means that this DropList will use whatever `scrolling-edge-size` is defined on the Drag component.
+`scrolling-edge-size` | Number (`undefined`px) | When dragging a Drag component to the edge of this DropList, the pixel amount defines how close to the edge of the DropList a scroll will be triggered up/down/left/right (`0` = no scrolling on this DropList). `Undefined` default value means that this DropList will use whatever `scrolling-edge-size` is defined on the Drag component.
 
 ### Slots
 Slot Name | Description

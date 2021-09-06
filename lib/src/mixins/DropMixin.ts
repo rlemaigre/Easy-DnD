@@ -45,12 +45,14 @@ export default class DropMixin extends DragAwareMixin {
         dnd.on("dragpositionchanged", this.onDragPositionChanged);
         dnd.on("dragtopchanged", this.onDragTopChanged);
         dnd.on("drop", this.onDrop);
+        dnd.on("dragend", this.onDragEnd);
     }
 
     destroyed() {
         dnd.off("dragpositionchanged", this.onDragPositionChanged);
         dnd.off("dragtopchanged", this.onDragTopChanged);
         dnd.off("drop", this.onDrop);
+        dnd.off("dragend", this.onDragEnd);
     }
 
     onDragPositionChanged(event: DnDEvent) {
@@ -65,6 +67,12 @@ export default class DropMixin extends DragAwareMixin {
         }
         if (this === event.previousTop) {
             this.$emit("dragleave", event);
+        }
+    }
+
+    onDragEnd (event: DnDEvent) {
+        if (this === event.top) {
+            this.$emit('dragend', event);
         }
     }
 
