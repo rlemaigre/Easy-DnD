@@ -137,8 +137,6 @@ A drag operation **may** have a type. The type is a data structure (can be a sim
 
 A Drop component is said to participate in a drag operation if it accepts its type (the default is to accept any type). The type(s) a Drop component accepts can be defined by mean of the `accepts-type` prop (can be a string, an array of strings or a function that takes the type as parameter and returns a boolean).
 
-As far as Easy-DnD is concerned, if a Drop component doesn't accept the type of the current drag operation, it behaves like any other part of the page that is not sensitive to drag and drop. It is ignored during the drag, no special CSS classes are applied, no special cursors / drag images are displayed and no special events are triggered.
-
 The following demo illustrates the use of types. There are two types in use : 'string' and 'number'. The Drag components that contain '1' and '2' are of type 'number', the ones containing 'a' and 'b' are of type 'string'. The two Drop components on the left accept numbers, the ones on the right accept strings. When you drag a number/string (respectively), only Drop components that accept numbers/strings (respectively) react (i.e. drag images, CSS classes, cursors are applied). The other ones are left alone.
 
 https://codesandbox.io/s/example-3-g7io8
@@ -184,6 +182,7 @@ Event Name | Description
 `@dragenter` | Triggered when the mouse enters a Drop component
 `@dragleave` | Triggered when the mouse leaves a Drop component
 `@dragover` | Triggered when the mouse moves over a Drop component
+`@dragend` | Triggered when a drag event is finished while a Drag element is hovered over this Drop component. (Including if ESC is pressed while a Drag element was over the top of this Drop component)
 `@drop` | Triggered when a drop operation completes on a Drop component
 
 ### Props
@@ -274,7 +273,7 @@ Prop Name | Type / Default | Description
 `row` | Boolean (`null`) | Defining the direction of the DropList as horizontally-flowing. (Necessary for Nested DropLists) (Refer to **Nested Droplists** section below)
 `column` | Boolean (`null`) | Defining the direction of the DropList as vertically-flowing. (Necessary for Nested DropLists) (Refer to **Nested Droplists** section below)
 `no-animations` | Boolean (`false`) | Disable animations on the DropList (necessary if the tag is a custom Vue component)
-`scrolling-edge-size` | Number (`undefined`px) | When dragging this element to the edge of this DropList, the pixel amount defines how close to the edge of the DropList it will automatically scroll up/down/left/right (`0` = no scrolling on this DropList). `Undefined` default value means that this DropList will use whatever `scrolling-edge-size` is defined on the Drag component.
+`scrolling-edge-size` | Number (`undefined`px) | When dragging a Drag component to the edge of this DropList, the pixel amount defines how close to the edge of the DropList a scroll will be triggered up/down/left/right (`0` = no scrolling on this DropList). `Undefined` default value means that this DropList will use whatever `scrolling-edge-size` is defined on the Drag component.
 
 ### Slots
 Slot Name | Description

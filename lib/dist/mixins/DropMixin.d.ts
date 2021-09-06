@@ -18,6 +18,7 @@ export default class DropMixin extends DragAwareMixin {
     destroyed(): void;
     onDragPositionChanged(event: DnDEvent): void;
     onDragTopChanged(event: DnDEvent): void;
+    onDragEnd(event: DnDEvent): void;
     onDrop(event: DnDEvent): void;
     doDrop(event: DnDEvent): void;
     mounted(): void;
