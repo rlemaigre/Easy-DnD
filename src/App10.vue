@@ -7,18 +7,24 @@
             <drop-list
                 :items="items"
                 class="list"
+                mode="cut"
                 @reorder="$event.apply(items)"
             >
               <template v-slot:item="{ item }">
-                <drag class="item" :data="item" :key="item.name">
+                <drag class="item" :data="item" :key="item.name" @cut="onCut">
                   {{ item.name }}
                 </drag>
               </template>
             </drop-list>
           </v-col>
           <v-col>
-            <drop class="dropper" @dragenter="(e) => onDragEnter('active', e)" @dragleave="(e) => onDragLeave('active', e)" @dragend="(e) => onDragEnd('active', e)" :class="{'hovering': active}" />
-            <drop class="dropper" @dragenter="(e) => onDragEnter('active2', e)" @dragleave="(e) => onDragLeave('active2', e)" @dragend="(e) => onDragEnd('active2', e)" :class="{'hovering': active2}" />
+            <drop :class="{'hovering': active}" class="dropper"
+                  @dragend="(e) => onDragEnd('active', e)" @dragenter="(e) => onDragEnter('active', e)"
+                  @drop="onDrop"
+                  @dragleave="(e) => onDragLeave('active', e)"/>
+            <drop :class="{'hovering': active2}" class="dropper"
+                  @dragend="(e) => onDragEnd('active2', e)" @dragenter="(e) => onDragEnter('active2', e)"
+                  @dragleave="(e) => onDragLeave('active2', e)"/>
           </v-col>
         </v-row>
       </v-container>
@@ -115,6 +121,12 @@ export default {
       console.log('Called drag leave', variable, e);
       this[variable] = false
       clearInterval(this.timer)
+    },
+    onDrop (e) {
+      console.log('DROP', e)
+    },
+    onCut (e) {
+      console.log('CUT', e)
     }
   }
 };
@@ -186,7 +198,7 @@ body,
   }
 
   &:before {
-    content: 'Hover here (check console). Pressing ESC will call event dragleave';
+    content: 'Hover here (check console). Pressing ESC will call event dragend';
     color: #fff;
     padding: 8px;
   }

@@ -138,25 +138,16 @@ export default class DropMixin extends DragAwareMixin {
             'dnd-drop': true
         } as any;
         if (this.dropIn !== null) {
-            clazz = {
-                ...clazz,
-                "drop-in": this.dropIn,
-                "drop-out": !this.dropIn
-            };
+            clazz['drop-in'] = this.dropIn
+            clazz['drop-out'] = !this.dropIn
         }
         if (this.typeAllowed !== null) {
-            clazz = {
-                ...clazz,
-                "type-allowed": this.typeAllowed,
-                "type-forbidden": !this.typeAllowed
-            };
+            clazz['type-allowed'] = this.typeAllowed
+            clazz['type-forbidden'] = !this.typeAllowed
         }
         if (this.dropAllowed !== null) {
-            clazz = {
-                ...clazz,
-                "drop-allowed": this.dropAllowed,
-                "drop-forbidden": !this.dropAllowed
-            };
+            clazz['drop-allowed'] = this.dropAllowed
+            clazz['drop-forbidden'] = !this.dropAllowed
         }
         return clazz;
     }
