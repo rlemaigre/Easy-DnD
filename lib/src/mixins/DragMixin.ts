@@ -255,8 +255,6 @@ export default class DragMixin extends DragAwareMixin {
         }
 
         function onMouseUp(e: MouseEvent | TouchEvent) {
-            cancelDragActions();
-
             // On touch devices, we ignore fake mouse events and deal with touch events only.
             if (downEvent.type === 'touchstart' && e.type === 'mouseup') return;
 
@@ -264,6 +262,8 @@ export default class DragMixin extends DragAwareMixin {
             // still in progress. So by checking the flag dnd.inProgress, one can tell apart true clicks from drag and
             // drop artefacts.
             setTimeout(() => {
+                cancelDragActions();
+
                 if (dragStarted) {
                     dnd.stopDrag(e);
                 }
