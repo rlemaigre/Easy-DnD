@@ -328,9 +328,7 @@ export default class DragMixin extends DragAwareMixin {
                 'drag-no-handle': !this.handle
             };
         } else {
-            return {
-                ...clazz
-            };
+            return clazz;
         }
     }
 
