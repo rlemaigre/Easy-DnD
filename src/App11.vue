@@ -15,7 +15,7 @@
                                 @insert="insert1"
                             >
                                 <template v-slot:item="{item, reorder, index}">
-                                    <drag :key="`item-${item}`" :data="item" @cut="remove(items1, item)">
+                                    <drag :key="`item-${item}`" :data="item" @cut="remove(items1, item)" :delay="500" :vibration="50">
                                         <v-list-item
                                             style="background-color: white; user-select: none"
                                             :style="reorder ? {borderLeft: '2px solid #1976D2', marginLeft:'-2px'} : {}"

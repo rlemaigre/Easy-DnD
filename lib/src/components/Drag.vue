@@ -5,7 +5,7 @@
         <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
             <slot :name="slot" v-bind="scope"/>
         </template>
-        <div class="__drag-image" ref="drag-image">
+        <div v-if="dragInitialised" class="__drag-image" ref="drag-image">
             <slot name="drag-image"></slot>
         </div>
     </component>
