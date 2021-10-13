@@ -42,8 +42,6 @@ export default class DragMixin extends DragAwareMixin {
     scrollingEdgeSize: number;
 
     dragInitialised: boolean = false;
-    mouseIn: boolean = null;
-
 
     created() {
         this.reEmit("dragstart");
@@ -71,16 +69,6 @@ export default class DragMixin extends DragAwareMixin {
 
         el.addEventListener('mousedown', onMouseDown);
         el.addEventListener('touchstart', onMouseDown);
-        el.addEventListener('mouseenter', onMouseEnter);
-        el.addEventListener('mouseleave', onMouseLeave);
-
-        function onMouseEnter() {
-            comp.mouseIn = true;
-        }
-
-        function onMouseLeave() {
-            comp.mouseIn = false;
-        }
 
         function noop(e) {
             e.stopPropagation();
@@ -310,10 +298,6 @@ export default class DragMixin extends DragAwareMixin {
         }
     }
 
-    get dragIn() {
-        return !this.dragInProgress && this.mouseIn;
-    }
-
     get cssClasses() {
         let clazz = {
             'dnd-drag': true
@@ -322,8 +306,6 @@ export default class DragMixin extends DragAwareMixin {
             return {
                 ...clazz,
                 'drag-source': this.dragInProgress && this.dragSource === this,
-                'drag-in': this.dragIn,
-                'drag-out': !this.dragIn,
                 'drag-mode-copy': this.currentDropMode === 'copy',
                 'drag-mode-cut': this.currentDropMode === 'cut',
                 'drag-mode-reordering': this.currentDropMode === 'reordering',
