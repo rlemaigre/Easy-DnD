@@ -1,33 +1,29 @@
 <template>
     <v-app>
         <v-content>
-          <div id="scroller">
+          <div>
+            Testing slots as custom component
             <v-container fluid>
                 <v-row align-content="stretch">
                     <v-col>
-                      Hold down on items for 500ms before they will be draggable. Short tap vibration will happen on mobile
                         <v-list three-line class="list1">
                             <drop-list
                                 :items="items1"
-                                mode="cut"
                                 no-animations
                                 @reorder="$event.apply(items1)"
                                 @insert="insert1"
                             >
                                 <template v-slot:item="{item, reorder, index}">
-                                    <drag :key="`item-${item}`" :data="item" @cut="remove(items1, item)" :delay="500" :vibration="50">
-                                        <v-list-item
-                                            style="background-color: white; user-select: none"
-                                            :style="reorder ? {borderLeft: '2px solid #1976D2', marginLeft:'-2px'} : {}"
-                                        >
-                                            <v-list-item-avatar>
-                                              {{ index }}
-                                            </v-list-item-avatar>
-                                            <v-list-item-content>
-                                                <v-list-item-title v-html="item"/>
-                                            </v-list-item-content>
-                                        </v-list-item>
-                                        <v-divider/>
+                                    <drag :tag="App12Item" :key="`item-${item}`" :data="item" @cut="remove(items1, item)" :vibration="50">
+                                      <template v-slot:left>
+                                        {{ item }} Left
+                                      </template>
+                                      <template v-slot:center>
+                                        {{ item }} Center
+                                      </template>
+                                      <template v-slot:right>
+                                        {{ item }} Right
+                                      </template>
                                     </drag>
                                 </template>
                                 <template v-slot:inserting-drag-image="{data}">
@@ -65,33 +61,30 @@
     import Drop from "../lib/src/components/Drop.vue";
     import DropList from "../lib/src/components/DropList.vue";
     import "../lib/src/ts/DragImagesManager.ts";
+    import App12Item from "@/components/App12Item";
 
     export default {
         name: "App",
         components: {
             Drag,
             DropList,
-            Drop
+            Drop,
         },
         data: function () {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
             const arr = []
             for (const index in chars) {
-              arr.push(`${chars[index]}-${index}`)
-              arr.push(`2x${chars[index]}-${index}`)
+              arr.push(`${chars[index]}`)
             }
 
             return {
-                items1: arr,
-                items2: []
+                App12Item,
+                items1: arr
             };
         },
         methods: {
             insert1(event) {
                 this.items1.splice(event.index, 0, event.data);
-            },
-            insert2(event) {
-                this.items2.splice(event.index, 0, event.data);
             },
             remove(array, value) {
                 let index = array.indexOf(value);

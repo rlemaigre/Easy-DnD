@@ -23,6 +23,11 @@ export class DragImagesManager extends Vue {
     }
 
     onDragStart(event) {
+        // If go-back=true and it is still animating while they attempt another drag,
+        //      it will bug out. Best to clean up any existing elements on the page before
+        //      attempting to start the next animation
+        this.cleanUp();
+
         this.sourcePos = {
             x: event.source.$el.getBoundingClientRect().left,
             y: event.source.$el.getBoundingClientRect().top
@@ -108,7 +113,7 @@ export class DragImagesManager extends Vue {
         }
 
         if (activeClone !== null) {
-            activeClone.offsetWidth; // Forces broswer reflow
+            activeClone.offsetWidth; // Forces browser reflow
             activeClone.style.opacity = activeClone['__opacity'];
             activeClone.style.visibility = 'visible';
         }

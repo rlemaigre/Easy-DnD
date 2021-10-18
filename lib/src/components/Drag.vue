@@ -5,7 +5,7 @@
         <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
             <slot :name="slot" v-bind="scope"/>
         </template>
-        <div class="__drag-image" ref="drag-image">
+        <div v-if="dragInitialised" class="__drag-image" ref="drag-image">
             <slot name="drag-image"></slot>
         </div>
     </component>
@@ -38,7 +38,8 @@ export default class Drag extends DragMixin {
   }
 }
 
-.drag-no-handle.drag-in {
+.drag-no-handle:hover,
+.drag-no-handle:hover * {
   cursor: move;
   cursor: grab;
 }

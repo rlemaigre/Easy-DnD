@@ -8,8 +8,6 @@ import {cancelScrollAction, performEdgeScroll} from './../js/edgescroller'
 @Component({})
 export default class DragMixin extends DragAwareMixin {
 
-    isDrag = true;
-
     @Prop({default: null, type: null})
     type: string;
 
@@ -43,8 +41,7 @@ export default class DragMixin extends DragAwareMixin {
     @Prop ({type: Number, default: 100})
     scrollingEdgeSize: number;
 
-    mouseIn: boolean = null;
-
+    dragInitialised: boolean = false;
 
     created() {
         this.reEmit("dragstart");
@@ -69,20 +66,9 @@ export default class DragMixin extends DragAwareMixin {
         let startPosition = null;
         let delayTimer = null;
         let scrollContainer = null;
-        let hasPassedDelay = true;
 
         el.addEventListener('mousedown', onMouseDown);
         el.addEventListener('touchstart', onMouseDown);
-        el.addEventListener('mouseenter', onMouseEnter);
-        el.addEventListener('mouseleave', onMouseLeave);
-
-        function onMouseEnter() {
-            comp.mouseIn = true;
-        }
-
-        function onMouseLeave() {
-            comp.mouseIn = false;
-        }
 
         function noop(e) {
             e.stopPropagation();
@@ -131,25 +117,29 @@ export default class DragMixin extends DragAwareMixin {
                 }
 
                 if (!!comp.delay) {
-                    hasPassedDelay = false;
+                    comp.dragInitialised = false;
                     clearTimeout(delayTimer);
                     delayTimer = setTimeout(() => {
-                        hasPassedDelay = true;
+                        comp.dragInitialised = true;
                         performVibration();
                     }, comp.delay);
                 }
                 else {
+                    comp.dragInitialised = true;
                     performVibration();
                 }
 
                 document.addEventListener('click', onMouseClick, true);
-                document.addEventListener('mousemove', onMouseMove);
-                document.addEventListener('touchmove', onMouseMove, {passive: false});
-                document.addEventListener('easy-dnd-move', onEasyDnDMove);
                 document.addEventListener('mouseup', onMouseUp);
                 document.addEventListener('touchend', onMouseUp);
                 document.addEventListener('selectstart', noop);
-                document.addEventListener('keyup', onKeyUp)
+                document.addEventListener('keyup', onKeyUp);
+
+                setTimeout(() => {
+                    document.addEventListener('mousemove', onMouseMove);
+                    document.addEventListener('touchmove', onMouseMove, {passive: false});
+                    document.addEventListener('easy-dnd-move', onEasyDnDMove);
+                }, 0)
 
                 // Prevents event from bubbling to ancestor drag components and initiate several drags at the same time
                 e.stopPropagation();
@@ -204,7 +194,7 @@ export default class DragMixin extends DragAwareMixin {
             if (!dragStarted && dist > comp.delta) {
                 // If they have dragged greater than the delta before the delay period has ended,
                 // It means that they attempted to perform another action (such as scrolling) on the page
-                if (!hasPassedDelay) {
+                if (!comp.dragInitialised) {
                     clearTimeout(delayTimer);
                 }
                 else {
@@ -245,7 +235,7 @@ export default class DragMixin extends DragAwareMixin {
             }
 
             // Prevent scroll on touch devices if they were performing a drag
-            if (hasPassedDelay && e.cancelable) {
+            if (comp.dragInitialised && e.cancelable) {
                 e.preventDefault();
             }
         }
@@ -284,7 +274,7 @@ export default class DragMixin extends DragAwareMixin {
         }
 
         function cancelDragActions () {
-            hasPassedDelay = true;
+            comp.dragInitialised = false;
             clearTimeout(delayTimer);
             cancelScrollAction();
         }
@@ -308,10 +298,6 @@ export default class DragMixin extends DragAwareMixin {
         }
     }
 
-    get dragIn() {
-        return !this.dragInProgress && this.mouseIn;
-    }
-
     get cssClasses() {
         let clazz = {
             'dnd-drag': true
@@ -320,8 +306,6 @@ export default class DragMixin extends DragAwareMixin {
             return {
                 ...clazz,
                 'drag-source': this.dragInProgress && this.dragSource === this,
-                'drag-in': this.dragIn,
-                'drag-out': !this.dragIn,
                 'drag-mode-copy': this.currentDropMode === 'copy',
                 'drag-mode-cut': this.currentDropMode === 'cut',
                 'drag-mode-reordering': this.currentDropMode === 'reordering',

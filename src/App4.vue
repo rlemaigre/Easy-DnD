@@ -4,7 +4,7 @@
             <v-container fluid>
                 <v-row align-content="stretch">
                     <v-col>
-                        <drag :data="selected">
+                        <drag :data="selected" go-back :vibration="10">
                             <v-data-table
                                     v-model="selected"
                                     :headers="headers"
