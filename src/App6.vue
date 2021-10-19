@@ -12,7 +12,7 @@
                                     @insert="insert1"
                             >
                                 <template v-slot:item="{item, reorder, index}">
-                                    <drag :key="item.title" :data="item" @cut="remove(items1, item)" handle=".handle" drag-class="my-dragging-class">
+                                    <drag :key="item.title" :data="item" @cut="remove(items1, item)" drag-class="my-dragging-class">
                                         <v-list-item
                                                 style="background-color: white; user-select: none"
                                                 :style="reorder ? {borderLeft: '2px solid #1976D2', marginLeft:'-2px'} : {}"
@@ -21,7 +21,7 @@
                                             <v-list-item-avatar class="handle">
                                                 <v-img :src="item.avatar"/>
                                             </v-list-item-avatar>
-                                            <v-list-item-content>
+                                            <v-list-item-content class="dnd-no-drag">
                                                 <v-list-item-title v-html="item.title"/>
                                                 <v-list-item-subtitle v-html="item.subtitle"/>
                                             </v-list-item-content>

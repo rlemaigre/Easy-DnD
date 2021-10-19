@@ -15,7 +15,7 @@ export default class DropMixin extends DragAwareMixin {
     effectiveAcceptsType(type: string): boolean;
     effectiveAcceptsData(data: any, type: any): boolean;
     created(): void;
-    destroyed(): void;
+    beforeDestroy(): void;
     onDragPositionChanged(event: DnDEvent): void;
     onDragTopChanged(event: DnDEvent): void;
     onDragEnd(event: DnDEvent): void;
