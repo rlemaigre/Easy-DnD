@@ -117,7 +117,7 @@ export default class DropList extends DropMixin {
         return 'auto';
     }
 
-    destroyed() {
+    beforeDestroy() {
         dnd.off("dragstart", this.onDragStart);
         dnd.off("dragend", this.onDragEnd);
     }

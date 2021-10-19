@@ -48,7 +48,7 @@ export default class DropMixin extends DragAwareMixin {
         dnd.on("dragend", this.onDragEnd);
     }
 
-    destroyed() {
+    beforeDestroy() {
         dnd.off("dragpositionchanged", this.onDragPositionChanged);
         dnd.off("dragtopchanged", this.onDragTopChanged);
         dnd.off("drop", this.onDrop);
