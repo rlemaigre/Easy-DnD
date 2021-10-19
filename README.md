@@ -130,6 +130,7 @@ Depending on the mode of the Drop component currently under the mouse cursor, th
 
 If a drag is in progress, `dnd-ghost` will be bound to the ghost. The Drag component can also optionally accept an additional class (`drag-class` prop) to bind to the ghost. When using a DropList, the `dnd-ghost` class and `drag-class` prop will both **NOT** be bound if the `drag-image` slot is defined.
 
+To prevent dragging your Draggable component from a child element, you may attach the class `dnd-no-drag` to the child. That way the entire element remains draggable, whereas specific sub-children can have dragging from themselves disabled.
 
 ### Types
 

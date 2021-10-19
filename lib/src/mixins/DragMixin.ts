@@ -57,20 +57,7 @@ export default class DragMixin extends DragAwareMixin {
 
     scrollContainer = null;
 
-    created() {
-        this.reEmit("dragstart");
-        this.reEmit("dragend");
-    }
-
-    reEmit(eventName: string) {
-        dnd.on(eventName, (ev) => {
-            if (ev.source === this) {
-                this.$emit(eventName, ev);
-            }
-        });
-    }
-
-    noop (e) {
+    onSelectStart (e) {
         e.stopPropagation();
         e.preventDefault();
     }
@@ -94,58 +81,74 @@ export default class DragMixin extends DragAwareMixin {
             target = touch.touches[0].target as HTMLElement;
             goodButton = true;
         }
-        let goodTarget = !this.handle || target.matches(this.handle + ', ' + this.handle + ' *');
-        if (!this.disabled && this.downEvent === null && goodButton && goodTarget) {
-            this.scrollContainer = scrollparent(target);
-            this.initialUserSelect = document.body.style.userSelect;
-            document.documentElement.style.userSelect = 'none'; // Permet au drag de se poursuivre normalement même
-            // quand on quitte un élémént avec overflow: hidden.
-            this.dragStarted = false;
-            this.downEvent = e;
-            if (this.downEvent.type === 'mousedown') {
-                const mouse = event as MouseEvent;
-                this.startPosition = {
-                    x: mouse.clientX,
-                    y: mouse.clientY
-                };
-            } else {
-                const touch = event as TouchEvent;
-                this.startPosition = {
-                    x: touch.touches[0].clientX,
-                    y: touch.touches[0].clientY
-                };
-            }
 
-            if (!!this.delay) {
-                this.dragInitialised = false;
-                clearTimeout(this.delayTimer);
-                this.delayTimer = setTimeout(() => {
-                    this.dragInitialised = true;
-                    this.performVibration();
-                }, this.delay);
-            }
-            else {
+        if (this.disabled || this.downEvent !== null || !goodButton) {
+            return;
+        }
+
+        // Check that the target element is eligible for starting a drag
+        // Includes checking against the handle selector
+        //   or whether the element contains 'dnd-no-drag' class (which should disable dragging from that
+        //   sub-element of a draggable parent)
+        const goodTarget = !target.matches('.dnd-no-drag, .dnd-no-drag *') &&
+            (
+                !this.handle ||
+                target.matches(this.handle + ', ' + this.handle + ' *')
+            );
+
+        if (!goodTarget) {
+            return;
+        }
+
+        this.scrollContainer = scrollparent(target);
+        this.initialUserSelect = document.body.style.userSelect;
+        document.documentElement.style.userSelect = 'none'; // Permet au drag de se poursuivre normalement même
+        // quand on quitte un élémént avec overflow: hidden.
+        this.dragStarted = false;
+        this.downEvent = e;
+        if (this.downEvent.type === 'mousedown') {
+            const mouse = event as MouseEvent;
+            this.startPosition = {
+                x: mouse.clientX,
+                y: mouse.clientY
+            };
+        } else {
+            const touch = event as TouchEvent;
+            this.startPosition = {
+                x: touch.touches[0].clientX,
+                y: touch.touches[0].clientY
+            };
+        }
+
+        if (!!this.delay) {
+            this.dragInitialised = false;
+            clearTimeout(this.delayTimer);
+            this.delayTimer = setTimeout(() => {
                 this.dragInitialised = true;
                 this.performVibration();
-            }
-
-            document.addEventListener('click', this.onMouseClick, true);
-            document.addEventListener('mouseup', this.onMouseUp);
-            document.addEventListener('touchend', this.onMouseUp);
-            document.addEventListener('selectstart', this.noop);
-            document.addEventListener('keyup', this.onKeyUp);
-
-            setTimeout(() => {
-                document.addEventListener('mousemove', this.onMouseMove);
-                document.addEventListener('touchmove', this.onMouseMove, {passive: false});
-                document.addEventListener('easy-dnd-move', this.onEasyDnDMove);
-            }, 0)
-
-            // Prevents event from bubbling to ancestor drag components and initiate several drags at the same time
-            e.stopPropagation();
-            // Prevents touchstart event to be converted to mousedown
-            //e.preventDefault();
+            }, this.delay);
         }
+        else {
+            this.dragInitialised = true;
+            this.performVibration();
+        }
+
+        document.addEventListener('click', this.onMouseClick, true);
+        document.addEventListener('mouseup', this.onMouseUp);
+        document.addEventListener('touchend', this.onMouseUp);
+        document.addEventListener('selectstart', this.onSelectStart);
+        document.addEventListener('keyup', this.onKeyUp);
+
+        setTimeout(() => {
+            document.addEventListener('mousemove', this.onMouseMove);
+            document.addEventListener('touchmove', this.onMouseMove, {passive: false});
+            document.addEventListener('easy-dnd-move', this.onEasyDnDMove);
+        }, 0)
+
+        // Prevents event from bubbling to ancestor drag components and initiate several drags at the same time
+        e.stopPropagation();
+        // Prevents touchstart event to be converted to mousedown
+        //e.preventDefault();
     }
 
     // Prevent the user from accidentally causing a click event
@@ -292,9 +295,26 @@ export default class DragMixin extends DragAwareMixin {
         document.removeEventListener('easy-dnd-move', this.onEasyDnDMove);
         document.removeEventListener('mouseup', this.onMouseUp);
         document.removeEventListener('touchend', this.onMouseUp);
-        document.removeEventListener('selectstart', this.noop);
+        document.removeEventListener('selectstart', this.onSelectStart);
         document.removeEventListener('keyup', this.onKeyUp);
         document.documentElement.style.userSelect = this.initialUserSelect;
+    }
+
+    dndDragStart (ev) {
+        if (ev.source === this) {
+            this.$emit('dragstart', ev);
+        }
+    }
+
+    dndDragEnd (ev) {
+        if (ev.source === this) {
+            this.$emit('dragend', ev);
+        }
+    }
+
+    created() {
+        dnd.on('dragstart', this.dndDragStart);
+        dnd.on('dragend', this.dndDragEnd);
     }
 
     mounted () {
@@ -303,6 +323,9 @@ export default class DragMixin extends DragAwareMixin {
     }
 
     beforeDestroy() {
+        dnd.off('dragstart', this.dndDragStart);
+        dnd.off('dragend', this.dndDragEnd);
+
         this.$el.removeEventListener('mousedown', this.onMouseDown);
         this.$el.removeEventListener('touchstart', this.onMouseDown);
     }
@@ -344,7 +367,7 @@ export default class DragMixin extends DragAwareMixin {
     createDragImage(selfTransform: string) {
         let image;
         if (this.$scopedSlots['drag-image']) {
-            let el = this.$refs['drag-image'] as HTMLElement;
+            let el = this.$refs['drag-image'] as HTMLElement || document.createElement('div');
             if (el.childElementCount !== 1) {
                 image = createDragImage(el);
             } else {

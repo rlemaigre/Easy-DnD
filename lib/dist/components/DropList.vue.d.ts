@@ -24,7 +24,7 @@ export default class DropList extends DropMixin {
     get rootListeners(): Record<string, Function | Function[]>;
     created(): void;
     get direction(): "row" | "column" | "auto";
-    destroyed(): void;
+    beforeDestroy(): void;
     refresh(): void;
     onDragStart(event: DnDEvent): void;
     onDragEnd(): void;

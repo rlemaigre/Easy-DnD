@@ -31,7 +31,6 @@
                                         <img :src="data"/>
                                     </v-list-item-avatar>
                                 </template>
-                                <template v-slot:reordering-drag-image/>
                                 <template v-slot:feedback="{data}">
                                     <v-skeleton-loader
                                         type="list-item-avatar-three-line"
