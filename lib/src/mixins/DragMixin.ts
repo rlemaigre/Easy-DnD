@@ -147,8 +147,6 @@ export default class DragMixin extends DragAwareMixin {
 
         // Prevents event from bubbling to ancestor drag components and initiate several drags at the same time
         e.stopPropagation();
-        // Prevents touchstart event to be converted to mousedown
-        e.preventDefault();
     }
 
     // Prevent the user from accidentally causing a click event

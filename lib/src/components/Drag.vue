@@ -38,9 +38,11 @@ export default class Drag extends DragMixin {
   }
 }
 
-.drag-no-handle:hover {
-  cursor: move;
-  cursor: grab;
+.drag-no-handle {
+  &:hover {
+    cursor: move;
+    cursor: grab;
+  }
 }
 </style>
 
