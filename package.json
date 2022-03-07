@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "rollup --config ./lib/rollup.config.js --environment BUILD:production"
+    "build": "rollup --config ./lib/rollup.config.js --environment BUILD:production",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
@@ -20,10 +22,16 @@
     "vuetify": "^2.1.13"
   },
   "devDependencies": {
+    "@babel/core": "^7.17.5",
     "@babel/preset-env": "^7.11.5",
+    "@storybook/addon-actions": "^6.4.19",
+    "@storybook/addon-essentials": "^6.4.19",
+    "@storybook/addon-links": "^6.4.19",
+    "@storybook/vue": "^6.4.19",
     "@vue/cli-plugin-babel": "^4.2.3",
     "@vue/cli-plugin-typescript": "^4.2.3",
     "@vue/cli-service": "^4.2.3",
+    "babel-loader": "^8.2.3",
     "reflect-metadata": "^0.1.13",
     "rollup": "^1.20.3",
     "rollup-plugin-buble": "^0.19.8",
