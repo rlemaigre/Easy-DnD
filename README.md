@@ -21,7 +21,7 @@ yarn add vue-easy-dnd
 
 ## Does it support IE 11 ?
 
-Yes with a polyfill for custom events such as https://www.npmjs.com/package/custom-event-polyfill
+Vue3 does not support IE. The Vue2 branch DOES support IE 11 using https://www.npmjs.com/package/custom-event-polyfill
 
 ## Does it support touch devices ?
 
@@ -313,13 +313,13 @@ https://codesandbox.io/s/nested-drop-lists-nw605
 
 These demos are meant to be pretty and reflect real life examples.
 
-The following demo features list reordering, drag and drop between two lists, custom drag images and custom feedback when inserting new items. It uses Vuetify components.
+The following demo features list reordering, drag and drop between two lists, custom drag images and custom feedback when inserting new items.
 
 https://codesandbox.io/s/easy-dnd-demo-9mbij
 
 ![demo](img/vid7.gif)
 
-The following demo features drag and drop between a table and a list, custom drag images and a custom style for drop areas when the drop is allowed. It uses Vuetify components.
+The following demo features drag and drop between a table and a list, custom drag images and a custom style for drop areas when the drop is allowed.
 
 https://codesandbox.io/s/easy-dnd-demo-2-xnqbz
 

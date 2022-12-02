@@ -21,7 +21,7 @@ yarn add vue-easy-dnd
 
 ## Does it support IE 11 ?
 
-Yes with a polyfill for custom events such as https://www.npmjs.com/package/custom-event-polyfill
+Vue3 does not support IE. The Vue2 branch DOES support IE 11 using https://www.npmjs.com/package/custom-event-polyfill
 
 ## Does it support touch devices ?
 

@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import Drag from './components/Drag.vue';
 import Drop from './components/Drop.vue';
 import DropMask from './components/DropMask.vue';
