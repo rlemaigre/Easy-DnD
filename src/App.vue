@@ -3,7 +3,7 @@
         <v-content>
             <v-container fluid class="wrapper">
                 <drop-zone class="drop-zone drop-zone1 even" :accept="acceptEven">
-                    <template v-slot:image="{data, type}">
+                    <template v-slot:image="{data}">
                         <div class="circle">
                             <div class="txt">{{ data }}</div>
                         </div>
@@ -19,21 +19,21 @@
                         </drag>
                     </drop-mask>
                     <drop-zone class="drop-zone drop-zone2 odd" :accept="acceptOdd">
-                        <template v-slot:image="{data, type}">
+                        <template v-slot:image="{data}">
                             <div class="triangle">
                                 <div class="txt">{{ data }}</div>
                             </div>
                         </template>
                         <drop-mask class="mask">
                             <drop-zone class="drop-zone drop-zone3 even" :accept="acceptEven">
-                                <template v-slot:image="{data, type}">
+                                <template v-slot:image="{data}">
                                     <div class="circle">
                                         <div class="txt">{{ data }}</div>
                                     </div>
                                 </template>
                             </drop-zone>
                             <drop-zone class="drop-zone drop-zone4 odd" :accept="acceptOdd">
-                                <template v-slot:image="{data, type}">
+                                <template v-slot:image="{data}">
                                     <div class="triangle">
                                         <div class="txt">{{ data }}</div>
                                     </div>

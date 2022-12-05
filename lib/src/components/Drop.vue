@@ -1,7 +1,7 @@
 <template>
-    <component :is="tag" v-bind="$attrs" v-on="$listeners" :class="cssClasses" :style="cssStyle">
+    <component :is="tag" v-bind="$attrs" :class="cssClasses" :style="cssStyle">
         <slot></slot>
-        <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
+        <template v-for="(_, slot) of $slots" v-slot:[slot]="scope">
             <slot :name="slot" v-bind="scope"/>
         </template>
         <div class="__drag-image" v-if="showDragImage" ref="drag-image">
@@ -24,7 +24,7 @@ export default {
   },
   computed: {
     showDragImage() {
-      return this.dragInProgress && this.typeAllowed && this.$scopedSlots['drag-image'];
+      return this.dragInProgress && this.typeAllowed && this.$slots['drag-image'];
     }
   }
 }

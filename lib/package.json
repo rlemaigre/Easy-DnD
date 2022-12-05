@@ -12,7 +12,8 @@
     "src"
   ],
   "dependencies": {
-    "vue": "^3.2.45"
+    "vue": "^3.2.45",
+    "mitt": "^3.0.0"
   },
   "devDependencies": {},
   "browserslist": [

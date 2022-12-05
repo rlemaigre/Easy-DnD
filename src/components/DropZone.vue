@@ -5,7 +5,7 @@
             <slot name="image" :type="type" :data="data"></slot>
         </template>
         <div class="dropped">
-            <div v-for="n in numbers">Dropped : {{n}}</div>
+            <div v-for="(n, i) in numbers" :key="i">Dropped : {{n}}</div>
         </div>
     </drop>
 </template>

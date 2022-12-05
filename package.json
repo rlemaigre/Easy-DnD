@@ -11,9 +11,17 @@
     "@babel/polyfill": "^7.12.1",
     "@segi/template": "file:lib",
     "core-js": "^3.26.1",
+    "mitt": "^3.0.0",
     "vue": "^3.2.45"
   },
   "devDependencies": {
+    "@babel/core": "^7.12.16",
+    "@babel/eslint-parser": "^7.12.16",
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-vue": "^8.0.3",
     "rollup": "^1.20.3",
     "rollup-plugin-buble": "^0.19.8",
     "rollup-plugin-commonjs": "^10.1.0",
@@ -22,13 +30,8 @@
     "rollup-plugin-sass": "^1.2.2",
     "rollup-plugin-typescript2": "^0.24.1",
     "rollup-plugin-vue": "^5.0.1",
-    "@babel/core": "^7.12.16",
-    "@babel/eslint-parser": "^7.12.16",
-    "@vue/cli-plugin-babel": "~5.0.0",
-    "@vue/cli-plugin-eslint": "~5.0.0",
-    "@vue/cli-service": "~5.0.0",
-    "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3"
+    "sass": "^1.56.1",
+    "sass-loader": "^13.2.0"
   },
   "eslintConfig": {
     "root": true,
@@ -42,7 +45,10 @@
     "parserOptions": {
       "parser": "@babel/eslint-parser"
     },
-    "rules": {}
+    "rules": {
+      "vue/multi-word-component-names": "off",
+      "no-prototype-builtins": "off"
+    }
   },
   "browserslist": [
     "> 1%",

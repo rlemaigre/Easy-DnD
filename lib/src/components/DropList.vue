@@ -1,5 +1,5 @@
 <template>
-    <component :is="rootTag" v-bind="rootProps" v-on="rootListeners" :class="clazz" :style="style">
+    <component :is="rootTag" v-bind="rootProps" :class="clazz" :style="style">
         <template v-if="dropIn && dropAllowed">
             <template v-if="reordering">
                 <template v-if="hasReorderingFeedback">
@@ -43,10 +43,10 @@
 <script>
 import DropMixin from "../mixins/DropMixin";
 import DragFeedback from "./DragFeedback";
-import Grid from "../ts/Grid";
-import {DnDEvent, InsertEvent, ReorderEvent} from "../ts/events";
-import {createDragImage} from "../ts/createDragImage"
-import {dnd} from "../ts/DnD";
+import Grid from "../js/Grid";
+import {InsertEvent, ReorderEvent} from "../js/events";
+import {createDragImage} from "../js/createDragImage"
+import {dnd} from "../js/DnD";
 
 export default {
   name: 'DropList',
@@ -106,13 +106,6 @@ export default {
         }
       }
     },
-    rootListeners() {
-      if (this.noAnimations) {
-        return this.$listeners;
-      } else {
-        return {};
-      }
-    },
     direction() {
       // todo - rewrite this logic
       if (this.row) return 'row';
@@ -121,7 +114,8 @@ export default {
     },
     reordering() {
       if (dnd.inProgress) {
-        return dnd.source.$el.parentElement === this.$el && this.$listeners.hasOwnProperty('reorder');
+        // todo - was $listeners instead of $attrs
+        return dnd.source.$el.parentElement === this.$el && this.$attrs.hasOwnProperty('reorder');
       } else {
         return null;
       }
@@ -206,13 +200,13 @@ export default {
       return this.dragInProgress && this.typeAllowed && !this.reordering;
     },
     showInsertingDragImage() {
-      return this.dragInProgress && this.typeAllowed && !this.reordering && this.$scopedSlots.hasOwnProperty("drag-image");
+      return this.dragInProgress && this.typeAllowed && !this.reordering && this.$slots.hasOwnProperty("drag-image");
     },
     showReorderingDragImage() {
-      return this.dragInProgress && this.reordering && this.$scopedSlots.hasOwnProperty("reordering-drag-image");
+      return this.dragInProgress && this.reordering && this.$slots.hasOwnProperty("reordering-drag-image");
     },
     hasReorderingFeedback() {
-      return this.$scopedSlots.hasOwnProperty("reordering-feedback");
+      return this.$slots.hasOwnProperty("reordering-feedback");
     }
   },
   methods: {
@@ -224,7 +218,7 @@ export default {
       this.feedbackKey = this.computeFeedbackKey();
       this.forbiddenKeys = this.computeForbiddenKeys();
     },
-    onDragStart(event: DnDEvent) {
+    onDragStart(event) {
       if (this.candidate(dnd.type, dnd.data, dnd.source)) {
         if (this.reordering) {
           this.fromIndex = Array.prototype.indexOf.call(event.source.$el.parentElement.children, event.source.$el);
@@ -240,7 +234,7 @@ export default {
       this.forbiddenKeys = null;
       this.grid = null;
     },
-    doDrop(event: DnDEvent) {
+    doDrop(event) {
       if (this.reordering) {
         if (this.fromIndex !== this.closestIndex) {
           this.$emit('reorder', new ReorderEvent(
@@ -257,9 +251,10 @@ export default {
         ));
       }
     },
-    candidate(type, data, source): boolean {
+    candidate() {
       let superCandidate = DropMixin['options'].methods.candidate.call(this, ...arguments);
-      return (superCandidate && (this.$listeners.hasOwnProperty("insert") || this.$listeners.hasOwnProperty("drop"))) || this.reordering;
+      // todo - was $listeners instead of $attrs
+      return (superCandidate && (this.$attrs.hasOwnProperty("insert") || this.$attrs.hasOwnProperty("drop"))) || this.reordering;
     },
     computeForbiddenKeys() {
       let vnodes = this.noAnimations ? [] : this.$children[0].$vnode.context.$children[0].$slots.default;
@@ -315,7 +310,7 @@ export default {
     dnd.on("dragstart", this.onDragStart);
     dnd.on("dragend", this.onDragEnd);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     dnd.off("dragstart", this.onDragStart);
     dnd.off("dragend", this.onDragEnd);
   }

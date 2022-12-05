@@ -1,8 +1,7 @@
 <template>
-    <component :is="tag" v-bind="$attrs" v-on="$listeners"
-               :class="cssClasses">
+    <component :is="tag" v-bind="$attrs" :class="cssClasses">
         <slot></slot>
-        <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
+        <template v-for="(_, slot) of $slots" v-slot:[slot]="scope">
             <slot :name="slot" v-bind="scope"/>
         </template>
         <div v-if="dragInitialised" class="__drag-image" ref="drag-image">

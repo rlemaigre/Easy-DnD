@@ -1,7 +1,7 @@
 <template>
-    <component :is="tag" v-bind="$attrs" v-on="$listeners">
+    <component :is="tag" v-bind="$attrs">
         <slot></slot>
-        <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
+        <template v-for="(_, slot) of $slots" v-slot:[slot]="scope">
             <slot :name="slot" v-bind="scope"/>
         </template>
     </component>
@@ -9,7 +9,7 @@
 
 <script>
 import DragAwareMixin from "../mixins/DragAwareMixin";
-import {dnd} from "../ts/DnD";
+import {dnd} from "../js/DnD";
 
 export default {
   name: 'DropMask',
