@@ -35,9 +35,9 @@
   </v-app>
 </template>
 
-<script lang="ts">
-import Drag from "../lib/src/components/Drag.vue";
-import DropList from "../lib/src/components/DropList.vue";
+<script>
+import Drag from "../lib/src/components/Drag";
+import DropList from "../lib/src/components/DropList";
 
 export default {
   name: "App",

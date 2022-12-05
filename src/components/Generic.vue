@@ -5,45 +5,40 @@
     </div>
 </template>
 
-<script lang="ts">
-    import {Component, Prop, Vue} from "vue-property-decorator";
-    import Row from "@/components/Row.vue";
-    import Column from "@/components/Column.vue";
-    import Atomic from "@/components/Atomic.vue";
+<script>
+import Row from "./Row";
+import Column from "./Column";
+import Atomic from "./Atomic";
 
-    @Component({
-        name: 'Generic',
-        components: {Atomic, Row}
-    })
-    export default class Generic extends Vue {
-
-        @Prop({type: null})
-        model;
-
-        get comp() {
-            if (typeof this.model === "object") {
-                if (this.model.type === 'row') {
-                    return Row;
-                } else {
-                    return Column;
-                }
-            } else {
-                return Atomic;
-            }
+export default {
+  name: 'Generic',
+  components: { Atomic, Row },
+  props: ['model'],
+  computed: {
+    comp() {
+      if (typeof this.model === "object") {
+        if (this.model.type === 'row') {
+          return Row;
+        } else {
+          return Column;
         }
-
-        get props() {
-            if (typeof this.model === "object") {
-                return {
-                    items: this.model.items
-                }
-            } else {
-                return {
-                    data: this.model
-                }
-            }
+      } else {
+        return Atomic;
+      }
+    },
+    props() {
+      if (typeof this.model === "object") {
+        return {
+          items: this.model.items
         }
+      } else {
+        return {
+          data: this.model
+        }
+      }
     }
+  }
+}
 </script>
 
 <style scoped lang="scss">

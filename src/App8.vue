@@ -136,51 +136,50 @@
 </template>
 
 <script>
-    import Drag from "../lib/src/components/Drag.vue";
-    import Drop from "../lib/src/components/Drop.vue";
-    import DropList from "../lib/src/components/DropList.vue";
-    import "../lib/src/ts/DragImagesManager.ts";
+import Drag from "../lib/src/components/Drag";
+import Drop from "../lib/src/components/Drop";
+import DropList from "../lib/src/components/DropList";
 
-    export default {
-        name: "App",
-        components: {
-            Drag,
-            DropList,
-            Drop
-        },
-        data: function () {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
-            const arr = []
-            for (const char of chars) {
-              arr.push(char)
-            }
-
-            return {
-                items1: arr,
-                items2: []
-            };
-        },
-        methods: {
-            insert1(event) {
-                this.items1.splice(event.index, 0, event.data);
-            },
-            insert2(event) {
-                this.items2.splice(event.index, 0, event.data);
-            },
-            remove(array, value) {
-                let index = array.indexOf(value);
-                array.splice(index, 1);
-            },
-            onMouseEnterBottomRight () {
-              console.log('triggered enter')
-                this.$refs.bottomRight.style.background = 'green';
-            },
-            onMouseLeaveBottomRight () {
-              console.log('triggered leave')
-              this.$refs.bottomRight.style.background = 'purple';
-            }
+export default {
+    name: "App",
+    components: {
+        Drag,
+        DropList,
+        Drop
+    },
+    data: function () {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+        const arr = []
+        for (const char of chars) {
+          arr.push(char)
         }
-    };
+
+        return {
+            items1: arr,
+            items2: []
+        };
+    },
+    methods: {
+        insert1(event) {
+            this.items1.splice(event.index, 0, event.data);
+        },
+        insert2(event) {
+            this.items2.splice(event.index, 0, event.data);
+        },
+        remove(array, value) {
+            let index = array.indexOf(value);
+            array.splice(index, 1);
+        },
+        onMouseEnterBottomRight () {
+          console.log('triggered enter')
+            this.$refs.bottomRight.style.background = 'green';
+        },
+        onMouseLeaveBottomRight () {
+          console.log('triggered leave')
+          this.$refs.bottomRight.style.background = 'purple';
+        }
+    }
+};
 </script>
 
 <style>

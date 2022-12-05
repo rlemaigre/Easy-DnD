@@ -10,30 +10,31 @@
     </drop>
 </template>
 
-<script lang="ts">
-    import {Component, Prop, Vue} from "vue-property-decorator";
-    import Drop from "../../lib/src/components/Drop.vue";
-    import {dnd} from "../../lib/src/index";
+<script>
+import Drop from "../../lib/src/components/Drop";
+import {dnd} from "../../lib/src";
 
-    @Component({
-        components: {Drop}
-    })
-    export default class DropZone extends Vue {
-
-        @Prop({type: Function})
-        accept: { (data: any): boolean };
-
-        numbers: number[] = [];
-
-        drop() {
-            this.numbers.push(dnd.data);
-        }
-
-        dropImage() {
-            return this.$refs['shadow'];
-        }
-
+export default {
+  components: { Drop },
+  props: {
+    accept: {
+      type: Function
     }
+  },
+  data () {
+    return {
+      numbers: []
+    }
+  },
+  methods: {
+    drop() {
+      this.numbers.push(dnd.data);
+    },
+    dropImage() {
+      return this.$refs['shadow'];
+    }
+  }
+}
 </script>
 
 <style scoped lang="scss">

@@ -32,10 +32,10 @@
   </v-app>
 </template>
 
-<script lang="ts">
-import Drag from "../lib/src/components/Drag.vue";
-import DropList from "../lib/src/components/DropList.vue";
-import Drop from "../lib/src/components/Drop.vue";
+<script>
+import Drag from "../lib/src/components/Drag";
+import DropList from "../lib/src/components/DropList";
+import Drop from "../lib/src/components/Drop";
 
 export default {
   name: "App",

@@ -1,10 +1,12 @@
 import {Component, Vue} from "vue-property-decorator";
 import {dnd} from "./DnD";
+import { nextTick } from "vue";
 
 /**
  * This class reacts to drag events emitted by the dnd object to manage a sequence of drag images and fade from one to the
  * other as the drag progresses.
  */
+// todo - this class is completely broken
 @Component({}) // Necessary to set proper "this" context in event listeners.
 export class DragImagesManager extends Vue {
 
@@ -37,30 +39,30 @@ export class DragImagesManager extends Vue {
         this.source = event.source;
     }
 
-    onDragEnd(event) {
-        Vue.nextTick(() => {
-            if (!event.success && this.source && this.source['goBack']) {
-                // Restore the drag image that is active when hovering outside any drop zone :
-                let img = this.switch(null) as HTMLElement;
+    async onDragEnd(event) {
+        await nextTick();
 
-                // Move it back to its original place :
+        if (!event.success && this.source && this.source['goBack']) {
+            // Restore the drag image that is active when hovering outside any drop zone :
+            let img = this.switch(null) as HTMLElement;
+
+            // Move it back to its original place :
+            window.requestAnimationFrame(() => {
+                img.style.transition = "all 0.5s";
                 window.requestAnimationFrame(() => {
-                    img.style.transition = "all 0.5s";
-                    window.requestAnimationFrame(() => {
-                        img.style.left = this.sourcePos.x + "px";
-                        img.style.top = this.sourcePos.y + "px";
-                        img.style.transform = "translate(0,0)";
-                        let handler = () => {
-                            this.cleanUp();
-                            img.removeEventListener("transitionend", handler);
-                        };
-                        img.addEventListener("transitionend", handler);
-                    })
+                    img.style.left = this.sourcePos.x + "px";
+                    img.style.top = this.sourcePos.y + "px";
+                    img.style.transform = "translate(0,0)";
+                    let handler = () => {
+                        this.cleanUp();
+                        img.removeEventListener("transitionend", handler);
+                    };
+                    img.addEventListener("transitionend", handler);
                 })
-            } else {
-                this.cleanUp();
-            }
-        });
+            })
+        } else {
+            this.cleanUp();
+        }
     }
 
     cleanUp() {

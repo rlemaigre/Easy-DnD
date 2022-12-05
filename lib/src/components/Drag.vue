@@ -11,23 +11,30 @@
     </component>
 </template>
 
-<script lang="ts">
-import {Component, Prop} from "vue-property-decorator";
+<script>
 import DragMixin from "../mixins/DragMixin";
 
-@Component({})
-export default class Drag extends DragMixin {
-
+export default {
+  name: 'Drag',
+  mixins: [DragMixin],
+  props: {
     /**
      * Tag to be used as root of this component. Defaults to div.
      */
-    @Prop({default: 'div', type: [String, Object, Function]})
-    tag: any;
-
+    tag: {
+      type: [String, Object, Function],
+      default: 'div'
+    }
+  }
 }
 </script>
 
 <style lang="scss">
+html.drag-in-progress * {
+  cursor: move !important;
+  cursor: grabbing !important;
+}
+
 .drop-allowed.drop-in * {
   cursor: inherit !important;
 }
@@ -43,13 +50,6 @@ export default class Drag extends DragMixin {
     cursor: move;
     cursor: grab;
   }
-}
-</style>
-
-<style lang="scss">
-html.drag-in-progress * {
-  cursor: move !important;
-  cursor: grabbing !important;
 }
 </style>
 

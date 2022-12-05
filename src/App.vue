@@ -47,21 +47,26 @@
     </v-app>
 </template>
 
-<script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
-import Drag from "../lib/src/components/Drag.vue";
-import DropZone from "@/components/DropZone.vue";
-import DropMask from "../lib/src/components/DropMask.vue";
-import "../lib/src/ts/DragImagesManager.ts";
+<script>
+import Drag from "../lib/src/components/Drag";
+import DropMask from "../lib/src/components/DropMask";
+import DropZone from "./components/DropZone";
 
-@Component({
-    components: {DropMask, DropZone, Drag}
-})
-export default class App extends Vue {
-
-    acceptEven = (data) => data % 2 === 0;
-    acceptOdd = (data) => data % 2 === 1;
-
+export default {
+  components: { DropMask, DropZone, Drag },
+  data () {
+    return {
+      items: ['a', 'b', 'c', 'd', 'e']
+    }
+  },
+  methods: {
+    acceptEven (data) {
+      return data % 2 === 0
+    },
+    acceptOdd (data) {
+      return data % 2 === 1
+    }
+  }
 }
 </script>
 

@@ -4,14 +4,8 @@
     </div>
 </template>
 
-<script lang="ts">
-    import {Component, Vue} from "vue-property-decorator";
-
-    @Component({})
-    export default class DragFeedback extends Vue {
-    }
+<script>
+export default {
+  name: 'DragFeedback'
+}
 </script>
-
-<style scoped lang="scss">
-
-</style>

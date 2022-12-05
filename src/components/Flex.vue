@@ -21,51 +21,46 @@
     </div>
 </template>
 
-<script lang="ts">
-    import DropList from "../../lib/src/components/DropList.vue";
-    import Drag from "../../lib/src/components/Drag.vue";
-    import {Component, Prop, Vue} from "vue-property-decorator";
-    import {InsertEvent, ReorderEvent} from "../../lib/src/ts/events";
-    import MyDiv from "@/components/MyDiv.vue";
+<script>
+import DropList from "../../lib/src/components/DropList";
+import Drag from "../../lib/src/components/Drag";
+import {InsertEvent, ReorderEvent} from "../../lib/src";
+import MyDiv from "./MyDiv";
 
-    @Component({
-        name: 'Flex',
-        components: {Drag, DropList}
-    })
-    export default class Flex extends Vue {
-
-        @Prop()
-        items: any[];
-
-        @Prop()
-        direction: string;
-
-        get root() {
-            return MyDiv;
-        }
-
-        key(item) {
-            if (typeof item === "object") {
-                return item.key
-            } else {
-                return item;
-            }
-        }
-
-        onInsert(event: InsertEvent) {
-            this.items.splice(event.index, 0, event.data);
-        }
-
-        onReorder(event: ReorderEvent) {
-            event.apply(this.items);
-        }
-
-        remove(item) {
-            let index = this.items.indexOf(item);
-            this.items.splice(index, 1);
-        }
-
+export default {
+  name: 'Flex',
+  components: { Drag, DropList },
+  props: {
+    items: {},
+    direction: {
+      type: String
     }
+  },
+  computed: {
+    root () {
+      return MyDiv
+    }
+  },
+  methods: {
+    key(item) {
+      if (typeof item === "object") {
+        return item.key
+      } else {
+        return item;
+      }
+    },
+    onInsert(event: InsertEvent) {
+      this.items.splice(event.index, 0, event.data);
+    },
+    onReorder(event: ReorderEvent) {
+      event.apply(this.items);
+    },
+    remove(item) {
+      let index = this.items.indexOf(item);
+      this.items.splice(index, 1);
+    }
+  }
+}
 </script>
 
 <style scoped lang="scss">

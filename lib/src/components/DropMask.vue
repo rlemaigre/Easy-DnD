@@ -7,32 +7,37 @@
     </component>
 </template>
 
-<script lang="ts">
-    import {Component, Prop} from "vue-property-decorator";
-    import DragAwareMixin from "../mixins/DragAwareMixin";
-    import {dnd} from "../ts/DnD";
+<script>
+import DragAwareMixin from "../mixins/DragAwareMixin";
+import {dnd} from "../ts/DnD";
 
-    @Component({})
-    export default class DropMask extends DragAwareMixin {
-
-        isDropMask = true;
-
-        @Prop({default: 'div', type: [String, Object,Function]})
-        tag: any;
-
-        mounted() {
-            let el = this.$el;
-            let comp = this;
-            el.addEventListener('easy-dnd-move', onMouseMove);
-
-            function onMouseMove(e) {
-                dnd.mouseMove(e, comp);
-            }
-        }
-
-        createDragImage() {
-            return 'source';
-        }
-
+export default {
+  name: 'DropMask',
+  mixins: [DragAwareMixin],
+  props: {
+    tag: {
+      type: [String, Object, Function],
+      default: 'div'
     }
+  },
+  data () {
+    return {
+      isDropMask: true
+    }
+  },
+  methods: {
+    createDragImage () {
+      return 'source'
+    }
+  },
+  mounted() {
+    let el = this.$el;
+    let comp = this;
+    el.addEventListener('easy-dnd-move', onMouseMove);
+
+    function onMouseMove(e) {
+      dnd.mouseMove(e, comp);
+    }
+  }
+}
 </script>

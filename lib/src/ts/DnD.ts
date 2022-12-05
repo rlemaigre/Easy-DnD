@@ -5,6 +5,7 @@ import {Vue} from "vue-property-decorator";
  * reporting its state evolution during the progress of the drag and drop. Its data is reactive and listeners can be
  * attachted to it using the method on.
  */
+// todo - this class ios completely broken
 export class DnD {
 
     public inProgress = false;

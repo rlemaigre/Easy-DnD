@@ -56,41 +56,40 @@
 </template>
 
 <script>
-    import Drag from "../lib/src/components/Drag.vue";
-    import Drop from "../lib/src/components/Drop.vue";
-    import DropList from "../lib/src/components/DropList.vue";
-    import "../lib/src/ts/DragImagesManager.ts";
-    import App12Item from "@/components/App12Item";
+import Drag from "../lib/src/components/Drag";
+import Drop from "../lib/src/components/Drop";
+import DropList from "../lib/src/components/DropList";
+import App12Item from "./components/App12Item";
 
-    export default {
-        name: "App",
-        components: {
-            Drag,
-            DropList,
-            Drop,
-        },
-        data: function () {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
-            const arr = []
-            for (const index in chars) {
-              arr.push(`${chars[index]}`)
-            }
-
-            return {
-                App12Item,
-                items1: arr
-            };
-        },
-        methods: {
-            insert1(event) {
-                this.items1.splice(event.index, 0, event.data);
-            },
-            remove(array, value) {
-                let index = array.indexOf(value);
-                array.splice(index, 1);
-            }
+export default {
+    name: "App",
+    components: {
+        Drag,
+        DropList,
+        Drop,
+    },
+    data: function () {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+        const arr = []
+        for (const index in chars) {
+          arr.push(`${chars[index]}`)
         }
-    };
+
+        return {
+            App12Item,
+            items1: arr
+        };
+    },
+    methods: {
+        insert1(event) {
+            this.items1.splice(event.index, 0, event.data);
+        },
+        remove(array, value) {
+            let index = array.indexOf(value);
+            array.splice(index, 1);
+        }
+    }
+};
 </script>
 
 <style>

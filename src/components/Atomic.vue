@@ -2,18 +2,15 @@
     <span class="Atomic">{{data}}</span>
 </template>
 
-<script lang="ts">
-    import {Component, Prop, Vue} from "vue-property-decorator";
-
-    @Component({
-        name: 'Atomic'
-    })
-    export default class Atomic extends Vue {
-
-        @Prop()
-        data: number;
-
+<script>
+export default {
+  name: 'Atomic',
+  props: {
+    data: {
+      type: Number
     }
+  }
+}
 </script>
 
 <style scoped lang="scss">

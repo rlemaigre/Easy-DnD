@@ -61,44 +61,43 @@
 </template>
 
 <script>
-    import Drag from "../lib/src/components/Drag.vue";
-    import Drop from "../lib/src/components/Drop.vue";
-    import DropList from "../lib/src/components/DropList.vue";
-    import "../lib/src/ts/DragImagesManager.ts";
+import Drag from "../lib/src/components/Drag";
+import Drop from "../lib/src/components/Drop";
+import DropList from "../lib/src/components/DropList";
 
-    export default {
-        name: "App",
-        components: {
-            Drag,
-            DropList,
-            Drop
-        },
-        data: function () {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
-            const arr = []
-            for (const index in chars) {
-              arr.push(`${chars[index]}-${index}`)
-              arr.push(`2x${chars[index]}-${index}`)
-            }
-
-            return {
-                items1: arr,
-                items2: []
-            };
-        },
-        methods: {
-            insert1(event) {
-                this.items1.splice(event.index, 0, event.data);
-            },
-            insert2(event) {
-                this.items2.splice(event.index, 0, event.data);
-            },
-            remove(array, value) {
-                let index = array.indexOf(value);
-                array.splice(index, 1);
-            }
+export default {
+    name: "App",
+    components: {
+        Drag,
+        DropList,
+        Drop
+    },
+    data: function () {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+        const arr = []
+        for (const index in chars) {
+          arr.push(`${chars[index]}-${index}`)
+          arr.push(`2x${chars[index]}-${index}`)
         }
-    };
+
+        return {
+            items1: arr,
+            items2: []
+        };
+    },
+    methods: {
+        insert1(event) {
+            this.items1.splice(event.index, 0, event.data);
+        },
+        insert2(event) {
+            this.items2.splice(event.index, 0, event.data);
+        },
+        remove(array, value) {
+            let index = array.indexOf(value);
+            array.splice(index, 1);
+        }
+    }
+};
 </script>
 
 <style>

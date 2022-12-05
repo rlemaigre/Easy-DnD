@@ -2,7 +2,6 @@
     <v-app>
         <v-content>
             <v-container fluid class="wrapper">
-                sdqf
                 <drop-list @reorder="" :items="[1,2]" column>
                     <template v-slot:item="{item}">
                         <drag v-if="item === 1" :key="item">testx</drag>
@@ -23,26 +22,25 @@
     </v-app>
 </template>
 
-<script lang="ts">
-    import {Component, Vue} from "vue-property-decorator";
-    import Drag from "../lib/src/components/Drag.vue";
-    import DropList from "../lib/src/components/DropList.vue";
-    import {InsertEvent} from "../lib/src/ts/events";
-    import "../lib/src/ts/DragImagesManager.ts";
-    import Drop from "../lib/src/components/Drop.vue";
+<script>
+import Drag from "../lib/src/components/Drag";
+import DropList from "../lib/src/components/DropList";
+import Drop from "../lib/src/components/Drop";
+import {InsertEvent} from "../lib/src";
 
-    @Component({
-        components: {Drop, Drag, DropList}
-    })
-    export default class App2 extends Vue {
-
-        items = ['a', 'b', 'c', 'd', 'e'];
-
-        onInsert(event: InsertEvent) {
-            this.items.splice(event.index, 0, event.data);
-        }
-
+export default {
+  components: { Drop, Drag, DropList },
+  data () {
+    return {
+      items: ['a', 'b', 'c', 'd', 'e']
     }
+  },
+  methods: {
+    onInsert(event: InsertEvent) {
+      this.items.splice(event.index, 0, event.data);
+    }
+  }
+}
 </script>
 
 <style lang="scss">

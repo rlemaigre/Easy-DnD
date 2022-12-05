@@ -11,8 +11,8 @@
 </template>
 
 <script>
-import Drag from "../lib/src/components/Drag.vue";
-import Drop from "../lib/src/components/Drop.vue";
+import Drag from "../lib/src/components/Drag";
+import Drop from "../lib/src/components/Drop";
 
 export default {
   name: "App",
