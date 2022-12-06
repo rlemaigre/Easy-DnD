@@ -1,5 +1,6 @@
 <template>
     <component :is="rootTag" v-bind="rootProps" :class="clazz" :style="style">
+      {{ reordering }}
         <template v-if="dropIn && dropAllowed">
             <template v-if="reordering">
                 <template v-if="hasReorderingFeedback">
@@ -41,7 +42,7 @@
 </template>
 
 <script>
-import DropMixin from "../mixins/DropMixin";
+import DropMixin, { dropAllowed, doDrop, candidate } from "../mixins/DropMixin";
 import DragFeedback from "./DragFeedback";
 import Grid from "../js/Grid";
 import {InsertEvent, ReorderEvent} from "../js/events";
@@ -90,7 +91,7 @@ export default {
   computed: {
     rootTag() {
       if (this.noAnimations) {
-        return this.tag ? this.tag : 'div';
+        return this.tag || 'div';
       } else {
         return "transition-group";
       }
@@ -115,7 +116,7 @@ export default {
     reordering() {
       if (dnd.inProgress) {
         // todo - was $listeners instead of $attrs
-        return dnd.source.$el.parentElement === this.$el && this.$attrs.hasOwnProperty('reorder');
+        return dnd.source.$el.parentElement === this.$el && this.$attrs.hasOwnProperty('onReorder');
       } else {
         return null;
       }
@@ -131,21 +132,20 @@ export default {
       if (this.dragInProgress) {
         if (this.reordering) {
           return this.items.length > 1;
-        } else {
-          let superDropAllowed = DropMixin['options'].computed.dropAllowed.get.call(this);
-          if (!superDropAllowed) {
+        }
+        else {
+          // todo - eventually refactor so that this isn't necessary
+          if (!dropAllowed(this)) {
             return false;
-          } else {
-            if (this.forbiddenKeys !== null && this.feedbackKey !== null) {
-              return !this.forbiddenKeys.includes(this.feedbackKey)
-            } else {
-              return null;
-            }
+          }
+
+          if (this.forbiddenKeys !== null && this.feedbackKey !== null) {
+            return !this.forbiddenKeys.includes(this.feedbackKey)
           }
         }
-      } else {
-        return null;
       }
+
+      return null;
     },
     itemsBeforeFeedback() {
       if (this.closestIndex === 0) {
@@ -219,7 +219,7 @@ export default {
       this.forbiddenKeys = this.computeForbiddenKeys();
     },
     onDragStart(event) {
-      if (this.candidate(dnd.type, dnd.data, dnd.source)) {
+      if (this.candidate(dnd.type)) {
         if (this.reordering) {
           this.fromIndex = Array.prototype.indexOf.call(event.source.$el.parentElement.children, event.source.$el);
           this.grid = this.computeReorderingGrid();
@@ -243,7 +243,8 @@ export default {
           ));
         }
       } else {
-        DropMixin['options'].methods.doDrop.call(this, event);
+        // todo - eventually remove the need for this
+        doDrop(this, event)
         this.$emit('insert', new InsertEvent(
             event.type,
             event.data,
@@ -251,18 +252,19 @@ export default {
         ));
       }
     },
-    candidate() {
-      let superCandidate = DropMixin['options'].methods.candidate.call(this, ...arguments);
+    candidate(type) {
       // todo - was $listeners instead of $attrs
-      return (superCandidate && (this.$attrs.hasOwnProperty("insert") || this.$attrs.hasOwnProperty("drop"))) || this.reordering;
+      return (candidate(this, type) && (this.$attrs.hasOwnProperty("onInsert") || this.$attrs.hasOwnProperty("onDrop"))) || this.reordering;
     },
     computeForbiddenKeys() {
+      // todo - go over all usages of $children
       let vnodes = this.noAnimations ? [] : this.$children[0].$vnode.context.$children[0].$slots.default;
       return vnodes
           .map(vn => vn.key)
           .filter(k => k !== undefined && k !== 'drag-image' && k !== 'drag-feedback');
     },
     computeFeedbackKey() {
+      console.log(this.$refs.feedback)
       return this.$refs['feedback']['$slots']['default'][0]['key'];
     },
     computeInsertingGrid() {
@@ -280,8 +282,7 @@ export default {
       return grid;
     },
     computeReorderingGrid() {
-      let tg = this.$el; // todo -  as HTMLElement
-      return new Grid(tg.children, this.items.length - 1, this.direction, this.fromIndex);
+      return new Grid(this.$el.children, this.items.length - 1, this.direction, this.fromIndex); // todo - $el as HTMLElement
     },
     createDragImage() {
       let image;

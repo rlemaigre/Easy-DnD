@@ -26,7 +26,6 @@
 import Drag from "../lib/src/components/Drag";
 import DropList from "../lib/src/components/DropList";
 import Drop from "../lib/src/components/Drop";
-import {InsertEvent} from "../lib/src";
 
 export default {
   components: { Drop, Drag, DropList },
@@ -36,7 +35,7 @@ export default {
     }
   },
   methods: {
-    onInsert(event: InsertEvent) {
+    onInsert(event) {
       this.items.splice(event.index, 0, event.data);
     }
   }

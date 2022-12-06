@@ -1,49 +1,46 @@
 <template>
-    <v-app>
-        <v-content>
-            <v-container fluid class="wrapper">
-                <v-row>
-                    <v-col>
-                        <div class="list">
-                            <drag v-for="n in [1,2,3,4,5]" :data="n" class="item" type="test">{{n}}</drag>
-                        </div>
-                    </v-col>
-                    <v-col>
-                        <drop-list :items="items" class="list" @insert="onInsert" @reorder="$event.apply(items)"
-                                   accepts-type="test">
-                            <template v-slot:item="{item, reorder}">
-                                <drag class="item" :key="item" :drag-image-opacity="1"
-                                      @cut="items = items.filter(i => i !== item)" :style="{opacity: reorder ? 0 : 1}">
-                                    {{item}}
-                                </drag>
-                            </template>
-                            <template v-slot:feedback="{data}">
-                                <div class="item feedback" :key="data">{{data}}</div>
-                            </template>
-                        </drop-list>
-                    </v-col>
-                    <drop tag="v-col" style="background-color: grey" mode="cut"></drop>
-                </v-row>
-            </v-container>
-        </v-content>
-    </v-app>
+    <Page class="wrapper">
+        <div class="row">
+            <div class="col">
+                <div class="list">
+                    <drag v-for="n in [1,2,3,4,5]" :key="n" :data="n" class="item" type="test">{{n}}</drag>
+                </div>
+            </div>
+            <div class="col">
+              <drop-list :items="items" accepts-type="test" class="list" @insert="onInsert" @reorder="$event.apply(items)">
+                <template v-slot:item="{item, reorder}">
+                  <drag class="item" :key="item" :drag-image-opacity="1"
+                        @cut="items = items.filter(i => i !== item)" :style="{opacity: reorder ? 0 : 1}">
+                    {{ item }}
+                  </drag>
+                </template>
+                <template v-slot:feedback="{data}">
+                  <div class="item feedback" :key="data">{{ data }}</div>
+                </template>
+              </drop-list>
+            </div>
+            <drop class="col" style="background-color: grey" mode="cut"></drop>
+        </div>
+    </Page>
 </template>
 
 <script>
+import Page from './components/Page'
+
 import Drag from "../lib/src/components/Drag";
 import DropList from "../lib/src/components/DropList";
 import Drop from "../lib/src/components/Drop";
-import {InsertEvent} from "../lib/src";
 
 export default {
-  components: { Drop, Drag, DropList },
+  components: { Page, Drop, Drag, DropList },
   data () {
     return {
       items: ['a', 'b', 'c', 'd', 'e']
     }
   },
   methods: {
-    onInsert(event: InsertEvent) {
+    onInsert(event) {
+      console.log('on insert')
       this.items.splice(event.index, 0, event.data);
     }
   }
@@ -51,7 +48,7 @@ export default {
 </script>
 
 <style lang="scss">
-    html, body, #app, .v-application--wrap, .v-content, .v-content__wrap {
+    html, body, #app, .wrapper {
         height: 100%;
     }
 

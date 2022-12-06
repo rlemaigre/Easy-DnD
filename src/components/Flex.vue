@@ -24,7 +24,6 @@
 <script>
 import DropList from "../../lib/src/components/DropList";
 import Drag from "../../lib/src/components/Drag";
-import {InsertEvent, ReorderEvent} from "../../lib/src";
 import MyDiv from "./MyDiv";
 
 export default {
@@ -49,10 +48,10 @@ export default {
         return item;
       }
     },
-    onInsert(event: InsertEvent) {
+    onInsert(event) {
       this.items.splice(event.index, 0, event.data);
     },
-    onReorder(event: ReorderEvent) {
+    onReorder(event) {
       event.apply(this.items);
     },
     remove(item) {

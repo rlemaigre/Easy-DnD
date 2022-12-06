@@ -1,8 +1,8 @@
 <template>
     <component :is="tag" v-bind="$attrs" :class="cssClasses" :style="cssStyle">
         <slot></slot>
-        <template v-for="(_, slot) of $slots" v-slot:[slot]="scope">
-            <slot :name="slot" v-bind="scope"/>
+        <template v-for="(args, slot) of $slots" v-slot:[slot]>
+            <slot :name="slot" v-bind="args" />
         </template>
         <div class="__drag-image" v-if="showDragImage" ref="drag-image">
             <slot name="drag-image" :type="dragType" :data="dragData"></slot>
