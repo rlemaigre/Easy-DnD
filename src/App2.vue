@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import Page from './components/Page'
+import Page from './components/scaffold/Page'
 
 import Drag from "../lib/src/components/Drag";
 import DropList from "../lib/src/components/DropList";

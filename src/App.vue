@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import Page from './components/Page'
+import Page from './components/scaffold/Page'
 
 import Drag from "../lib/src/components/Drag";
 import DropMask from "../lib/src/components/DropMask";

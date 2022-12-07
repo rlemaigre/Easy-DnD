@@ -1,16 +1,18 @@
 <template>
-  <div id="app">
+  <Page class="wrapper">
     <Drag v-for="n in items" :key="n" :data="n">
-      <img alt="Vue logo" src="https://vuejs.org/images/logo.png" width="25%" ondragstart="return false;" />
+      <img alt="Vue logo" src="https://vuejs.org/images/logo.png" style="width: 200px; height: 200px;" ondragstart="return false;" />
     </Drag>
     <Drop
         @drop="func"
         style="width: 100%; max-width: 500px; height: 500px; background: #000"
     ></Drop>
-  </div>
+  </Page>
 </template>
 
 <script>
+import Page from './components/scaffold/Page'
+
 import Drag from "../lib/src/components/Drag";
 import Drop from "../lib/src/components/Drop";
 
@@ -22,6 +24,7 @@ export default {
     };
   },
   components: {
+    Page,
     Drag,
     Drop,
   },

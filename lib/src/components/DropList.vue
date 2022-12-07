@@ -1,6 +1,5 @@
 <template>
-    <component :is="rootTag" v-bind="rootProps" :class="clazz" :style="style">
-      {{ reordering }}
+    <component ref="component" :is="rootTag" v-bind="rootProps" :class="clazz" :style="style">
         <template v-if="dropIn && dropAllowed">
             <template v-if="reordering">
                 <template v-if="hasReorderingFeedback">
@@ -42,6 +41,7 @@
 </template>
 
 <script>
+import { TransitionGroup } from "vue";
 import DropMixin, { dropAllowed, doDrop, candidate } from "../mixins/DropMixin";
 import DragFeedback from "./DragFeedback";
 import Grid from "../js/Grid";
@@ -93,7 +93,7 @@ export default {
       if (this.noAnimations) {
         return this.tag || 'div';
       } else {
-        return "transition-group";
+        return TransitionGroup;
       }
     },
     rootProps() {
@@ -139,6 +139,7 @@ export default {
             return false;
           }
 
+          // todo - work out forbiddenKeys
           if (this.forbiddenKeys !== null && this.feedbackKey !== null) {
             return !this.forbiddenKeys.includes(this.feedbackKey)
           }
@@ -258,14 +259,18 @@ export default {
     },
     computeForbiddenKeys() {
       // todo - go over all usages of $children
-      let vnodes = this.noAnimations ? [] : this.$children[0].$vnode.context.$children[0].$slots.default;
+      console.log(this.$refs.component.$slots.default())
+      // todo - this logic is wrong and doesn't work in vue3. Is it necessary at all?
+      let vnodes = this.noAnimations ? [] : this.$refs.component.$slots.default()[0].children[0].children;
+      console.log(vnodes
+          .map(vn => vn.children[0].key))
       return vnodes
-          .map(vn => vn.key)
-          .filter(k => k !== undefined && k !== 'drag-image' && k !== 'drag-feedback');
+          .map(vn => vn.children[0].key)
+          .filter(k => !!k && k !== 'drag-image' && k !== 'drag-feedback');
     },
     computeFeedbackKey() {
-      console.log(this.$refs.feedback)
-      return this.$refs['feedback']['$slots']['default'][0]['key'];
+      // todo - check this () might not work if its not scoped
+      return this.$refs['feedback']['$slots']['default']()[0]['key'];
     },
     computeInsertingGrid() {
       let feedbackParent = this.$refs['feedback']['$el']; // todo -  as HTMLElement
