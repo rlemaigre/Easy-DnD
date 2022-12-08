@@ -102,7 +102,6 @@ export default {
       } else {
         return {
           tag: this.tag,
-          duration: {enter: 0, leave: 0},
           css: false
         }
       }

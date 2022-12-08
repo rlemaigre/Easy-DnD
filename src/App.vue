@@ -49,6 +49,7 @@ import Page from './components/scaffold/Page'
 import Drag from "../lib/src/components/Drag";
 import DropMask from "../lib/src/components/DropMask";
 import DropZone from "./components/DropZone";
+import "../lib/src/js/DragImagesManager.js";
 
 export default {
   components: { Page, DropMask, DropZone, Drag },
@@ -69,10 +70,6 @@ export default {
 </script>
 
 <style lang="scss">
-html, body, #app, .v-application--wrap, .v-content, .v-content__wrap {
-  height: 100%;
-}
-
 .drop-in {
   box-shadow: 0 0 10px rgba(0, 0, 255, 0.3);
 }

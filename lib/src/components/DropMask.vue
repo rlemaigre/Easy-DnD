@@ -1,6 +1,5 @@
 <template>
     <component :is="tag" v-bind="$attrs">
-        <slot></slot>
         <template v-for="(args, slot) of $slots" v-slot:[slot]>
             <slot :name="slot" v-bind="args" />
         </template>

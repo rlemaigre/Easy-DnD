@@ -1,6 +1,6 @@
 <template>
     <drop @drop="drop" accepts-type="number" :accepts-data="accept">
-        <slot name="default"></slot>
+        <slot></slot>
         <template v-slot:drag-image="{type, data}">
             <slot name="image" :type="type" :data="data"></slot>
         </template>
@@ -29,9 +29,6 @@ export default {
   methods: {
     drop() {
       this.numbers.push(dnd.data);
-    },
-    dropImage() {
-      return this.$refs['shadow'];
     }
   }
 }

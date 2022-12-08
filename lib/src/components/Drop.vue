@@ -1,9 +1,9 @@
 <template>
     <component :is="tag" v-bind="$attrs" :class="cssClasses" :style="cssStyle">
-        <slot></slot>
-        <template v-for="(args, slot) of $slots" v-slot:[slot]>
+        <template v-for="[slot, args] of dynamicSlots" v-slot:[slot]>
             <slot :name="slot" v-bind="args" />
         </template>
+      <!-- todo - this is not working because the above template now automatically accepts drag-image -->
         <div class="__drag-image" v-if="showDragImage" ref="drag-image">
             <slot name="drag-image" :type="dragType" :data="dragData"></slot>
         </div>
@@ -23,8 +23,11 @@ export default {
     }
   },
   computed: {
+    dynamicSlots () {
+      return Object.entries(this.$slots).filter(([key]) => key !== 'drag-image')
+    },
     showDragImage() {
-      return this.dragInProgress && this.typeAllowed && this.$slots['drag-image'];
+      return this.dragInProgress && this.typeAllowed && !!this.$slots['drag-image'];
     }
   }
 }

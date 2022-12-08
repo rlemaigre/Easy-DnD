@@ -30,7 +30,7 @@
                                         <v-divider/>
                                     </drag>
                                 </template>
-                                <template v-slot:inserting-drag-image="{data}">
+                                <template v-slot:drag-image="{data}">
                                     <v-list-item-avatar style="transform:translate(-50%, -50%) scale(1.5)">
                                         <img :src="data"/>
                                     </v-list-item-avatar>

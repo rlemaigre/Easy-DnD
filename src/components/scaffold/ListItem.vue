@@ -6,6 +6,9 @@
     <div class="content">
       <slot />
     </div>
+    <div v-if="!!$slots.right" class="side">
+      <slot name="right" />
+    </div>
   </div>
 </template>
 

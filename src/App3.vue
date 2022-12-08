@@ -18,13 +18,12 @@
                             <Separator />
                         </drag>
                     </template>
-                    <template v-slot:inserting-drag-image="{data}">
+                    <template v-slot:drag-image="{data}">
                       <Avatar :src="data.avatar" style="transform:translate(-50%, -50%) scale(1.5)" />
                     </template>
                     <template v-slot:reordering-drag-image/>
                     <template v-slot:feedback="{data}">
                         <Skeleton
-                                type="list-item-avatar-three-line"
                                 :key="data.title"
                                 style="border-left: 2px solid #1976D2; margin-left: -2px;"
                         />
@@ -66,6 +65,7 @@ import Separator from './components/scaffold/Separator'
 import Skeleton from './components/scaffold/Skeleton'
 import Chip from './components/scaffold/Chip'
 
+import "../lib/src/js/DragImagesManager.js";
 import Drag from "../lib/src/components/Drag";
 import DropList from "../lib/src/components/DropList";
 
