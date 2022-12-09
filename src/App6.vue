@@ -10,21 +10,23 @@
                   @insert="insert1"
           >
               <template v-slot:item="{item, reorder, index}">
-                  <drag :key="item.title" :data="item" @cut="remove(items1, item)" drag-class="my-dragging-class">
+                  <drag :key="item.title" :data="item" @cut="remove(items1, item)" drag-class="my-dragging-class" handle=".handle">
                       <ListItem
                               style="background-color: white; user-select: none"
                               :style="reorder ? {borderLeft: '2px solid #1976D2', marginLeft:'-2px'} : {}"
                               @click="onClickItem($event, item, index)"
                       >
                         <template v-slot:side>
-                          <Avatar :src="item.avatar"/>
+                          <Avatar :src="item.avatar" class="handle" />
                         </template>
 
                         <div class="title" v-html="item.title"/>
                         <div class="subtitle" v-html="item.subtitle"/>
 
                         <template v-slot:right>
-                          {{ index }}
+                          <Chip class="handle">
+                            {{ index }}
+                          </Chip>
                         </template>
                       </ListItem>
                       <Separator />
@@ -88,6 +90,7 @@ import Chip from './components/scaffold/Chip'
 
 import Drag from "../lib/src/components/Drag";
 import DropList from "../lib/src/components/DropList";
+import "../lib/src/js/DragImagesManager.js";
 
 export default {
     name: "App",

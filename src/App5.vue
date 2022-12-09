@@ -23,6 +23,7 @@ import Page from './components/scaffold/Page'
 
 import Drag from "../lib/src/components/Drag";
 import DropList from "../lib/src/components/DropList";
+import "../lib/src/js/DragImagesManager.js";
 
 export default {
   components: { Page, Drag, DropList },

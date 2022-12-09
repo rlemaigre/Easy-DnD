@@ -1,4 +1,8 @@
 import { createApp } from 'vue'
-import App from './App.vue'
+import App from './App7.vue'
 
-createApp(App).mount('#app')
+import Generic from "./components/Generic";
+
+const app = createApp(App)
+app.component('generic', Generic);
+app.mount('#app');

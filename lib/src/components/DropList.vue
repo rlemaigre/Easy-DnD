@@ -219,6 +219,7 @@ export default {
       this.forbiddenKeys = this.computeForbiddenKeys();
     },
     onDragStart(event) {
+      console.warn('called drag start', this.$el);
       if (this.candidate(dnd.type)) {
         if (this.reordering) {
           this.fromIndex = Array.prototype.indexOf.call(event.source.$el.parentElement.children, event.source.$el);
@@ -272,6 +273,7 @@ export default {
       return this.$refs['feedback']['$slots']['default']()[0]['key'];
     },
     computeInsertingGrid() {
+      console.error('compute refs', this.$refs.feedback);
       let feedbackParent = this.$refs['feedback']['$el']; // todo -  as HTMLElement
       let feedback = feedbackParent.children[0];
       let clone = feedback.cloneNode(true); // todo -  as HTMLElement
@@ -281,12 +283,15 @@ export default {
       } else {
         tg.appendChild(clone);
       }
-      let grid = new Grid(tg.children, this.items.length, this.direction, null);
+      const grid = new Grid(tg.children, this.items.length, this.direction, null);
+      console.warn('INSERT GRID', grid)
       tg.removeChild(clone);
       return grid;
     },
     computeReorderingGrid() {
-      return new Grid(this.$el.children, this.items.length - 1, this.direction, this.fromIndex); // todo - $el as HTMLElement
+      const grid = new Grid(this.$el.children, this.items.length - 1, this.direction, this.fromIndex); // todo - $el as HTMLElement
+      console.warn('REORDER GRID', grid)
+      return grid
     },
     createDragImage() {
       let image;

@@ -24,7 +24,7 @@
                 </template>
                 <drop-mask class="mask">
                     <drop-zone class="drop-zone drop-zone3 even" :accept="acceptEven">
-                        <template v-slot:image="{data}">
+                        <template v-slot:imaAge="{data}">
                             <div class="circle">
                                 <div class="txt">{{ data }}</div>
                             </div>

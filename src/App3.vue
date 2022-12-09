@@ -7,7 +7,7 @@
                     <template v-slot:item="{item, reorder}">
                         <drag :key="item.title" :data="item" @cut="remove(items1, item)">
                             <ListItem style="background-color: white"
-                                         :style="reorder ? {borderLeft: '2px solid #1976D2', marginLeft:'-2px'} : {}">
+                                         :style="reorder ? {borderLeft: '10px solid #1976D2', marginLeft:'-2px'} : {}">
                                 <template v-slot:side>
                                     <Avatar :src="item.avatar"/>
                                 </template>

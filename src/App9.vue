@@ -38,6 +38,7 @@
 <script>
 import Drag from "../lib/src/components/Drag";
 import DropList from "../lib/src/components/DropList";
+import "../lib/src/js/DragImagesManager.js";
 
 export default {
   name: "App",

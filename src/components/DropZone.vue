@@ -1,6 +1,6 @@
 <template>
     <drop @drop="drop" accepts-type="number" :accepts-data="accept">
-        <slot></slot>
+        <slot />
         <template v-slot:drag-image="{type, data}">
             <slot name="image" :type="type" :data="data"></slot>
         </template>

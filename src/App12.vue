@@ -60,6 +60,7 @@ import Drag from "../lib/src/components/Drag";
 import Drop from "../lib/src/components/Drop";
 import DropList from "../lib/src/components/DropList";
 import App12Item from "./components/App12Item";
+import "../lib/src/js/DragImagesManager.js";
 
 export default {
     name: "App",
