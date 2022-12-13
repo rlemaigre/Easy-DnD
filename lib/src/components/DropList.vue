@@ -1,47 +1,5 @@
-<template>
-    <component ref="component" :is="rootTag" v-bind="rootProps" :class="clazz" :style="style">
-        <template v-if="dropIn && dropAllowed">
-            <template v-if="reordering">
-                <template v-if="hasReorderingFeedback">
-                    <slot name="item" v-for="(item, index) in itemsBeforeReorderingFeedback" :item="item"
-                        :index="index" />
-                    <slot name="reordering-feedback" :item="items[fromIndex]"/>
-                    <slot name="item" v-for="(item, index) in itemsAfterReorderingFeedback" :item="item"
-                        :index="itemsBeforeReorderingFeedback.length + index" />
-                </template>
-                <template v-else>
-                    <slot name="item" v-for="(item, index) in reorderedItems" :item="item"
-                        :index="index"
-                        :reorder="index === closestIndex"/>
-                </template>
-            </template>
-            <template v-else>
-                <slot name="item" v-for="(item, index) in itemsBeforeFeedback" :item="item" :reorder="false"
-                     :index="index"/>
-                <slot name="feedback" :data="dragData" :type="dragType"/>
-                <slot name="item" v-for="(item, index) in itemsAfterFeedback" :item="item" :reorder="false"
-                     :index="itemsBeforeFeedback.length + index"/>
-            </template>
-        </template>
-        <template v-else>
-            <slot name="item" v-for="(item, index) in items" :item="item" :reorder="false" :index="index"/>
-            <slot name="empty" v-if="items.length < 1" />
-        </template>
-        <drag-feedback class="__feedback" v-if="showDragFeedback" ref="feedback" key="drag-feedback">
-            <slot name="feedback" :data="dragData" :type="dragType"/>
-        </drag-feedback>
-        <div class="__drag-image" v-if="showInsertingDragImage" ref="drag-image" key="inserting-drag-image">
-            <slot name="drag-image" :type="dragType" :data="dragData"/>
-        </div>
-        <div class="__drag-image" v-if="showReorderingDragImage" ref="drag-image" key="reordering-drag-image">
-            <slot name="reordering-drag-image" :item="items[fromIndex]"/>
-        </div>
-        <slot />
-    </component>
-</template>
-
 <script>
-import { TransitionGroup } from "vue";
+import { TransitionGroup, h } from "vue";
 import DropMixin, { dropAllowed, doDrop, candidate } from "../mixins/DropMixin";
 import DragFeedback from "./DragFeedback";
 import Grid from "../js/Grid";
@@ -52,9 +10,6 @@ import {dnd} from "../js/DnD";
 export default {
   name: 'DropList',
   mixins: [DropMixin],
-  components: {
-    DragFeedback
-  },
   props: {
     tag: {
       type: [String, Object, Function],
@@ -91,7 +46,7 @@ export default {
   computed: {
     rootTag() {
       if (this.noAnimations) {
-        return this.tag || 'div';
+        return this.tag;
       } else {
         return TransitionGroup;
       }
@@ -219,7 +174,6 @@ export default {
       this.forbiddenKeys = this.computeForbiddenKeys();
     },
     onDragStart(event) {
-      console.warn('called drag start', this.$el);
       if (this.candidate(dnd.type)) {
         if (this.reordering) {
           this.fromIndex = Array.prototype.indexOf.call(event.source.$el.parentElement.children, event.source.$el);
@@ -258,14 +212,8 @@ export default {
       return (candidate(this, type) && (this.$attrs.hasOwnProperty("onInsert") || this.$attrs.hasOwnProperty("onDrop"))) || this.reordering;
     },
     computeForbiddenKeys() {
-      // todo - go over all usages of $children
-      console.log(this.$refs.component.$slots.default())
-      // todo - this logic is wrong and doesn't work in vue3. Is it necessary at all?
-      let vnodes = this.noAnimations ? [] : this.$refs.component.$slots.default()[0].children[0].children;
-      console.log(vnodes
-          .map(vn => vn.children[0].key))
-      return vnodes
-          .map(vn => vn.children[0].key)
+      return (this.noAnimations ? [] : this.$refs.component.$slots.default())
+          .map(vn => vn.key)
           .filter(k => !!k && k !== 'drag-image' && k !== 'drag-feedback');
     },
     computeFeedbackKey() {
@@ -273,9 +221,7 @@ export default {
       return this.$refs['feedback']['$slots']['default']()[0]['key'];
     },
     computeInsertingGrid() {
-      console.error('compute refs', this.$refs.feedback);
-      let feedbackParent = this.$refs['feedback']['$el']; // todo -  as HTMLElement
-      let feedback = feedbackParent.children[0];
+      let feedback = this.$refs.feedback.$el.children[0];
       let clone = feedback.cloneNode(true); // todo -  as HTMLElement
       let tg = this.$el; // todo -  as HTMLElement
       if (tg.children.length > this.items.length) {
@@ -284,14 +230,11 @@ export default {
         tg.appendChild(clone);
       }
       const grid = new Grid(tg.children, this.items.length, this.direction, null);
-      console.warn('INSERT GRID', grid)
       tg.removeChild(clone);
       return grid;
     },
     computeReorderingGrid() {
-      const grid = new Grid(this.$el.children, this.items.length - 1, this.direction, this.fromIndex); // todo - $el as HTMLElement
-      console.warn('REORDER GRID', grid)
-      return grid
+      return new Grid(this.$el.children, this.items.length - 1, this.direction, this.fromIndex); // todo - $el as HTMLElement
     },
     createDragImage() {
       let image;
@@ -316,11 +259,176 @@ export default {
       return image;
     }
   },
+  render () {
+    if (!this.$slots.item) {
+      throw 'The "Item" slot must be defined to use DropList'
+    }
+
+    let defaultArr = [];
+    if (this.dropIn && this.dropAllowed) {
+      if (this.reordering) {
+        if (this.hasReorderingFeedback) {
+          const itemsReorderingBefore = this.itemsBeforeReorderingFeedback.map((item, index) => {
+            return this.$slots.item({
+              item: item,
+              index: index,
+              reorder: false
+            })[0]
+          })
+          if (itemsReorderingBefore.length > 0) {
+            defaultArr = defaultArr.concat(itemsReorderingBefore);
+          }
+
+          if (this.$slots['reordering-feedback']) {
+            defaultArr.push(this.$slots['reordering-feedback']({
+              key: 'reordering-feedback',
+              item: this.items[this.fromIndex]
+            })[0])
+          }
+
+          const itemsReorderingAfter = this.itemsAfterReorderingFeedback.map((item, index) => {
+            return this.$slots.item({
+              item: item,
+              index: this.itemsBeforeReorderingFeedback.length + index,
+              reorder: false
+            })[0]
+          })
+          if (itemsReorderingAfter.length > 0) {
+            defaultArr = defaultArr.concat(itemsReorderingAfter);
+          }
+        }
+        else {
+          const reorderedItems = this.reorderedItems.map((item, index) => {
+            return this.$slots.item({
+              item: item,
+              index: index,
+              reorder: index === this.closestIndex
+            })[0]
+          })
+          if (reorderedItems.length > 0) {
+            defaultArr = defaultArr.concat(reorderedItems);
+          }
+        }
+      }
+      else {
+        const itemsBefore = this.itemsBeforeFeedback.map((item, index) => {
+          return this.$slots.item({
+            item: item,
+            index: index,
+            reorder: false
+          })[0]
+        });
+        if (itemsBefore.length > 0) {
+          defaultArr = defaultArr.concat(itemsBefore);
+        }
+
+        if (this.$slots['feedback']) {
+          defaultArr.push(this.$slots.feedback({
+            key: 'drag-feedback',
+            data: this.dragData,
+            type: this.dragType
+          })[0]);
+        }
+
+        const itemsAfter = this.itemsAfterFeedback.map((item, index) => {
+          return this.$slots.item({
+            item: item,
+            index: this.itemsBeforeFeedback.length + index,
+            reorder: false
+          })[0]
+        })
+        if (itemsAfter.length > 0) {
+          defaultArr = defaultArr.concat(itemsAfter);
+        }
+      }
+    }
+    else {
+      const defaultItems = this.items.map((item, index) => {
+        return this.$slots.item({
+          item: item,
+          index: index,
+          reorder: false
+        })[0]
+      });
+
+      if (defaultItems.length > 0) {
+        defaultArr = defaultArr.concat(defaultItems);
+      }
+      else if (this.$slots['empty']) {
+        defaultArr.push(this.$slots.empty()[0])
+      }
+    }
+
+    if (this.showDragFeedback && this.$slots['feedback']) {
+      defaultArr.push(h(
+          DragFeedback,
+          {
+            class: '__feedback',
+            ref: 'feedback',
+            key: 'drag-feedback'
+          },
+          {
+            default: () => this.$slots['feedback']({
+              type: this.dragType,
+              data: this.dragData
+            })[0]
+          }
+      ));
+    }
+
+    if (this.showReorderingDragImage && this.$slots['reordering-drag-image']) {
+      defaultArr.push(h(
+          'div',
+          {
+            class: '__drag-image',
+            ref: 'drag-image',
+            key: 'reordering-drag-image'
+          },
+          {
+            default: () => this.$slots['reordering-drag-image']({
+              item: this.items[this.fromIndex]
+            })[0]
+          }
+      ));
+    }
+
+    if (this.showInsertingDragImage && this.$slots['inserting-drag-image']) {
+      defaultArr.push(h(
+          'div',
+          {
+            class: '__drag-image',
+            ref: 'drag-image',
+            key: 'inserting-drag-image'
+          },
+          {
+            default: () => this.$slots['inserting-drag-image']({
+              type: this.dragType,
+              data: this.dragData
+            })[0]
+          }
+      ));
+    }
+
+    return h(
+        this.rootTag,
+        {
+          ref: 'component',
+          class: this.clazz,
+          style: this.style,
+          ...this.rootProps
+        },
+        {
+          default: () => defaultArr
+        }
+    )
+  },
   created() {
     dnd.on("dragstart", this.onDragStart);
     dnd.on("dragend", this.onDragEnd);
+    console.log('mounted drag events');
   },
   beforeUnmount() {
+    console.log('unmounting drag events');
     dnd.off("dragstart", this.onDragStart);
     dnd.off("dragend", this.onDragEnd);
   }

@@ -1,41 +1,39 @@
 <template>
-  <v-app>
-    <v-content>
-      <v-container fluid class="wrapper">
-        <v-row>
-          <v-col>
-            <drop-list
-                :items="items"
-                class="list"
-                @reorder="$event.apply(items)"
-            >
-              <template v-slot:item="{ item }">
-                <drag class="item" :data="item" :key="item.name">
-                  {{ item.name }}
-                </drag>
-              </template>
-            </drop-list>
-          </v-col>
-          <v-col>
-            <drop-list
-                :items="items"
-                class="list"
-                @reorder="$event.apply(items)"
-            >
-              <template v-slot:item="{ item }">
-                <drag class="item" :data="item" :key="item.name">
-                  {{ item.name }}
-                </drag>
-              </template>
-            </drop-list>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-content>
-  </v-app>
+  <Page class="wrapper">
+    <div class="row">
+      <div class="col">
+        <drop-list
+            :items="items"
+            class="list"
+            @reorder="$event.apply(items)"
+        >
+          <template v-slot:item="{ item }">
+            <drag class="item" :data="item" :key="item.name">
+              {{ item.name }}
+            </drag>
+          </template>
+        </drop-list>
+      </div>
+      <div class="col">
+        <drop-list
+            :items="items"
+            class="list"
+            @reorder="$event.apply(items)"
+        >
+          <template v-slot:item="{ item }">
+            <drag class="item" :data="item" :key="item.name">
+              {{ item.name }}
+            </drag>
+          </template>
+        </drop-list>
+      </div>
+    </div>
+  </Page>
 </template>
 
 <script>
+import Page from './components/scaffold/Page'
+
 import Drag from "../lib/src/components/Drag";
 import DropList from "../lib/src/components/DropList";
 import "../lib/src/js/DragImagesManager.js";
@@ -43,6 +41,7 @@ import "../lib/src/js/DragImagesManager.js";
 export default {
   name: "App",
   components: {
+    Page,
     Drag,
     DropList,
   },

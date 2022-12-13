@@ -1,38 +1,36 @@
 <template>
-  <v-app>
-    <v-content>
-      <v-container fluid class="wrapper">
-        <v-row>
-          <v-col>
-            <drop-list
-                :items="items"
-                class="list"
-                mode="cut"
-                @reorder="$event.apply(items)"
-            >
-              <template v-slot:item="{ item }">
-                <drag class="item" :data="item" :key="item.name" @cut="onCut">
-                  {{ item.name }}
-                </drag>
-              </template>
-            </drop-list>
-          </v-col>
-          <v-col>
-            <drop :class="{'hovering': active}" class="dropper"
-                  @dragend="(e) => onDragEnd('active', e)" @dragenter="(e) => onDragEnter('active', e)"
-                  @drop="onDrop"
-                  @dragleave="(e) => onDragLeave('active', e)"/>
-            <drop :class="{'hovering': active2}" class="dropper"
-                  @dragend="(e) => onDragEnd('active2', e)" @dragenter="(e) => onDragEnter('active2', e)"
-                  @dragleave="(e) => onDragLeave('active2', e)"/>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-content>
-  </v-app>
+  <Page class="wrapper">
+    <div class="row">
+      <div class="col">
+        <drop-list
+            :items="items"
+            class="list"
+            mode="cut"
+            @reorder="$event.apply(items)"
+        >
+          <template v-slot:item="{ item }">
+            <drag class="item" :data="item" :key="item.name" @cut="onCut">
+              {{ item.name }}
+            </drag>
+          </template>
+        </drop-list>
+      </div>
+      <div class="col">
+        <drop :class="{'hovering': active}" class="dropper"
+              @dragend="(e) => onDragEnd('active', e)" @dragenter="(e) => onDragEnter('active', e)"
+              @drop="onDrop"
+              @dragleave="(e) => onDragLeave('active', e)"/>
+        <drop :class="{'hovering': active2}" class="dropper"
+              @dragend="(e) => onDragEnd('active2', e)" @dragenter="(e) => onDragEnter('active2', e)"
+              @dragleave="(e) => onDragLeave('active2', e)"/>
+      </div>
+    </div>
+  </Page>
 </template>
 
 <script>
+import Page from './components/scaffold/Page'
+
 import Drag from "../lib/src/components/Drag";
 import DropList from "../lib/src/components/DropList";
 import Drop from "../lib/src/components/Drop";
@@ -41,6 +39,7 @@ import "../lib/src/js/DragImagesManager.js";
 export default {
   name: "App",
   components: {
+    Page,
     Drag,
     DropList,
     Drop

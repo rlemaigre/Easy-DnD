@@ -1,63 +1,67 @@
 <template>
-    <v-app>
-        <v-content>
-            <v-container fluid>
-                <v-row align-content="stretch">
-                    <v-col>
-                        <drag :data="selected" go-back :vibration="10">
-                            <v-data-table
-                                    v-model="selected"
-                                    :headers="headers"
-                                    :items="desserts"
-                                    item-key="name"
-                                    show-select
-                            >
-                            </v-data-table>
-                            <template v-slot:drag-image>
-                                <v-badge color="red" style="transform: translate(10px, 5px)">
-                                    <template v-slot:badge>{{selected.length}}</template>
-                                    <v-icon large color="primary">mdi-food-variant</v-icon>
-                                </v-badge>
-                            </template>
-                        </drag>
-                    </v-col>
-                    <v-col>
-                        <drop @drop="onDrop" style="height:100%" tag="v-list" three-line class="my-list">
-                            <template v-for="(list, index) in lists">
-                                <v-list-item :key="index" @click="">
-                                    <v-list-item-avatar color="primary" size="48">
-                                        <span class="white--text">{{list.length}}</span>
-                                    </v-list-item-avatar>
-                                    <v-list-item-content>
-                                        <v-list-item-title>List {{index}}</v-list-item-title>
-                                        <v-list-item-subtitle>
-                                            {{list.map(l => l.name).join(", ")}}<br/>
-                                            {{list.map(l => l.calories).join(", ")}}
-                                        </v-list-item-subtitle>
-                                    </v-list-item-content>
-                                </v-list-item>
-                                <v-divider/>
-                            </template>
-                        </drop>
-                    </v-col>
-                </v-row>
-            </v-container>
-        </v-content>
-    </v-app>
+    <Page class="wrapper">
+        <div class="row">
+            <div class="col">
+                <drag :data="selected" go-back :vibration="10">
+                  data table needs reimplementing for Vue3
+                    <v-data-table
+                            v-model="selected"
+                            :headers="headers"
+                            :items="desserts"
+                            item-key="name"
+                            show-select
+                    >
+                    </v-data-table>
+                    <template v-slot:drag-image>
+                        <Chip color="red" style="transform: translate(10px, 5px)">
+                            {{selected.length}}
+                        </Chip>
+                    </template>
+                </drag>
+            </div>
+            <div class="col">
+                <drop @drop="onDrop" style="height:100%" tag="v-list" three-line class="my-list">
+                    <template v-for="(list, index) in lists" :key="index">
+                        <ListItem>
+                          <template v-slot:side>
+                            <span class="white--text">{{list.length}}</span>
+                          </template>
+
+                          <div class="title">
+                            List {{ index }}
+                          </div>
+                          <div class="subtitle">
+                            {{list.map(l => l.name).join(", ")}}<br/>
+                            {{list.map(l => l.calories).join(", ")}}
+                          </div>
+                        </ListItem>
+                        <Separator />
+                    </template>
+                </drop>
+            </div>
+        </div>
+    </Page>
 </template>
 
 <script>
+import Page from './components/scaffold/Page'
+import ListItem from './components/scaffold/ListItem'
+import Separator from './components/scaffold/Separator'
+import Chip from './components/scaffold/Chip'
+
 import Drag from "../lib/src/components/Drag";
 import Drop from "../lib/src/components/Drop";
-import DropList from "../lib/src/components/DropList";
 import "../lib/src/js/DragImagesManager.js";
 
 export default {
     name: "App",
     components: {
-        Drag,
-        DropList,
-        Drop
+      Drag,
+      Drop,
+      Page,
+      ListItem,
+      Separator,
+      Chip
     },
     data: function () {
         return {

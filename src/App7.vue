@@ -1,21 +1,17 @@
 <template>
-    <v-app>
-        <v-content>
-            <v-container fluid class="wrapper" style="margin-top: 2000px">
-                <generic :model="data" class="root"></generic>
-            </v-container>
-        </v-content>
-    </v-app>
+  <Page class="wrapper">
+    <generic :model="data" class="root"></generic>
+  </Page>
 </template>
 
 <script>
-import Drag from "../lib/src/components/Drag";
-import DropList from "../lib/src/components/DropList";
-import Drop from "../lib/src/components/Drop";
+import Page from './components/scaffold/Page'
+
+import "../lib/src/js/DragImagesManager.js";
 
 export default {
   name: 'App7',
-  components: { Drop, Drag, DropList },
+  components: { Page },
   data () {
     return {
       key: 0,

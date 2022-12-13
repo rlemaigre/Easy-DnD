@@ -95,10 +95,10 @@ import "../lib/src/js/DragImagesManager.js";
 export default {
     name: "App",
     components: {
-      Page,
-      Avatar,
       Drag,
       DropList,
+      Page,
+      Avatar,
       List,
       ListItem,
       Separator,
