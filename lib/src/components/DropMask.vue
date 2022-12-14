@@ -8,7 +8,7 @@
 
 <script>
 import DragAwareMixin from "../mixins/DragAwareMixin";
-import {dnd} from "../js/DnD";
+import { dnd } from "../js/DnD";
 
 export default {
   name: 'DropMask',

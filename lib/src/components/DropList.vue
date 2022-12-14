@@ -3,9 +3,9 @@ import { TransitionGroup, h } from "vue";
 import DropMixin, { dropAllowed, doDrop, candidate } from "../mixins/DropMixin";
 import DragFeedback from "./DragFeedback";
 import Grid from "../js/Grid";
-import {InsertEvent, ReorderEvent} from "../js/events";
-import {createDragImage} from "../js/createDragImage";
-import {dnd} from "../js/DnD";
+import { InsertEvent, ReorderEvent } from "../js/events";
+import { createDragImage } from "../js/createDragImage";
+import { dnd } from "../js/DnD";
 
 export default {
   name: 'DropList',
@@ -152,7 +152,7 @@ export default {
         'drop-list': true,
         'reordering': this.reordering === true,
         'inserting': this.reordering === false,
-        ...(this.reordering === false ? this.cssClasses : {'dnd-drop': true})
+        ...(this.reordering === false ? this.cssClasses : { 'dnd-drop': true })
       };
     },
     style () {
