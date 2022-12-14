@@ -1,24 +1,40 @@
 <template>
-    <div class="Flex">
-        <drop-list :items="items" class="dl" :style="{flexDirection: direction}" @insert="onInsert"
-                   @reorder="onReorder" mode="cut" :row="direction === 'row'" :column="direction === 'column'"
-                   :tag="root" no-animations>
-            <template v-slot:item="{item}">
-                <drag tag="generic" :model="item" :key="key(item)" :data="item"
-                      @cut="remove(item)">
-                    <template v-slot:drag-image>
-                        <div class="drag-image">DRAG</div>
-                    </template>
-                </drag>
-            </template>
-            <template v-slot:feedback="{data}">
-                <div class="feedback" :key="key(data)"/>
-            </template>
-            <template v-slot:reordering-feedback="{item}">
-                <div class="reordering-feedback" key="feedback"/>
-            </template>
-        </drop-list>
-    </div>
+  <div class="Flex">
+    <drop-list
+      :items="items"
+      class="dl"
+      :style="{flexDirection: direction}"
+      mode="cut"
+      :row="direction === 'row'"
+      :column="direction === 'column'"
+      :tag="root"
+      no-animations
+      @insert="onInsert"
+      @reorder="onReorder"
+    >
+      <template #item="{item}">
+        <drag
+          :key="key(item)"
+          tag="generic"
+          :model="item"
+          :data="item"
+          @cut="remove(item)"
+        >
+          <template #drag-image>
+            <div class="drag-image">
+              DRAG
+            </div>
+          </template>
+        </drag>
+      </template>
+      <template #feedback="{data}">
+        <div :key="key(data)" class="feedback" />
+      </template>
+      <template #reordering-feedback="{item}">
+        <div key="feedback" class="reordering-feedback" />
+      </template>
+    </drop-list>
+  </div>
 </template>
 
 <script>
@@ -30,36 +46,41 @@ export default {
   name: 'Flex',
   components: { Drag, DropList },
   props: {
-    items: {},
+    items: {
+      type: Array,
+      required: true
+    },
     direction: {
-      type: String
+      type: String,
+      default: 'auto'
     }
   },
   computed: {
     root () {
-      return MyDiv
+      return MyDiv;
     }
   },
   methods: {
-    key(item) {
+    key (item) {
       if (typeof item === "object") {
-        return item.key
-      } else {
+        return item.key;
+      }
+      else {
         return item;
       }
     },
-    onInsert(event) {
+    onInsert (event) {
       this.items.splice(event.index, 0, event.data);
     },
-    onReorder(event) {
+    onReorder (event) {
       event.apply(this.items);
     },
-    remove(item) {
+    remove (item) {
       let index = this.items.indexOf(item);
       this.items.splice(index, 1);
     }
   }
-}
+};
 </script>
 
 <style scoped lang="scss">

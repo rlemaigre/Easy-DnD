@@ -1,8 +1,12 @@
 <template>
-    <div class="generic">
-        <component :is="comp" v-bind="props" class="inner"></component>
-        <slot/>
-    </div>
+  <div class="generic">
+    <component
+      :is="comp"
+      v-bind="props"
+      class="inner"
+    />
+    <slot />
+  </div>
 </template>
 
 <script>
@@ -13,32 +17,40 @@ import Atomic from "./Atomic";
 export default {
   name: 'Generic',
   components: { Atomic, Row },
-  props: ['model'],
+  props: {
+    model: {
+      type: [Number, Object],
+      required: true
+    }
+  },
   computed: {
-    comp() {
+    comp () {
       if (typeof this.model === "object") {
         if (this.model.type === 'row') {
           return Row;
-        } else {
+        }
+        else {
           return Column;
         }
-      } else {
+      }
+      else {
         return Atomic;
       }
     },
-    props() {
+    props () {
       if (typeof this.model === "object") {
         return {
           items: this.model.items
-        }
-      } else {
+        };
+      }
+      else {
         return {
           data: this.model
-        }
+        };
       }
     }
   }
-}
+};
 </script>
 
 <style scoped lang="scss">

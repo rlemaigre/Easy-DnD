@@ -1,15 +1,28 @@
 <template>
-    <component :is="tag" v-bind="$attrs" :class="cssClasses" :style="cssStyle">
-      <slot v-bind="$slots['default'] || {}"></slot>
+  <component
+    :is="tag"
+    v-bind="$attrs"
+    :class="cssClasses"
+    :style="cssStyle"
+  >
+    <slot v-bind="$slots['default'] || {}" />
 
-      <template v-for="[slot, args] of dynamicSlots" v-slot:[slot]>
-        <slot :name="slot" v-bind="args" />
-      </template>
+    <template v-for="[slot, args] of dynamicSlots" #[slot]>
+      <slot :name="slot" v-bind="args" />
+    </template>
 
-      <div v-if="showDragImage" class="__drag-image" ref="drag-image">
-        <slot name="drag-image" :type="dragType" :data="dragData"></slot>
-      </div>
-    </component>
+    <div
+      v-if="showDragImage"
+      ref="drag-image"
+      class="__drag-image"
+    >
+      <slot
+        name="drag-image"
+        :type="dragType"
+        :data="dragData"
+      />
+    </div>
+  </component>
 </template>
 
 <script>
@@ -26,13 +39,13 @@ export default {
   },
   computed: {
     dynamicSlots () {
-      return Object.entries(this.$slots).filter(([key]) => key !== 'drag-image' && key !== 'default')
+      return Object.entries(this.$slots).filter(([key]) => key !== 'drag-image' && key !== 'default');
     },
-    showDragImage() {
+    showDragImage () {
       return this.dragInProgress && this.typeAllowed && !!this.$slots['drag-image'];
     }
   }
-}
+};
 </script>
 
 <style lang="scss">

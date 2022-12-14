@@ -1,11 +1,11 @@
 <template>
   <Page class="wrapper">
-    <generic :model="data" class="root"></generic>
+    <generic :model="data" class="root" />
   </Page>
 </template>
 
 <script>
-import Page from './components/scaffold/Page'
+import Page from './components/scaffold/Page';
 
 import "../lib/src/js/DragImagesManager.js";
 
@@ -16,15 +16,9 @@ export default {
     return {
       key: 0,
       data: null
-    }
+    };
   },
-  methods: {
-    genNum() {
-      this.key++;
-      return this.key;
-    }
-  },
-  created() {
+  created () {
     this.data = {
       key: this.genNum(),
       type: 'col',
@@ -53,8 +47,14 @@ export default {
         this.genNum()
       ]
     };
+  },
+  methods: {
+    genNum () {
+      this.key++;
+      return this.key;
+    }
   }
-}
+};
 </script>
 
 <style lang="scss">

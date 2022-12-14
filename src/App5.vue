@@ -1,25 +1,35 @@
 <template>
-    <Page class="wrapper">
-        <drop-list :items="[1,2]" column>
-            <template v-slot:item="{item}">
-                <drag v-if="item === 1">testx</drag>
-                <drag v-else>
-                    <drop-list :items="['a','b']" column>
-                        <template v-slot:item="{item}">
-                            <drag v-if="item === 'a'">test1</drag>
-                            <drag v-else>test2</drag>
-                        </template>
-                        <template v-slot:feedback><span :key="122">feedback</span></template>
-                    </drop-list>
-                </drag>
+  <Page class="wrapper">
+    <drop-list :items="[1,2]" column>
+      <template #item="{item}">
+        <drag v-if="item === 1">
+          testx
+        </drag>
+        <drag v-else>
+          <drop-list :items="['a','b']" column>
+            <template #item="{item: iItem}">
+              <drag v-if="iItem === 'a'">
+                test1
+              </drag>
+              <drag v-else>
+                test2
+              </drag>
             </template>
-            <template v-slot:feedback><span :key="122">feedback</span></template>
-        </drop-list>
-    </Page>
+            <template #feedback>
+              <span :key="122">feedback</span>
+            </template>
+          </drop-list>
+        </drag>
+      </template>
+      <template #feedback>
+        <span :key="122">feedback</span>
+      </template>
+    </drop-list>
+  </Page>
 </template>
 
 <script>
-import Page from './components/scaffold/Page'
+import Page from './components/scaffold/Page';
 
 import Drag from "../lib/src/components/Drag";
 import DropList from "../lib/src/components/DropList";
@@ -30,14 +40,14 @@ export default {
   data () {
     return {
       items: ['a', 'b', 'c', 'd', 'e']
-    }
+    };
   },
   methods: {
-    onInsert(event) {
+    onInsert (event) {
       this.items.splice(event.index, 0, event.data);
     }
   }
-}
+};
 </script>
 
 <style lang="scss">

@@ -1,50 +1,82 @@
 <template>
-    <Page class="wrapper">
-        <drop-zone class="drop-zone drop-zone1 even" :accept="acceptEven">
-            <template v-slot:image="{data}">
-                <div class="circle">
-                    <div class="txt">{{ data }}</div>
+  <Page class="wrapper">
+    <drop-zone class="drop-zone drop-zone1 even" :accept="acceptEven">
+      <template #image="{data}">
+        <div class="circle">
+          <div class="txt">
+            {{ data }}
+          </div>
+        </div>
+      </template>
+      <drop-mask class="palette">
+        <drag
+          class="drag"
+          type="number"
+          :data="1"
+          go-back
+        >
+          1
+        </drag>
+        <drag
+          class="drag"
+          type="number"
+          :data="2"
+        >
+          2
+        </drag>
+        <drag
+          class="drag"
+          type="number"
+          :data="3"
+        >
+          3
+        </drag>
+        <drag
+          class="drag"
+          type="number"
+          :data="4"
+        >
+          4
+          <template #drag-image>
+            4
+          </template>
+        </drag>
+      </drop-mask>
+      <drop-zone class="drop-zone drop-zone2 odd" :accept="acceptOdd">
+        <template #image="{data}">
+          <div class="triangle">
+            <div class="txt">
+              {{ data }}
+            </div>
+          </div>
+        </template>
+        <drop-mask class="mask">
+          <drop-zone class="drop-zone drop-zone3 even" :accept="acceptEven">
+            <template #imaAge="{data}">
+              <div class="circle">
+                <div class="txt">
+                  {{ data }}
                 </div>
+              </div>
             </template>
-            <drop-mask class="palette">
-                <drag class="drag" type="number" :data="1" go-back>1</drag>
-                <drag class="drag" type="number" :data="2">2</drag>
-                <drag class="drag" type="number" :data="3">3</drag>
-                <drag class="drag" type="number" :data="4">4
-                    <template v-slot:drag-image>
-                        4
-                    </template>
-                </drag>
-            </drop-mask>
-            <drop-zone class="drop-zone drop-zone2 odd" :accept="acceptOdd">
-                <template v-slot:image="{data}">
-                    <div class="triangle">
-                        <div class="txt">{{ data }}</div>
-                    </div>
-                </template>
-                <drop-mask class="mask">
-                    <drop-zone class="drop-zone drop-zone3 even" :accept="acceptEven">
-                        <template v-slot:imaAge="{data}">
-                            <div class="circle">
-                                <div class="txt">{{ data }}</div>
-                            </div>
-                        </template>
-                    </drop-zone>
-                    <drop-zone class="drop-zone drop-zone4 odd" :accept="acceptOdd">
-                        <template v-slot:image="{data}">
-                            <div class="triangle">
-                                <div class="txt">{{ data }}</div>
-                            </div>
-                        </template>
-                    </drop-zone>
-                </drop-mask>
-            </drop-zone>
-        </drop-zone>
-    </Page>
+          </drop-zone>
+          <drop-zone class="drop-zone drop-zone4 odd" :accept="acceptOdd">
+            <template #image="{data}">
+              <div class="triangle">
+                <div class="txt">
+                  {{ data }}
+                </div>
+              </div>
+            </template>
+          </drop-zone>
+        </drop-mask>
+      </drop-zone>
+    </drop-zone>
+  </Page>
 </template>
 
 <script>
-import Page from './components/scaffold/Page'
+import Page from './components/scaffold/Page';
 
 import Drag from "../lib/src/components/Drag";
 import DropMask from "../lib/src/components/DropMask";
@@ -56,17 +88,17 @@ export default {
   data () {
     return {
       items: ['a', 'b', 'c', 'd', 'e']
-    }
+    };
   },
   methods: {
     acceptEven (data) {
-      return data % 2 === 0
+      return data % 2 === 0;
     },
     acceptOdd (data) {
-      return data % 2 === 1
+      return data % 2 === 1;
     }
   }
-}
+};
 </script>
 
 <style lang="scss">

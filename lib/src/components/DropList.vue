@@ -4,7 +4,7 @@ import DropMixin, { dropAllowed, doDrop, candidate } from "../mixins/DropMixin";
 import DragFeedback from "./DragFeedback";
 import Grid from "../js/Grid";
 import {InsertEvent, ReorderEvent} from "../js/events";
-import {createDragImage} from "../js/createDragImage"
+import {createDragImage} from "../js/createDragImage";
 import {dnd} from "../js/DnD";
 
 export default {
@@ -16,7 +16,8 @@ export default {
       default: 'div'
     },
     items: {
-      type: Array
+      type: Array,
+      required: true
     },
     row: {
       type: Boolean,
@@ -41,48 +42,52 @@ export default {
       forbiddenKeys: [],
       feedbackKey: null,
       fromIndex: null
-    }
+    };
   },
   computed: {
-    rootTag() {
+    rootTag () {
       if (this.noAnimations) {
         return this.tag;
-      } else {
+      }
+      else {
         return TransitionGroup;
       }
     },
-    rootProps() {
+    rootProps () {
       if (this.noAnimations) {
         return this.$attrs;
-      } else {
+      }
+      else {
         return {
           tag: this.tag,
           css: false
-        }
+        };
       }
     },
-    direction() {
+    direction () {
       // todo - rewrite this logic
       if (this.row) return 'row';
       if (this.column) return 'column';
       return 'auto';
     },
-    reordering() {
+    reordering () {
       if (dnd.inProgress) {
         // todo - was $listeners instead of $attrs
         return dnd.source.$el.parentElement === this.$el && this.$attrs.hasOwnProperty('onReorder');
-      } else {
+      }
+      else {
         return null;
       }
     },
-    closestIndex() {
+    closestIndex () {
       if (this.grid) {
         return this.grid.closestIndex(dnd.position);
-      } else {
+      }
+      else {
         return null;
       }
     },
-    dropAllowed() {
+    dropAllowed () {
       if (this.dragInProgress) {
         if (this.reordering) {
           return this.items.length > 1;
@@ -95,42 +100,46 @@ export default {
 
           // todo - work out forbiddenKeys
           if (this.forbiddenKeys !== null && this.feedbackKey !== null) {
-            return !this.forbiddenKeys.includes(this.feedbackKey)
+            return !this.forbiddenKeys.includes(this.feedbackKey);
           }
         }
       }
 
       return null;
     },
-    itemsBeforeFeedback() {
+    itemsBeforeFeedback () {
       if (this.closestIndex === 0) {
         return [];
-      } else {
+      }
+      else {
         return this.items.slice(0, this.closestIndex);
       }
     },
-    itemsAfterFeedback() {
+    itemsAfterFeedback () {
       if (this.closestIndex === this.items.length) {
         return [];
-      } else {
+      }
+      else {
         return this.items.slice(this.closestIndex);
       }
     },
-    itemsBeforeReorderingFeedback() {
+    itemsBeforeReorderingFeedback () {
       if (this.closestIndex <= this.fromIndex) {
         return this.items.slice(0, this.closestIndex);
-      } else {
+      }
+      else {
         return this.items.slice(0, this.closestIndex + 1);
       }
     },
-    itemsAfterReorderingFeedback() {
+    itemsAfterReorderingFeedback () {
       if (this.closestIndex <= this.fromIndex) {
         return this.items.slice(this.closestIndex);
-      } else {
+      }
+      else {
         return this.items.slice(this.closestIndex + 1);
       }
     },
-    reorderedItems() {
+    reorderedItems () {
       let toIndex = this.closestIndex;
       let reordered = [...this.items];
       let temp = reordered[this.fromIndex];
@@ -138,7 +147,7 @@ export default {
       reordered.splice(toIndex, 0, temp);
       return reordered;
     },
-    clazz() {
+    clazz () {
       return {
         'drop-list': true,
         'reordering': this.reordering === true,
@@ -146,104 +155,116 @@ export default {
         ...(this.reordering === false ? this.cssClasses : {'dnd-drop': true})
       };
     },
-    style() {
+    style () {
       return {
         ...(this.reordering === false ? this.cssStyle : {})
       };
     },
-    showDragFeedback() {
+    showDragFeedback () {
       return this.dragInProgress && this.typeAllowed && !this.reordering;
     },
-    showInsertingDragImage() {
+    showInsertingDragImage () {
       return this.dragInProgress && this.typeAllowed && !this.reordering && this.$slots.hasOwnProperty("drag-image");
     },
-    showReorderingDragImage() {
+    showReorderingDragImage () {
       return this.dragInProgress && this.reordering && this.$slots.hasOwnProperty("reordering-drag-image");
     },
-    hasReorderingFeedback() {
+    hasReorderingFeedback () {
       return this.$slots.hasOwnProperty("reordering-feedback");
     }
+  },
+  created () {
+    dnd.on("dragstart", this.onDragStart);
+    dnd.on("dragend", this.onDragEnd);
+  },
+  beforeUnmount () {
+    dnd.off("dragstart", this.onDragStart);
+    dnd.off("dragend", this.onDragEnd);
   },
   methods: {
     // Presence of feedback node in the DOM and of keys in the virtual DOM required => delayed until what
     // depends on drag data has been processed.
     async refresh () {
-      await this.$nextTick()
+      await this.$nextTick();
       this.grid = this.computeInsertingGrid();
       this.feedbackKey = this.computeFeedbackKey();
       this.forbiddenKeys = this.computeForbiddenKeys();
     },
-    onDragStart(event) {
+    onDragStart (event) {
       if (this.candidate(dnd.type)) {
         if (this.reordering) {
           this.fromIndex = Array.prototype.indexOf.call(event.source.$el.parentElement.children, event.source.$el);
           this.grid = this.computeReorderingGrid();
-        } else {
-          this.refresh()
+        }
+        else {
+          this.refresh();
         }
       }
     },
-    onDragEnd() {
+    onDragEnd () {
       this.fromIndex = null;
       this.feedbackKey = null;
       this.forbiddenKeys = null;
       this.grid = null;
     },
-    doDrop(event) {
+    doDrop (event) {
       if (this.reordering) {
         if (this.fromIndex !== this.closestIndex) {
           this.$emit('reorder', new ReorderEvent(
-              this.fromIndex,
-              this.closestIndex
+            this.fromIndex,
+            this.closestIndex
           ));
         }
-      } else {
+      }
+      else {
         // todo - eventually remove the need for this
-        doDrop(this, event)
+        doDrop(this, event);
         this.$emit('insert', new InsertEvent(
-            event.type,
-            event.data,
-            this.closestIndex
+          event.type,
+          event.data,
+          this.closestIndex
         ));
       }
     },
-    candidate(type) {
+    candidate (type) {
       // todo - was $listeners instead of $attrs
       return (candidate(this, type) && (this.$attrs.hasOwnProperty("onInsert") || this.$attrs.hasOwnProperty("onDrop"))) || this.reordering;
     },
-    computeForbiddenKeys() {
+    computeForbiddenKeys () {
       return (this.noAnimations ? [] : this.$refs.component.$slots.default())
-          .map(vn => vn.key)
-          .filter(k => !!k && k !== 'drag-image' && k !== 'drag-feedback');
+        .map(vn => vn.key)
+        .filter(k => !!k && k !== 'drag-image' && k !== 'drag-feedback');
     },
-    computeFeedbackKey() {
+    computeFeedbackKey () {
       // todo - check this () might not work if its not scoped
       return this.$refs['feedback']['$slots']['default']()[0]['key'];
     },
-    computeInsertingGrid() {
+    computeInsertingGrid () {
       let feedback = this.$refs.feedback.$el.children[0];
       let clone = feedback.cloneNode(true); // todo -  as HTMLElement
       let tg = this.$el; // todo -  as HTMLElement
       if (tg.children.length > this.items.length) {
         tg.insertBefore(clone, tg.children[this.items.length]);
-      } else {
+      }
+      else {
         tg.appendChild(clone);
       }
       const grid = new Grid(tg.children, this.items.length, this.direction, null);
       tg.removeChild(clone);
       return grid;
     },
-    computeReorderingGrid() {
+    computeReorderingGrid () {
       return new Grid(this.$el.children, this.items.length - 1, this.direction, this.fromIndex); // todo - $el as HTMLElement
     },
-    createDragImage() {
+    createDragImage () {
       let image;
       if (this.$refs['drag-image']) {
         let el = this.$refs['drag-image']; // todo -  as HTMLElement
         let model;
         if (el.childElementCount !== 1) {
           model = el;
-        } else {
+        }
+        else {
           model = el.children.item(0);
         }
         let clone = model.cloneNode(true); // todo -  as HTMLElement
@@ -252,8 +273,9 @@ export default {
         image = createDragImage(clone);
         tg.removeChild(clone);
         image['__opacity'] = this.dragImageOpacity;
-        image.classList.add('dnd-ghost')
-      } else {
+        image.classList.add('dnd-ghost');
+      }
+      else {
         image = 'source';
       }
       return image;
@@ -261,7 +283,7 @@ export default {
   },
   render () {
     if (!this.$slots.item) {
-      throw 'The "Item" slot must be defined to use DropList'
+      throw 'The "Item" slot must be defined to use DropList';
     }
 
     let defaultArr = [];
@@ -273,8 +295,8 @@ export default {
               item: item,
               index: index,
               reorder: false
-            })[0]
-          })
+            })[0];
+          });
           if (itemsReorderingBefore.length > 0) {
             defaultArr = defaultArr.concat(itemsReorderingBefore);
           }
@@ -283,7 +305,7 @@ export default {
             defaultArr.push(this.$slots['reordering-feedback']({
               key: 'reordering-feedback',
               item: this.items[this.fromIndex]
-            })[0])
+            })[0]);
           }
 
           const itemsReorderingAfter = this.itemsAfterReorderingFeedback.map((item, index) => {
@@ -291,8 +313,8 @@ export default {
               item: item,
               index: this.itemsBeforeReorderingFeedback.length + index,
               reorder: false
-            })[0]
-          })
+            })[0];
+          });
           if (itemsReorderingAfter.length > 0) {
             defaultArr = defaultArr.concat(itemsReorderingAfter);
           }
@@ -303,8 +325,8 @@ export default {
               item: item,
               index: index,
               reorder: index === this.closestIndex
-            })[0]
-          })
+            })[0];
+          });
           if (reorderedItems.length > 0) {
             defaultArr = defaultArr.concat(reorderedItems);
           }
@@ -316,7 +338,7 @@ export default {
             item: item,
             index: index,
             reorder: false
-          })[0]
+          })[0];
         });
         if (itemsBefore.length > 0) {
           defaultArr = defaultArr.concat(itemsBefore);
@@ -335,8 +357,8 @@ export default {
             item: item,
             index: this.itemsBeforeFeedback.length + index,
             reorder: false
-          })[0]
-        })
+          })[0];
+        });
         if (itemsAfter.length > 0) {
           defaultArr = defaultArr.concat(itemsAfter);
         }
@@ -348,91 +370,81 @@ export default {
           item: item,
           index: index,
           reorder: false
-        })[0]
+        })[0];
       });
 
       if (defaultItems.length > 0) {
         defaultArr = defaultArr.concat(defaultItems);
       }
       else if (this.$slots['empty']) {
-        defaultArr.push(this.$slots.empty()[0])
+        defaultArr.push(this.$slots.empty()[0]);
       }
     }
 
     if (this.showDragFeedback && this.$slots['feedback']) {
       defaultArr.push(h(
-          DragFeedback,
-          {
-            class: '__feedback',
-            ref: 'feedback',
-            key: 'drag-feedback'
-          },
-          {
-            default: () => this.$slots['feedback']({
-              type: this.dragType,
-              data: this.dragData
-            })[0]
-          }
+        DragFeedback,
+        {
+          class: '__feedback',
+          ref: 'feedback',
+          key: 'drag-feedback'
+        },
+        {
+          default: () => this.$slots['feedback']({
+            type: this.dragType,
+            data: this.dragData
+          })[0]
+        }
       ));
     }
 
     if (this.showReorderingDragImage && this.$slots['reordering-drag-image']) {
       defaultArr.push(h(
-          'div',
-          {
-            class: '__drag-image',
-            ref: 'drag-image',
-            key: 'reordering-drag-image'
-          },
-          {
-            default: () => this.$slots['reordering-drag-image']({
-              item: this.items[this.fromIndex]
-            })[0]
-          }
+        'div',
+        {
+          class: '__drag-image',
+          ref: 'drag-image',
+          key: 'reordering-drag-image'
+        },
+        {
+          default: () => this.$slots['reordering-drag-image']({
+            item: this.items[this.fromIndex]
+          })[0]
+        }
       ));
     }
 
     if (this.showInsertingDragImage && this.$slots['inserting-drag-image']) {
       defaultArr.push(h(
-          'div',
-          {
-            class: '__drag-image',
-            ref: 'drag-image',
-            key: 'inserting-drag-image'
-          },
-          {
-            default: () => this.$slots['inserting-drag-image']({
-              type: this.dragType,
-              data: this.dragData
-            })[0]
-          }
+        'div',
+        {
+          class: '__drag-image',
+          ref: 'drag-image',
+          key: 'inserting-drag-image'
+        },
+        {
+          default: () => this.$slots['inserting-drag-image']({
+            type: this.dragType,
+            data: this.dragData
+          })[0]
+        }
       ));
     }
 
     return h(
-        this.rootTag,
-        {
-          ref: 'component',
-          class: this.clazz,
-          style: this.style,
-          ...this.rootProps
-        },
-        {
-          default: () => defaultArr
-        }
-    )
-  },
-  created() {
-    dnd.on("dragstart", this.onDragStart);
-    dnd.on("dragend", this.onDragEnd);
-    console.log('mounted drag events');
-  },
-  beforeUnmount() {
-    console.log('unmounting drag events');
-    dnd.off("dragstart", this.onDragStart);
-    dnd.off("dragend", this.onDragEnd);
+      this.rootTag,
+      {
+        ref: 'component',
+        class: this.clazz,
+        style: this.style,
+        ...this.rootProps
+      },
+      {
+        default: () => defaultArr
+      }
+    );
   }
-}
+};
 </script>
 
 <style scoped lang="scss">

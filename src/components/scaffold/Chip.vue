@@ -12,7 +12,7 @@ export default {
       default: '#cacaca'
     }
   }
-}
+};
 </script>
 
 <style lang="scss">

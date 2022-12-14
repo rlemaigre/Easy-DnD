@@ -1,17 +1,17 @@
 <template>
   <ListItem
-      class="skeleton"
+    class="skeleton"
   />
 </template>
 
 <script>
-import ListItem from './ListItem'
+import ListItem from './ListItem';
 
 export default {
   components: {
     ListItem
   }
-}
+};
 </script>
 
 <style lang="scss">

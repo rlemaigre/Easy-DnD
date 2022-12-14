@@ -3,33 +3,46 @@
     <div class="row">
       <div class="col">
         <drop-list
-            :items="items"
-            class="list"
-            mode="cut"
-            @reorder="$event.apply(items)"
+          :items="items"
+          class="list"
+          mode="cut"
+          @reorder="$event.apply(items)"
         >
-          <template v-slot:item="{ item }">
-            <drag class="item" :data="item" :key="item.name" @cut="onCut">
+          <template #item="{ item }">
+            <drag
+              :key="item.name"
+              class="item"
+              :data="item"
+              @cut="onCut"
+            >
               {{ item.name }}
             </drag>
           </template>
         </drop-list>
       </div>
       <div class="col">
-        <drop :class="{'hovering': active}" class="dropper"
-              @dragend="(e) => onDragEnd('active', e)" @dragenter="(e) => onDragEnter('active', e)"
-              @drop="onDrop"
-              @dragleave="(e) => onDragLeave('active', e)"/>
-        <drop :class="{'hovering': active2}" class="dropper"
-              @dragend="(e) => onDragEnd('active2', e)" @dragenter="(e) => onDragEnter('active2', e)"
-              @dragleave="(e) => onDragLeave('active2', e)"/>
+        <drop
+          :class="{'hovering': active}"
+          class="dropper"
+          @dragend="(e) => onDragEnd('active', e)"
+          @dragenter="(e) => onDragEnter('active', e)"
+          @drop="onDrop"
+          @dragleave="(e) => onDragLeave('active', e)"
+        />
+        <drop
+          :class="{'hovering': active2}"
+          class="dropper"
+          @dragend="(e) => onDragEnd('active2', e)"
+          @dragenter="(e) => onDragEnter('active2', e)"
+          @dragleave="(e) => onDragLeave('active2', e)"
+        />
       </div>
     </div>
   </Page>
 </template>
 
 <script>
-import Page from './components/scaffold/Page'
+import Page from './components/scaffold/Page';
 
 import Drag from "../lib/src/components/Drag";
 import DropList from "../lib/src/components/DropList";
@@ -108,25 +121,25 @@ export default {
   },
   methods: {
     onDragEnter (variable, e) {
-      this[variable] = true
+      this[variable] = true;
       this.timer = setInterval(() => {
-        console.log('Logging Data...', variable, e)
-      }, 1000)
+        console.log('Logging Data...', variable, e);
+      }, 1000);
     },
     onDragEnd (variable, e) {
       console.log('DRAG END (esc)', variable, e);
-      this.onDragLeave(variable, e)
+      this.onDragLeave(variable, e);
     },
     onDragLeave (variable, e) {
       console.log('Called drag leave', variable, e);
-      this[variable] = false
-      clearInterval(this.timer)
+      this[variable] = false;
+      clearInterval(this.timer);
     },
     onDrop (e) {
-      console.log('DROP', e)
+      console.log('DROP', e);
     },
     onCut (e) {
-      console.log('CUT', e)
+      console.log('CUT', e);
     }
   }
 };

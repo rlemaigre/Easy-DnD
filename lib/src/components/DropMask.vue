@@ -1,9 +1,9 @@
 <template>
-    <component :is="tag" v-bind="$attrs">
-        <template v-for="(args, slot) of $slots" v-slot:[slot]>
-            <slot :name="slot" v-bind="args" />
-        </template>
-    </component>
+  <component :is="tag" v-bind="$attrs">
+    <template v-for="(args, slot) of $slots" #[slot]>
+      <slot :name="slot" v-bind="args" />
+    </template>
+  </component>
 </template>
 
 <script>
@@ -22,21 +22,21 @@ export default {
   data () {
     return {
       isDropMask: true
-    }
+    };
   },
-  methods: {
-    createDragImage () {
-      return 'source'
-    }
-  },
-  mounted() {
+  mounted () {
     let el = this.$el;
     let comp = this;
     el.addEventListener('easy-dnd-move', onMouseMove);
 
-    function onMouseMove(e) {
+    function onMouseMove (e) {
       dnd.mouseMove(e, comp);
     }
+  },
+  methods: {
+    createDragImage () {
+      return 'source';
+    }
   }
-}
+};
 </script>

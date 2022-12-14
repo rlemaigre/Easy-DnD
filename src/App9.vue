@@ -3,12 +3,16 @@
     <div class="row">
       <div class="col">
         <drop-list
-            :items="items"
-            class="list"
-            @reorder="$event.apply(items)"
+          :items="items"
+          class="list"
+          @reorder="$event.apply(items)"
         >
-          <template v-slot:item="{ item }">
-            <drag class="item" :data="item" :key="item.name">
+          <template #item="{ item }">
+            <drag
+              :key="item.name"
+              class="item"
+              :data="item"
+            >
               {{ item.name }}
             </drag>
           </template>
@@ -16,12 +20,16 @@
       </div>
       <div class="col">
         <drop-list
-            :items="items"
-            class="list"
-            @reorder="$event.apply(items)"
+          :items="items"
+          class="list"
+          @reorder="$event.apply(items)"
         >
-          <template v-slot:item="{ item }">
-            <drag class="item" :data="item" :key="item.name">
+          <template #item="{ item }">
+            <drag
+              :key="item.name"
+              class="item"
+              :data="item"
+            >
               {{ item.name }}
             </drag>
           </template>
@@ -32,7 +40,7 @@
 </template>
 
 <script>
-import Page from './components/scaffold/Page'
+import Page from './components/scaffold/Page';
 
 import Drag from "../lib/src/components/Drag";
 import DropList from "../lib/src/components/DropList";

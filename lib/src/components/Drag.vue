@@ -1,13 +1,21 @@
 <template>
-  <component :is="tag" v-bind="$attrs" :class="cssClasses">
-    <slot v-bind="$slots['default'] || {}"></slot>
+  <component
+    :is="tag"
+    v-bind="$attrs"
+    :class="cssClasses"
+  >
+    <slot v-bind="$slots['default'] || {}" />
 
-    <template v-for="[slot, args] of dynamicSlots" v-slot:[slot]>
+    <template v-for="[slot, args] of dynamicSlots" #[slot]>
       <slot :name="slot" v-bind="args" />
     </template>
 
-    <div v-if="dragInitialised" class="__drag-image" ref="drag-image">
-        <slot name="drag-image"></slot>
+    <div
+      v-if="dragInitialised"
+      ref="drag-image"
+      class="__drag-image"
+    >
+      <slot name="drag-image" />
     </div>
   </component>
 </template>
@@ -29,10 +37,10 @@ export default {
   },
   computed: {
     dynamicSlots () {
-      return Object.entries(this.$slots).filter(([key]) => key !== 'drag-image' && key !== 'default')
+      return Object.entries(this.$slots).filter(([key]) => key !== 'drag-image' && key !== 'default');
     }
   }
-}
+};
 </script>
 
 <style lang="scss">

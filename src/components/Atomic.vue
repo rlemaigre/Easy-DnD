@@ -1,5 +1,5 @@
 <template>
-    <span class="Atomic">{{data}}</span>
+  <span class="Atomic">{{ data }}</span>
 </template>
 
 <script>
@@ -7,10 +7,11 @@ export default {
   name: 'Atomic',
   props: {
     data: {
-      type: Number
+      type: Number,
+      required: true
     }
   }
-}
+};
 </script>
 
 <style scoped lang="scss">
