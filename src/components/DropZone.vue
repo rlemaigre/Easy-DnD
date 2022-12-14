@@ -21,8 +21,8 @@
 </template>
 
 <script>
-import Drop from "../../lib/src/components/Drop";
-import {dnd} from "../../lib/src";
+import Drop from '../../lib/src/components/Drop';
+import { dnd } from '../../lib/src';
 
 export default {
   components: { Drop },

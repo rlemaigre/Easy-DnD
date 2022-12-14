@@ -52,10 +52,10 @@
 <script>
 import Page from './components/scaffold/Page';
 
-import Drag from "../lib/src/components/Drag";
-import DropList from "../lib/src/components/DropList";
-import Drop from "../lib/src/components/Drop";
-import "../lib/src/js/DragImagesManager.js";
+import Drag from '../lib/src/components/Drag';
+import DropList from '../lib/src/components/DropList';
+import Drop from '../lib/src/components/Drop';
+import '../lib/src/js/DragImagesManager.js';
 
 export default {
   components: { Page, Drop, Drag, DropList },

@@ -66,12 +66,12 @@ import ListItem from './components/scaffold/ListItem';
 import Separator from './components/scaffold/Separator';
 import Skeleton from './components/scaffold/Skeleton';
 
-import Drag from "../lib/src/components/Drag";
-import DropList from "../lib/src/components/DropList";
-import "../lib/src/js/DragImagesManager.js";
+import Drag from '../lib/src/components/Drag';
+import DropList from '../lib/src/components/DropList';
+import '../lib/src/js/DragImagesManager.js';
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
     Drag,
     DropList,

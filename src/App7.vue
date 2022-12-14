@@ -7,7 +7,7 @@
 <script>
 import Page from './components/scaffold/Page';
 
-import "../lib/src/js/DragImagesManager.js";
+import '../lib/src/js/DragImagesManager.js';
 
 export default {
   name: 'App7',

@@ -10,9 +10,9 @@
 </template>
 
 <script>
-import Row from "./Row";
-import Column from "./Column";
-import Atomic from "./Atomic";
+import Row from './Row';
+import Column from './Column';
+import Atomic from './Atomic';
 
 export default {
   name: 'Generic',
@@ -25,7 +25,7 @@ export default {
   },
   computed: {
     comp () {
-      if (typeof this.model === "object") {
+      if (typeof this.model === 'object') {
         if (this.model.type === 'row') {
           return Row;
         }
@@ -38,7 +38,7 @@ export default {
       }
     },
     props () {
-      if (typeof this.model === "object") {
+      if (typeof this.model === 'object') {
         return {
           items: this.model.items
         };

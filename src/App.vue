@@ -78,10 +78,10 @@
 <script>
 import Page from './components/scaffold/Page';
 
-import Drag from "../lib/src/components/Drag";
-import DropMask from "../lib/src/components/DropMask";
-import DropZone from "./components/DropZone";
-import "../lib/src/js/DragImagesManager.js";
+import Drag from '../lib/src/components/Drag';
+import DropMask from '../lib/src/components/DropMask';
+import DropZone from './components/DropZone';
+import '../lib/src/js/DragImagesManager.js';
 
 export default {
   components: { Page, DropMask, DropZone, Drag },

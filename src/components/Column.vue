@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Flex from "./Flex";
+import Flex from './Flex';
 
 export default {
   name: 'Column',

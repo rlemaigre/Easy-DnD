@@ -59,12 +59,12 @@ import ListItem from './components/scaffold/ListItem';
 import Separator from './components/scaffold/Separator';
 import Chip from './components/scaffold/Chip';
 
-import Drag from "../lib/src/components/Drag";
-import Drop from "../lib/src/components/Drop";
-import "../lib/src/js/DragImagesManager.js";
+import Drag from '../lib/src/components/Drag';
+import Drop from '../lib/src/components/Drop';
+import '../lib/src/js/DragImagesManager.js';
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
     Drag,
     Drop,
@@ -76,9 +76,9 @@ export default {
   data: function () {
     return {
       headers: [
-        {text: 'Dessert (100g serving)', value: 'name'},
-        {text: 'Calories', value: 'calories'},
-        {text: 'Fat (g)', value: 'fat'}
+        { text: 'Dessert (100g serving)', value: 'name' },
+        { text: 'Calories', value: 'calories' },
+        { text: 'Fat (g)', value: 'fat' }
       ],
       desserts: [
         {

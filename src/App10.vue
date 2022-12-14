@@ -44,13 +44,13 @@
 <script>
 import Page from './components/scaffold/Page';
 
-import Drag from "../lib/src/components/Drag";
-import DropList from "../lib/src/components/DropList";
-import Drop from "../lib/src/components/Drop";
-import "../lib/src/js/DragImagesManager.js";
+import Drag from '../lib/src/components/Drag';
+import DropList from '../lib/src/components/DropList';
+import Drop from '../lib/src/components/Drop';
+import '../lib/src/js/DragImagesManager.js';
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
     Page,
     Drag,
@@ -61,52 +61,52 @@ export default {
     return {
       items: [
         {
-          name: "Frozen Yogurt",
+          name: 'Frozen Yogurt',
           calories: 159,
           fat: 6.0,
         },
         {
-          name: "Ice cream sandwich",
+          name: 'Ice cream sandwich',
           calories: 237,
           fat: 9.0,
         },
         {
-          name: "Eclair",
+          name: 'Eclair',
           calories: 262,
           fat: 16.0,
         },
         {
-          name: "another item in the list",
+          name: 'another item in the list',
           calories: 237,
           fat: 9.0,
         },
         {
-          name: "another item in the list 2",
+          name: 'another item in the list 2',
           calories: 237,
           fat: 9.0,
         },
         {
-          name: "another item in the list 3",
+          name: 'another item in the list 3',
           calories: 237,
           fat: 9.0,
         },
         {
-          name: "another item in the list 4",
+          name: 'another item in the list 4',
           calories: 237,
           fat: 9.0,
         },
         {
-          name: "another item in the list 5",
+          name: 'another item in the list 5',
           calories: 237,
           fat: 9.0,
         },
         {
-          name: "another item in the list 6",
+          name: 'another item in the list 6',
           calories: 237,
           fat: 9.0,
         },
         {
-          name: "another item in the list 7",
+          name: 'another item in the list 7',
           calories: 237,
           fat: 9.0,
         },

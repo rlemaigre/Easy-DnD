@@ -22,12 +22,12 @@
 <script>
 import Page from './components/scaffold/Page';
 
-import Drag from "../lib/src/components/Drag";
-import Drop from "../lib/src/components/Drop";
-import "../lib/src/js/DragImagesManager.js";
+import Drag from '../lib/src/components/Drag';
+import Drop from '../lib/src/components/Drop';
+import '../lib/src/js/DragImagesManager.js';
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
     Page,
     Drag,

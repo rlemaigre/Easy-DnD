@@ -38,9 +38,9 @@
 </template>
 
 <script>
-import DropList from "../../lib/src/components/DropList";
-import Drag from "../../lib/src/components/Drag";
-import MyDiv from "./MyDiv";
+import DropList from '../../lib/src/components/DropList';
+import Drag from '../../lib/src/components/Drag';
+import MyDiv from './MyDiv';
 
 export default {
   name: 'Flex',
@@ -62,7 +62,7 @@ export default {
   },
   methods: {
     key (item) {
-      if (typeof item === "object") {
+      if (typeof item === 'object') {
         return item.key;
       }
       else {

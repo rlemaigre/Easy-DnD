@@ -1,11 +1,11 @@
 <script>
-import { TransitionGroup, h } from "vue";
-import DropMixin, { dropAllowed, doDrop, candidate } from "../mixins/DropMixin";
-import DragFeedback from "./DragFeedback";
-import Grid from "../js/Grid";
-import { InsertEvent, ReorderEvent } from "../js/events";
-import { createDragImage } from "../js/createDragImage";
-import { dnd } from "../js/DnD";
+import { TransitionGroup, h } from 'vue';
+import DropMixin, { dropAllowed, doDrop, candidate } from '../composables/DropMixin';
+import DragFeedback from './DragFeedback';
+import Grid from '../js/Grid';
+import { InsertEvent, ReorderEvent } from '../js/events';
+import { createDragImage } from '../js/createDragImage';
+import { dnd } from '../js/DnD';
 
 export default {
   name: 'DropList',
@@ -164,22 +164,22 @@ export default {
       return this.dragInProgress && this.typeAllowed && !this.reordering;
     },
     showInsertingDragImage () {
-      return this.dragInProgress && this.typeAllowed && !this.reordering && this.$slots.hasOwnProperty("drag-image");
+      return this.dragInProgress && this.typeAllowed && !this.reordering && this.$slots.hasOwnProperty('drag-image');
     },
     showReorderingDragImage () {
-      return this.dragInProgress && this.reordering && this.$slots.hasOwnProperty("reordering-drag-image");
+      return this.dragInProgress && this.reordering && this.$slots.hasOwnProperty('reordering-drag-image');
     },
     hasReorderingFeedback () {
-      return this.$slots.hasOwnProperty("reordering-feedback");
+      return this.$slots.hasOwnProperty('reordering-feedback');
     }
   },
   created () {
-    dnd.on("dragstart", this.onDragStart);
-    dnd.on("dragend", this.onDragEnd);
+    dnd.on('dragstart', this.onDragStart);
+    dnd.on('dragend', this.onDragEnd);
   },
   beforeUnmount () {
-    dnd.off("dragstart", this.onDragStart);
-    dnd.off("dragend", this.onDragEnd);
+    dnd.off('dragstart', this.onDragStart);
+    dnd.off('dragend', this.onDragEnd);
   },
   methods: {
     // Presence of feedback node in the DOM and of keys in the virtual DOM required => delayed until what
@@ -228,7 +228,7 @@ export default {
     },
     candidate (type) {
       // todo - was $listeners instead of $attrs
-      return (candidate(this, type) && (this.$attrs.hasOwnProperty("onInsert") || this.$attrs.hasOwnProperty("onDrop"))) || this.reordering;
+      return (candidate(this, type) && (this.$attrs.hasOwnProperty('onInsert') || this.$attrs.hasOwnProperty('onDrop'))) || this.reordering;
     },
     computeForbiddenKeys () {
       return (this.noAnimations ? [] : this.$refs.component.$slots.default())

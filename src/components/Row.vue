@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Flex from "./Flex.vue";
+import Flex from './Flex.vue';
 
 export default {
   name: 'Row',

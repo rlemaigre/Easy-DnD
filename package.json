@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve",
     "build-dev": "rollup --config ./lib/rollup.config.js",
     "build": "rollup --config ./lib/rollup.config.js --environment BUILD:production",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint ./src ./lib"
   },
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
@@ -77,6 +77,7 @@
       "vue/require-explicit-emits": "off",
       "space-before-function-paren": "error",
       "object-curly-spacing": ["error", "always"],
+      "quotes":["error", "single"],
       "indent": [
         "error",
         2
