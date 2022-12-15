@@ -1,47 +1,57 @@
 <template>
-  <v-app>
-    <v-content>
-      <v-container fluid class="wrapper">
-        <v-row>
-          <v-col>
-            <drop-list
-                :items="items"
-                class="list"
-                @reorder="$event.apply(items)"
+  <Page class="wrapper">
+    <div class="row">
+      <div class="col">
+        <drop-list
+          :items="items"
+          class="list"
+          @reorder="$event.apply(items)"
+        >
+          <template #item="{ item }">
+            <drag
+              :key="item.name"
+              class="item"
+              :data="item"
             >
-              <template v-slot:item="{ item }">
-                <drag class="item" :data="item" :key="item.name">
-                  {{ item.name }}
-                </drag>
-              </template>
-            </drop-list>
-          </v-col>
-          <v-col>
-            <drop-list
-                :items="items"
-                class="list"
-                @reorder="$event.apply(items)"
+              {{ item.name }}
+            </drag>
+          </template>
+          <template #feedback />
+        </drop-list>
+      </div>
+      <div class="col">
+        <drop-list
+          :items="items"
+          class="list"
+          @reorder="$event.apply(items)"
+        >
+          <template #item="{ item }">
+            <drag
+              :key="item.name"
+              class="item"
+              :data="item"
             >
-              <template v-slot:item="{ item }">
-                <drag class="item" :data="item" :key="item.name">
-                  {{ item.name }}
-                </drag>
-              </template>
-            </drop-list>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-content>
-  </v-app>
+              {{ item.name }}
+            </drag>
+          </template>
+          <template #feedback />
+        </drop-list>
+      </div>
+    </div>
+  </Page>
 </template>
 
-<script lang="ts">
-import Drag from "../lib/src/components/Drag.vue";
-import DropList from "../lib/src/components/DropList.vue";
+<script>
+import Page from './components/scaffold/Page';
+
+import Drag from '../lib/src/components/Drag';
+import DropList from '../lib/src/components/DropList';
+import '../lib/src/js/DragImagesManager.js';
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
+    Page,
     Drag,
     DropList,
   },
@@ -49,52 +59,52 @@ export default {
     return {
       items: [
         {
-          name: "Frozen Yogurt",
+          name: 'Frozen Yogurt',
           calories: 159,
           fat: 6.0,
         },
         {
-          name: "Ice cream sandwich",
+          name: 'Ice cream sandwich',
           calories: 237,
           fat: 9.0,
         },
         {
-          name: "Eclair",
+          name: 'Eclair',
           calories: 262,
           fat: 16.0,
         },
         {
-          name: "another item in the list",
+          name: 'another item in the list',
           calories: 237,
           fat: 9.0,
         },
         {
-          name: "another item in the list 2",
+          name: 'another item in the list 2',
           calories: 237,
           fat: 9.0,
         },
         {
-          name: "another item in the list 3",
+          name: 'another item in the list 3',
           calories: 237,
           fat: 9.0,
         },
         {
-          name: "another item in the list 4",
+          name: 'another item in the list 4',
           calories: 237,
           fat: 9.0,
         },
         {
-          name: "another item in the list 5",
+          name: 'another item in the list 5',
           calories: 237,
           fat: 9.0,
         },
         {
-          name: "another item in the list 6",
+          name: 'another item in the list 6',
           calories: 237,
           fat: 9.0,
         },
         {
-          name: "another item in the list 7",
+          name: 'another item in the list 7',
           calories: 237,
           fat: 9.0,
         },

@@ -1,23 +1,18 @@
 <template>
-    <flex :items="items" direction="column"></flex>
+  <flex :items="items" direction="column" />
 </template>
 
-<script lang="ts">
-    import {Component, Prop, Vue} from "vue-property-decorator";
-    import Flex from "@/components/Flex.vue";
+<script>
+import Flex from './Flex';
 
-    @Component({
-        name: 'Column',
-        components: {Flex}
-    })
-    export default class Column extends Vue {
-
-        @Prop()
-        items: any[];
-
+export default {
+  name: 'Column',
+  components: { Flex },
+  props: {
+    items: {
+      type: Array,
+      required: true
     }
+  }
+};
 </script>
-
-<style scoped lang="scss">
-
-</style>

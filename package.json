@@ -4,51 +4,103 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "rollup --config ./lib/rollup.config.js --environment BUILD:production"
+    "build-dev": "cd ./lib && rollup --config rollup.config.mjs",
+    "build": "cd ./lib && rollup --config rollup.config.mjs --environment BUILD:production",
+    "lint": "vue-cli-service lint ./src ./lib"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.4.4",
-    "@mdi/font": "^3.6.95",
+    "@babel/polyfill": "^7.12.1",
     "@segi/template": "file:lib",
-    "core-js": "^3.6.5",
-    "custom-event-polyfill": "^1.0.7",
-    "regenerator-runtime": "^0.13.7",
-    "roboto-fontface": "*",
-    "vue": "^2.6.10",
-    "vue-class-component": "^7.2.3",
-    "vue-property-decorator": "^8.4.1",
-    "vuetify": "^2.1.13"
+    "core-js": "^3.26.1",
+    "mitt": "^3.0.0",
+    "vue": "^3.2.45"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.11.5",
-    "@vue/cli-plugin-babel": "^4.2.3",
-    "@vue/cli-plugin-typescript": "^4.2.3",
-    "@vue/cli-service": "^4.2.3",
-    "reflect-metadata": "^0.1.13",
-    "rollup": "^1.20.3",
-    "rollup-plugin-buble": "^0.19.8",
-    "rollup-plugin-commonjs": "^10.1.0",
+    "@babel/core": "^7.12.16",
+    "@babel/eslint-parser": "^7.12.16",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-css": "^0.6.0",
+    "eslint-plugin-vue": "^8.0.3",
+    "rollup": "^3.7.4",
     "rollup-plugin-cpy": "^2.0.1",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-sass": "^1.2.2",
-    "rollup-plugin-typescript2": "^0.24.1",
-    "rollup-plugin-vue": "^5.0.1",
-    "sass": "^1.18.0",
-    "sass-loader": "^7.1.0",
-    "tslib": "^1.10.0",
-    "typescript": "^3.8.3",
-    "vue-cli-plugin-vuetify": "^0.6.3",
-    "vue-template-compiler": "^2.6.10"
+    "rollup-plugin-delete": "^2.0.0",
+    "rollup-plugin-scss": "^4.0.0",
+    "rollup-plugin-vue": "^6.0.0",
+    "sass": "^1.56.1",
+    "sass-loader": "^13.2.0"
   },
-  "postcss": {
-    "plugins": {
-      "autoprefixer": {}
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/vue3-recommended",
+      "eslint:recommended",
+      "plugin:css/recommended"
+    ],
+    "parserOptions": {
+      "parser": "@babel/eslint-parser"
+    },
+    "rules": {
+      "vue/multi-word-component-names": "off",
+      "vue/no-unused-vars": "off",
+      "no-prototype-builtins": "off",
+      "vue/no-mutating-props": "off",
+      "vue/max-attributes-per-line": [
+        "error",
+        {
+          "singleline": 2,
+          "multiline": 1
+        }
+      ],
+      "vue/html-self-closing": [
+        "error",
+        {
+          "html": {
+            "void": "always",
+            "normal": "always",
+            "component": "always"
+          },
+          "svg": "always",
+          "math": "always"
+        }
+      ],
+      "vue/no-v-html": "off",
+      "no-multiple-empty-lines": "error",
+      "semi": "error",
+      "vue/require-explicit-emits": "off",
+      "space-before-function-paren": "error",
+      "prefer-const": "error",
+      "object-curly-spacing": [
+        "error",
+        "always"
+      ],
+      "quotes": [
+        "error",
+        "single"
+      ],
+      "indent": [
+        "error",
+        2
+      ],
+      "brace-style": [
+        "error",
+        "stroustrup",
+        {
+          "allowSingleLine": true
+        }
+      ]
     }
   },
   "browserslist": [
     "> 1%",
     "last 2 versions",
-    "not ie <= 10",
-    "ie 11"
+    "not dead",
+    "not ie 11"
   ]
 }

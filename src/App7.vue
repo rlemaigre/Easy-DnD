@@ -1,67 +1,60 @@
 <template>
-    <v-app>
-        <v-content>
-            <v-container fluid class="wrapper" style="margin-top: 2000px">
-                <generic :model="data" class="root"></generic>
-            </v-container>
-        </v-content>
-    </v-app>
+  <Page class="wrapper">
+    <generic :model="data" class="root" />
+  </Page>
 </template>
 
-<script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
-import Drag from "../lib/src/components/Drag.vue";
-import DropList from "../lib/src/components/DropList.vue";
-import "../lib/src/ts/DragImagesManager.ts";
-import Drop from "../lib/src/components/Drop.vue";
+<script>
+import Page from './components/scaffold/Page';
 
-@Component({
-    name: 'App7',
-    components: {Drop, Drag, DropList}
-})
-export default class App7 extends Vue {
+import '../lib/src/js/DragImagesManager.js';
 
-    key = 0;
-
-    data = null;
-
-    created() {
-        this.data = {
-            key: this.genNum(),
-            type: 'col',
-            items: [
+export default {
+  name: 'App7',
+  components: { Page },
+  data () {
+    return {
+      key: 0,
+      data: null
+    };
+  },
+  created () {
+    this.data = {
+      key: this.genNum(),
+      type: 'col',
+      items: [
+        this.genNum(),
+        this.genNum(),
+        {
+          key: this.genNum(),
+          type: 'row',
+          items: [
+            this.genNum(),
+            this.genNum(),
+            this.genNum(),
+            {
+              key: this.genNum(),
+              type: 'col',
+              items: [
                 this.genNum(),
-                this.genNum(),
-                {
-                    key: this.genNum(),
-                    type: 'row',
-                    items: [
-                        this.genNum(),
-                        this.genNum(),
-                        this.genNum(),
-                        {
-                            key: this.genNum(),
-                            type: 'col',
-                            items: [
-                                this.genNum(),
-                                this.genNum(),
-                                this.genNum()
-                            ]
-                        }
-                    ]
-                },
                 this.genNum(),
                 this.genNum()
-            ]
-        };
+              ]
+            }
+          ]
+        },
+        this.genNum(),
+        this.genNum()
+      ]
+    };
+  },
+  methods: {
+    genNum () {
+      this.key++;
+      return this.key;
     }
-
-    genNum() {
-        this.key++;
-        return this.key;
-    }
-
-}
+  }
+};
 </script>
 
 <style lang="scss">

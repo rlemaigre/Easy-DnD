@@ -1,23 +1,18 @@
 <template>
-    <flex :items="items" direction="row"></flex>
+  <flex :items="items" direction="row" />
 </template>
 
-<script lang="ts">
-    import {Component, Prop, Vue} from "vue-property-decorator";
-    import Flex from "@/components/Flex.vue";
+<script>
+import Flex from './Flex.vue';
 
-    @Component({
-        name: 'Row',
-        components: {Flex}
-    })
-    export default class Row extends Vue {
-
-        @Prop()
-        items: any[];
-
+export default {
+  name: 'Row',
+  components: { Flex },
+  props: {
+    items: {
+      type: Array,
+      required: true
     }
+  }
+};
 </script>
-
-<style scoped lang="scss">
-
-</style>

@@ -1,38 +1,42 @@
 <template>
-    <component :is="tag" v-bind="$attrs" v-on="$listeners">
-        <slot></slot>
-        <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
-            <slot :name="slot" v-bind="scope"/>
-        </template>
-    </component>
+  <component :is="tag" v-bind="$attrs">
+    <template v-for="(args, slot) of $slots" #[slot]>
+      <slot :name="slot" v-bind="args" />
+    </template>
+  </component>
 </template>
 
-<script lang="ts">
-    import {Component, Prop} from "vue-property-decorator";
-    import DragAwareMixin from "../mixins/DragAwareMixin";
-    import {dnd} from "../ts/DnD";
+<script>
+import DragAwareMixin from '../mixins/DragAwareMixin';
+import { dnd } from '../js/DnD';
 
-    @Component({})
-    export default class DropMask extends DragAwareMixin {
-
-        isDropMask = true;
-
-        @Prop({default: 'div', type: [String, Object,Function]})
-        tag: any;
-
-        mounted() {
-            let el = this.$el;
-            let comp = this;
-            el.addEventListener('easy-dnd-move', onMouseMove);
-
-            function onMouseMove(e) {
-                dnd.mouseMove(e, comp);
-            }
-        }
-
-        createDragImage() {
-            return 'source';
-        }
-
+export default {
+  name: 'DropMask',
+  mixins: [DragAwareMixin],
+  props: {
+    tag: {
+      type: [String, Object, Function],
+      default: 'div'
     }
+  },
+  data () {
+    return {
+      isDropMask: true
+    };
+  },
+  mounted () {
+    this.$el.addEventListener('easy-dnd-move', this.onDndMove);
+  },
+  beforeUnmount () {
+    this.$el.removeEventListener('easy-dnd-move', this.onDndMove);
+  },
+  methods: {
+    createDragImage () {
+      return 'source';
+    },
+    onDndMove (e) {
+      dnd.mouseMove(e, this);
+    }
+  }
+};
 </script>

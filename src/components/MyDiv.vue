@@ -1,17 +1,11 @@
 <template>
-    <div class="MyDiv">
-        <slot/>
-    </div>
+  <div class="MyDiv">
+    <slot />
+  </div>
 </template>
 
-<script lang="ts">
-    import {Component, Vue} from "vue-property-decorator";
-
-    @Component({})
-    export default class MyDiv extends Vue {
-    }
+<script>
+export default {
+  name: 'MyDiv'
+};
 </script>
-
-<style scoped lang="scss">
-
-</style>

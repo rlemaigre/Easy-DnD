@@ -1,55 +1,56 @@
 <template>
-    <v-app>
-        <v-content>
-            <v-container fluid class="wrapper">
-                sdqf
-                <drop-list @reorder="" :items="[1,2]" column>
-                    <template v-slot:item="{item}">
-                        <drag v-if="item === 1" :key="item">testx</drag>
-                        <drag v-else :key="item">
-                            <drop-list :items="['a','b']" @reorder="" column>
-                                <template v-slot:item="{item}">
-                                    <drag v-if="item === 'a'" :key="item">test1</drag>
-                                    <drag v-else :key="item">test2</drag>
-                                </template>
-                                <template v-slot:feedback><span :key="122">feedback</span></template>
-                            </drop-list>
-                        </drag>
-                    </template>
-                    <template v-slot:feedback><span :key="122">feedback</span></template>
-                </drop-list>
-            </v-container>
-        </v-content>
-    </v-app>
+  <Page class="wrapper">
+    <drop-list :items="[1,2]" column>
+      <template #item="{item}">
+        <drag v-if="item === 1">
+          testx
+        </drag>
+        <drag v-else>
+          <drop-list :items="['a','b']" column>
+            <template #item="{item: iItem}">
+              <drag v-if="iItem === 'a'">
+                test1
+              </drag>
+              <drag v-else>
+                test2
+              </drag>
+            </template>
+            <template #feedback>
+              <span :key="122">feedback</span>
+            </template>
+          </drop-list>
+        </drag>
+      </template>
+      <template #feedback>
+        <span :key="122">feedback</span>
+      </template>
+    </drop-list>
+  </Page>
 </template>
 
-<script lang="ts">
-    import {Component, Vue} from "vue-property-decorator";
-    import Drag from "../lib/src/components/Drag.vue";
-    import DropList from "../lib/src/components/DropList.vue";
-    import {InsertEvent} from "../lib/src/ts/events";
-    import "../lib/src/ts/DragImagesManager.ts";
-    import Drop from "../lib/src/components/Drop.vue";
+<script>
+import Page from './components/scaffold/Page';
 
-    @Component({
-        components: {Drop, Drag, DropList}
-    })
-    export default class App2 extends Vue {
+import Drag from '../lib/src/components/Drag';
+import DropList from '../lib/src/components/DropList';
+import '../lib/src/js/DragImagesManager.js';
 
-        items = ['a', 'b', 'c', 'd', 'e'];
-
-        onInsert(event: InsertEvent) {
-            this.items.splice(event.index, 0, event.data);
-        }
-
+export default {
+  components: { Page, Drag, DropList },
+  data () {
+    return {
+      items: ['a', 'b', 'c', 'd', 'e']
+    };
+  },
+  methods: {
+    onInsert (event) {
+      this.items.splice(event.index, 0, event.data);
     }
+  }
+};
 </script>
 
 <style lang="scss">
-    html, body, #app, .v-application--wrap, .v-content, .v-content__wrap {
-        height: 100%;
-    }
-
     .drop-in {
         box-shadow: 0 0 10px rgba(0, 0, 255, 0.3);
     }
