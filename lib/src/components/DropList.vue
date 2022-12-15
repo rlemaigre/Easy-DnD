@@ -1,7 +1,7 @@
 <script>
 import { TransitionGroup, h } from 'vue';
 import DropMixin, { dropAllowed, doDrop, candidate } from '../mixins/DropMixin';
-import DragFeedback from './DragFeedback';
+import DragFeedback from './DragFeedback.vue';
 import Grid from '../js/Grid';
 import { InsertEvent, ReorderEvent } from '../js/events';
 import { createDragImage } from '../js/createDragImage';
@@ -435,7 +435,7 @@ export default {
 
 <style scoped lang="scss">
 .drop-list {
-  &::v-deep > * {
+  &:deep(> *) {
     transition: transform .2s;
   }
 }
@@ -450,12 +450,6 @@ export default {
   top: -10000px;
   left: -10000px;
   will-change: left, top;
-}
-
-.drop-list:not(.drop-in) {
-  &::v-deep .drag-source {
-    // transition: none !important;
-  }
 }
 </style>
 

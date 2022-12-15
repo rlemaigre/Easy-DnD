@@ -1,48 +1,59 @@
-# Vue-Easy-DnD (_A HTML5 Drag-and-Drop Replacement_)
-Easy-DnD is a drag and drop implementation for Vue.js 2 that uses only standard mouse events instead of the HTML5 drag and drop API, which is [impossible to work with](https://www.quirksmode.org/blog/archives/2009/09/the_html5_drag.html). Think of it as a way to transfer data from some components to others using the mouse or support for a mouse assisted copy/cut - paste. It also allows for lists to be reordered by drag and drop.
+# Vue-Easy-DnD 
+### A HTML5 drag-and-drop replacement
+Easy-DnD is a drag and drop implementation for Vue 3 that uses only standard mouse events instead of the HTML5 drag and drop API, which is [impossible to work with](https://www.quirksmode.org/blog/archives/2009/09/the_html5_drag.html).
 
+Think of it as a way to transfer data from some components to others using the mouse or support for a mouse assisted copy/cut - paste. It also allows for lists to be reordered by drag and drop.
+
+&nbsp;\
+&nbsp;
 # Installation
+
+### Vue 3 is currently in BETA.
 
 Install via [npm](https://npmjs.com) or [yarn](https://yarnpkg.com)
 
 ```bash
+// Vue 3 beta:
 # Use npm
-npm install vue-easy-dnd --save
+npm install vue-easy-dnd@latest --save
 
 # Use yarn
-yarn add vue-easy-dnd
+yarn add vue-easy-dnd@latest
+
+
+
+// Vue 2
+
+# Use npm
+npm install vue-easy-dnd@^1 --save
+
+# Use yarn
+yarn add vue-easy-dnd@^1
 ```
 
-&nbsp;\
-&nbsp;\
 &nbsp;\
 &nbsp;
 # FAQ
 
-## Does it support IE 11 ?
-
-Vue3 does not support IE. The Vue2 branch DOES support IE 11 using https://www.npmjs.com/package/custom-event-polyfill
-
-## Does it support touch devices ?
+### Does it support touch devices ?
 
 Yes, including tap `vibration` prop on Drag component.
 
-## Does it support SSR ?
+### Does it support SSR ?
 
 Yes.
 
-## Does it support keyboard events?
+### Does it support keyboard events?
 
 Yes. ESC key can be pressed to cancel the drag.
 
-## Does it support Vue 3?
+### Does it support IE 11 ?
 
-Not at the moment. (This is a community development, so feel free to chip in!)
+The latest Vue 3 variant does not support IE 11.
+
+The Vue 2 branch *DOES* support IE 11 using https://www.npmjs.com/package/custom-event-polyfill
 
 
-
-&nbsp;\
-&nbsp;\
 &nbsp;\
 &nbsp;
 # Events
@@ -58,8 +69,6 @@ All emit events carry the current state of the drag operation by means of the fo
 * `success` : whether the drag completed successfully or not
 * `native` : the associated mouse event (or touch event). Can be mousedown/touchstart, mousemove/touchmove or mouseup/touchend.
 
-&nbsp;\
-&nbsp;\
 &nbsp;\
 &nbsp;
 # Mixins
@@ -80,13 +89,11 @@ https://codesandbox.io/s/example-5-j8qo9
 
 ![demo](img/vid6.gif)
 &nbsp;\
-&nbsp;\
-&nbsp;\
 &nbsp;
 # Components
 
 ## Drag
-The `drag` component is meant to define an area from which data can be exported. 
+The `drag` component is meant to define an area from which data can be exported.
 
 ### Events
 Event Name | Description
@@ -98,7 +105,7 @@ Event Name | Description
 ### Props
 Prop Name | Type / Default | Description
 --------- | -------------- | -----------
-`tag` | Any | This prop can be used to customize the root of the template, Can refer to a custom Vue component, including its props, slots, scoped slots and listeners.
+`tag` | Any | This prop can be used to customize the root of the template, Can refer to a custom Vue component, including its props, slots and listeners.
 `type` | String (`null`) | Refer to **Types** section below
 `data` | Any | Any data associated with this drag which will be sent with the emit event
 `drag-image-opacity` | Number (`0.7`) | 0-1 defining the opacity of the drag image
@@ -171,8 +178,6 @@ https://codesandbox.io/s/example-4-6h8zy
 ![demo](img/vid5.gif)
 
 &nbsp;\
-&nbsp;\
-&nbsp;\
 &nbsp;
 ## Drop
 The `drop` component is meant to define an area into which data can be imported. Drop components can be nested forming hierarchies of arbitrary depth.
@@ -189,7 +194,7 @@ Event Name | Description
 ### Props
 Prop Name | Type / Default | Description
 --------- | -------------- | -----------
-`tag` | Any | This prop can be used to customize the root of the template, Can refer to a custom Vue component, including its props, slots, scoped slots and listeners.
+`tag` | Any | This prop can be used to customize the root of the template, Can refer to a custom Vue component, including its props, slots and listeners.
 `accepts-type` | String / Array | Refer to **Types** section above
 `accepts-data` | Any | Refer to **Restricting droppable data** section below
 `drag-image-opacity` | Number (`0.7`) | 0-1 defining the opacity of the drag image when dragging over this drop component
@@ -235,8 +240,6 @@ https://codesandbox.io/s/easy-dnd-demo-fo078
 ![demo](img/vid1.gif)
 
 &nbsp;\
-&nbsp;\
-&nbsp;\
 &nbsp;
 ## DropMask
 The `drop-mask` component is meant to create an island insensitive to drag and rop on top of a Drop component.
@@ -244,15 +247,13 @@ The `drop-mask` component is meant to create an island insensitive to drag and r
 ### Props
 Prop Name | Type / Default | Description
 --------- | -------------- | -----------
-`tag` | Any | This prop can be used to customize the root of the template, Can refer to a custom Vue component, including its props, slots, scoped slots and listeners.
+`tag` | Any | This prop can be used to customize the root of the template, Can refer to a custom Vue component, including its props, slots and listeners.
 
 ### Demo
 https://codesandbox.io/s/example-1-gvwsw
 
 ![demo](img/vid2.gif)
 
-&nbsp;\
-&nbsp;\
 &nbsp;\
 &nbsp;
 ## DropList
@@ -304,8 +305,6 @@ https://codesandbox.io/s/nested-drop-lists-nw605
 
 ![demo](img/vid11.gif)
 
-&nbsp;\
-&nbsp;\
 &nbsp;\
 &nbsp;
 
