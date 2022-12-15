@@ -76,6 +76,7 @@
       "semi": "error",
       "vue/require-explicit-emits": "off",
       "space-before-function-paren": "error",
+      "prefer-const": "error",
       "object-curly-spacing": ["error", "always"],
       "quotes":["error", "single"],
       "indent": [

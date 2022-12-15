@@ -76,7 +76,7 @@ export default {
       event.apply(this.items);
     },
     remove (item) {
-      let index = this.items.indexOf(item);
+      const index = this.items.indexOf(item);
       this.items.splice(index, 1);
     }
   }

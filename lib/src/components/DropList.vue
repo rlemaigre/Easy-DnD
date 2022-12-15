@@ -1,6 +1,6 @@
 <script>
 import { TransitionGroup, h } from 'vue';
-import DropMixin, { dropAllowed, doDrop, candidate } from '../composables/DropMixin';
+import DropMixin, { dropAllowed, doDrop, candidate } from '../mixins/DropMixin';
 import DragFeedback from './DragFeedback';
 import Grid from '../js/Grid';
 import { InsertEvent, ReorderEvent } from '../js/events';
@@ -49,20 +49,17 @@ export default {
       if (this.noAnimations) {
         return this.tag;
       }
-      else {
-        return TransitionGroup;
-      }
+      return TransitionGroup;
     },
     rootProps () {
       if (this.noAnimations) {
         return this.$attrs;
       }
-      else {
-        return {
-          tag: this.tag,
-          css: false
-        };
-      }
+
+      return {
+        tag: this.tag,
+        css: false
+      };
     },
     direction () {
       // todo - rewrite this logic
@@ -72,20 +69,15 @@ export default {
     },
     reordering () {
       if (dnd.inProgress) {
-        // todo - was $listeners instead of $attrs
         return dnd.source.$el.parentElement === this.$el && this.$attrs.hasOwnProperty('onReorder');
       }
-      else {
-        return null;
-      }
+      return null;
     },
     closestIndex () {
       if (this.grid) {
         return this.grid.closestIndex(dnd.position);
       }
-      else {
-        return null;
-      }
+      return null;
     },
     dropAllowed () {
       if (this.dragInProgress) {
@@ -98,7 +90,6 @@ export default {
             return false;
           }
 
-          // todo - work out forbiddenKeys
           if (this.forbiddenKeys !== null && this.feedbackKey !== null) {
             return !this.forbiddenKeys.includes(this.feedbackKey);
           }
@@ -111,38 +102,31 @@ export default {
       if (this.closestIndex === 0) {
         return [];
       }
-      else {
-        return this.items.slice(0, this.closestIndex);
-      }
+      return this.items.slice(0, this.closestIndex);
     },
     itemsAfterFeedback () {
       if (this.closestIndex === this.items.length) {
         return [];
       }
-      else {
-        return this.items.slice(this.closestIndex);
-      }
+      return this.items.slice(this.closestIndex);
     },
     itemsBeforeReorderingFeedback () {
       if (this.closestIndex <= this.fromIndex) {
         return this.items.slice(0, this.closestIndex);
       }
-      else {
-        return this.items.slice(0, this.closestIndex + 1);
-      }
+      return this.items.slice(0, this.closestIndex + 1);
     },
     itemsAfterReorderingFeedback () {
       if (this.closestIndex <= this.fromIndex) {
         return this.items.slice(this.closestIndex);
       }
-      else {
-        return this.items.slice(this.closestIndex + 1);
-      }
+      return this.items.slice(this.closestIndex + 1);
     },
     reorderedItems () {
-      let toIndex = this.closestIndex;
-      let reordered = [...this.items];
-      let temp = reordered[this.fromIndex];
+      const toIndex = this.closestIndex;
+      const reordered = [...this.items];
+      const temp = reordered[this.fromIndex];
+
       reordered.splice(this.fromIndex, 1);
       reordered.splice(toIndex, 0, temp);
       return reordered;
@@ -156,21 +140,25 @@ export default {
       };
     },
     style () {
-      return {
-        ...(this.reordering === false ? this.cssStyle : {})
-      };
+      if (this.reordering === false) {
+        return this.cssStyle;
+      }
+      return {};
     },
     showDragFeedback () {
       return this.dragInProgress && this.typeAllowed && !this.reordering;
     },
     showInsertingDragImage () {
-      return this.dragInProgress && this.typeAllowed && !this.reordering && this.$slots.hasOwnProperty('drag-image');
+      return this.dragInProgress && this.typeAllowed && !this.reordering && !!this.$slots['drag-image'];
     },
     showReorderingDragImage () {
-      return this.dragInProgress && this.reordering && this.$slots.hasOwnProperty('reordering-drag-image');
+      return this.dragInProgress && this.reordering && !!this.$slots['reordering-drag-image'];
     },
     hasReorderingFeedback () {
-      return this.$slots.hasOwnProperty('reordering-feedback');
+      return !!this.$slots['reordering-feedback'];
+    },
+    hasEmptySlot () {
+      return !!this.$slots['empty'];
     }
   },
   created () {
@@ -227,22 +215,20 @@ export default {
       }
     },
     candidate (type) {
-      // todo - was $listeners instead of $attrs
       return (candidate(this, type) && (this.$attrs.hasOwnProperty('onInsert') || this.$attrs.hasOwnProperty('onDrop'))) || this.reordering;
     },
     computeForbiddenKeys () {
-      return (this.noAnimations ? [] : this.$refs.component.$slots.default())
+      return (this.noAnimations ? [] : this.$refs.component.$slots['default']())
         .map(vn => vn.key)
         .filter(k => !!k && k !== 'drag-image' && k !== 'drag-feedback');
     },
     computeFeedbackKey () {
-      // todo - check this () might not work if its not scoped
       return this.$refs['feedback']['$slots']['default']()[0]['key'];
     },
     computeInsertingGrid () {
-      let feedback = this.$refs.feedback.$el.children[0];
-      let clone = feedback.cloneNode(true); // todo -  as HTMLElement
-      let tg = this.$el; // todo -  as HTMLElement
+      const feedback = this.$refs.feedback.$el.children[0];
+      const clone = feedback.cloneNode(true);
+      const tg = this.$el;
       if (tg.children.length > this.items.length) {
         tg.insertBefore(clone, tg.children[this.items.length]);
       }
@@ -254,12 +240,12 @@ export default {
       return grid;
     },
     computeReorderingGrid () {
-      return new Grid(this.$el.children, this.items.length - 1, this.direction, this.fromIndex); // todo - $el as HTMLElement
+      return new Grid(this.$el.children, this.items.length - 1, this.direction, this.fromIndex);
     },
     createDragImage () {
       let image;
       if (this.$refs['drag-image']) {
-        let el = this.$refs['drag-image']; // todo -  as HTMLElement
+        const el = this.$refs['drag-image'];
         let model;
         if (el.childElementCount !== 1) {
           model = el;
@@ -267,8 +253,8 @@ export default {
         else {
           model = el.children.item(0);
         }
-        let clone = model.cloneNode(true); // todo -  as HTMLElement
-        let tg = this.$el; // todo -  as HTMLElement
+        const clone = model.cloneNode(true);
+        const tg = this.$el;
         tg.appendChild(clone);
         image = createDragImage(clone);
         tg.removeChild(clone);
@@ -282,8 +268,12 @@ export default {
     }
   },
   render () {
-    if (!this.$slots.item) {
+    if (!this.$slots['item']) {
       throw 'The "Item" slot must be defined to use DropList';
+    }
+
+    if (!this.$slots['feedback']) {
+      throw 'The "Feedback" slot must be defined to use DropList';
     }
 
     let defaultArr = [];
@@ -291,7 +281,7 @@ export default {
       if (this.reordering) {
         if (this.hasReorderingFeedback) {
           const itemsReorderingBefore = this.itemsBeforeReorderingFeedback.map((item, index) => {
-            return this.$slots.item({
+            return this.$slots['item']({
               item: item,
               index: index,
               reorder: false
@@ -301,15 +291,13 @@ export default {
             defaultArr = defaultArr.concat(itemsReorderingBefore);
           }
 
-          if (this.$slots['reordering-feedback']) {
-            defaultArr.push(this.$slots['reordering-feedback']({
-              key: 'reordering-feedback',
-              item: this.items[this.fromIndex]
-            })[0]);
-          }
+          defaultArr.push(this.$slots['reordering-feedback']({
+            key: 'reordering-feedback',
+            item: this.items[this.fromIndex]
+          })[0]);
 
           const itemsReorderingAfter = this.itemsAfterReorderingFeedback.map((item, index) => {
-            return this.$slots.item({
+            return this.$slots['item']({
               item: item,
               index: this.itemsBeforeReorderingFeedback.length + index,
               reorder: false
@@ -321,7 +309,7 @@ export default {
         }
         else {
           const reorderedItems = this.reorderedItems.map((item, index) => {
-            return this.$slots.item({
+            return this.$slots['item']({
               item: item,
               index: index,
               reorder: index === this.closestIndex
@@ -334,7 +322,7 @@ export default {
       }
       else {
         const itemsBefore = this.itemsBeforeFeedback.map((item, index) => {
-          return this.$slots.item({
+          return this.$slots['item']({
             item: item,
             index: index,
             reorder: false
@@ -344,16 +332,14 @@ export default {
           defaultArr = defaultArr.concat(itemsBefore);
         }
 
-        if (this.$slots['feedback']) {
-          defaultArr.push(this.$slots.feedback({
-            key: 'drag-feedback',
-            data: this.dragData,
-            type: this.dragType
-          })[0]);
-        }
+        defaultArr.push(this.$slots['feedback']({
+          key: 'drag-feedback',
+          data: this.dragData,
+          type: this.dragType
+        })[0]);
 
         const itemsAfter = this.itemsAfterFeedback.map((item, index) => {
-          return this.$slots.item({
+          return this.$slots['item']({
             item: item,
             index: this.itemsBeforeFeedback.length + index,
             reorder: false
@@ -366,7 +352,7 @@ export default {
     }
     else {
       const defaultItems = this.items.map((item, index) => {
-        return this.$slots.item({
+        return this.$slots['item']({
           item: item,
           index: index,
           reorder: false
@@ -376,12 +362,12 @@ export default {
       if (defaultItems.length > 0) {
         defaultArr = defaultArr.concat(defaultItems);
       }
-      else if (this.$slots['empty']) {
-        defaultArr.push(this.$slots.empty()[0]);
+      else if (this.hasEmptySlot) {
+        defaultArr.push(this.$slots['empty']()[0]);
       }
     }
 
-    if (this.showDragFeedback && this.$slots['feedback']) {
+    if (this.showDragFeedback) {
       defaultArr.push(h(
         DragFeedback,
         {
@@ -398,7 +384,7 @@ export default {
       ));
     }
 
-    if (this.showReorderingDragImage && this.$slots['reordering-drag-image']) {
+    if (this.showReorderingDragImage) {
       defaultArr.push(h(
         'div',
         {
@@ -414,7 +400,7 @@ export default {
       ));
     }
 
-    if (this.showInsertingDragImage && this.$slots['inserting-drag-image']) {
+    if (this.showInsertingDragImage) {
       defaultArr.push(h(
         'div',
         {
@@ -423,7 +409,7 @@ export default {
           key: 'inserting-drag-image'
         },
         {
-          default: () => this.$slots['inserting-drag-image']({
+          default: () => this.$slots['drag-image']({
             type: this.dragType,
             data: this.dragData
           })[0]

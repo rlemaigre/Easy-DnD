@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import DropMixin from '../composables/DropMixin';
+import DropMixin from '../mixins/DropMixin';
 
 export default {
   name: 'Drop',

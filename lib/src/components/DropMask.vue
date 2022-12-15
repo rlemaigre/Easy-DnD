@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import DragAwareMixin from '../composables/DragAwareMixin';
+import DragAwareMixin from '../mixins/DragAwareMixin';
 import { dnd } from '../js/DnD';
 
 export default {
@@ -25,17 +25,17 @@ export default {
     };
   },
   mounted () {
-    let el = this.$el;
-    let comp = this;
-    el.addEventListener('easy-dnd-move', onMouseMove);
-
-    function onMouseMove (e) {
-      dnd.mouseMove(e, comp);
-    }
+    this.$el.addEventListener('easy-dnd-move', this.onDndMove);
+  },
+  beforeUnmount () {
+    this.$el.removeEventListener('easy-dnd-move', this.onDndMove);
   },
   methods: {
     createDragImage () {
       return 'source';
+    },
+    onDndMove (e) {
+      dnd.mouseMove(e, this);
     }
   }
 };

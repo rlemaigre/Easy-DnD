@@ -156,7 +156,7 @@ export default {
     },
     remove (array, value) {
       console.warn('on remove CUT');
-      let index = array.indexOf(value);
+      const index = array.indexOf(value);
       array.splice(index, 1);
     }
   }

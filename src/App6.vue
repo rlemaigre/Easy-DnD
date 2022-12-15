@@ -191,7 +191,7 @@ export default {
       this.items2.splice(event.index, 0, event.data);
     },
     remove (array, value) {
-      let index = array.indexOf(value);
+      const index = array.indexOf(value);
       array.splice(index, 1);
     },
     onClickItem (e, item, index) {

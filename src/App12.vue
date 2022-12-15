@@ -96,7 +96,7 @@ export default {
       this.items1.splice(event.index, 0, event.data);
     },
     remove (array, value) {
-      let index = array.indexOf(value);
+      const index = array.indexOf(value);
       array.splice(index, 1);
     }
   }

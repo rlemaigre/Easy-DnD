@@ -18,6 +18,7 @@
               {{ item.name }}
             </drag>
           </template>
+          <template #feedback />
         </drop-list>
       </div>
       <div class="col">

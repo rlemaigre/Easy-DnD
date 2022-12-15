@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import DragMixin from '../composables/DragMixin';
+import DragMixin from '../mixins/DragMixin';
 
 export default {
   name: 'Drag',

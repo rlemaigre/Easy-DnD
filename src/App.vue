@@ -52,7 +52,7 @@
         </template>
         <drop-mask class="mask">
           <drop-zone class="drop-zone drop-zone3 even" :accept="acceptEven">
-            <template #imaAge="{data}">
+            <template #image="{data}">
               <div class="circle">
                 <div class="txt">
                   {{ data }}
