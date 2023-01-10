@@ -21,6 +21,11 @@ npm install vue-easy-dnd@latest --save
 # Use yarn
 yarn add vue-easy-dnd@latest
 
+(REQUIRED FOR Vue 3): Make sure to import the generated CSS file
+import 'vue-easy-dnd/dist/dnd.css'
+Vue 3 also relies on the Options API and mixins. So make sure you have enabled the Options API on your project (enabled by default)
+
+
 
 
 // Vue 2

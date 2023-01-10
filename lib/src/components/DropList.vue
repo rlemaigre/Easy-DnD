@@ -172,11 +172,12 @@ export default {
   methods: {
     // Presence of feedback node in the DOM and of keys in the virtual DOM required => delayed until what
     // depends on drag data has been processed.
-    async refresh () {
-      await this.$nextTick();
-      this.grid = this.computeInsertingGrid();
-      this.feedbackKey = this.computeFeedbackKey();
-      this.forbiddenKeys = this.computeForbiddenKeys();
+    refresh () {
+      this.$nextTick(() => {
+        this.grid = this.computeInsertingGrid();
+        this.feedbackKey = this.computeFeedbackKey();
+        this.forbiddenKeys = this.computeForbiddenKeys();
+      });
     },
     onDragStart (event) {
       if (this.candidate(dnd.type)) {
