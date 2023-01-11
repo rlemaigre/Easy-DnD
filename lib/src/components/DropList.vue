@@ -36,6 +36,7 @@ export default {
       default: undefined
     }
   },
+  emits: ['reorder', 'insert'],
   data () {
     return {
       grid: null,
@@ -69,7 +70,7 @@ export default {
     },
     reordering () {
       if (dnd.inProgress) {
-        return dnd.source.$el.parentElement === this.$el && this.$attrs.hasOwnProperty('onReorder');
+        return dnd.source.$el.parentElement === this.$el;
       }
       return null;
     },
@@ -216,7 +217,7 @@ export default {
       }
     },
     candidate (type) {
-      return (candidate(this, type) && (this.$attrs.hasOwnProperty('onInsert') || this.$attrs.hasOwnProperty('onDrop'))) || this.reordering;
+      return candidate(this, type) || this.reordering;
     },
     computeForbiddenKeys () {
       return (this.noAnimations ? [] : this.$refs.component.$slots['default']())
@@ -227,6 +228,10 @@ export default {
       return this.$refs['feedback']['$slots']['default']()[0]['key'];
     },
     computeInsertingGrid () {
+      if (this.$refs.feedback.$el.children.length < 1) {
+        return null;
+      }
+
       const feedback = this.$refs.feedback.$el.children[0];
       const clone = feedback.cloneNode(true);
       const tg = this.$el;
