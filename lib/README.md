@@ -8,13 +8,11 @@ Think of it as a way to transfer data from some components to others using the m
 &nbsp;
 # Installation
 
-### Vue 3 is currently in BETA.
-
 Install via [npm](https://npmjs.com) or [yarn](https://yarnpkg.com)
 
-```bash
-// Vue 3 beta:
+### Vue 3
 
+```
 # Use npm
 npm install vue-easy-dnd@latest --save
 
@@ -23,13 +21,13 @@ yarn add vue-easy-dnd@latest
 
 (REQUIRED FOR Vue 3): Make sure to import the generated CSS file
 import 'vue-easy-dnd/dist/dnd.css'
-Vue 3 also relies on the Options API and mixins. So make sure you have enabled the Options API on your project (enabled by default)
+Vue 3 also relies on the Options API and mixins. So make sure you have enabled the Options API in your project (enabled by default)
+```
 
 
 
-
-// Vue 2
-
+### Vue 2
+```
 # Use npm
 npm install vue-easy-dnd@^1 --save
 
@@ -52,13 +50,6 @@ Yes.
 ### Does it support keyboard events?
 
 Yes. ESC key can be pressed to cancel the drag.
-
-### Does it support IE 11 ?
-
-The latest Vue 3 variant does not support IE 11.
-
-The Vue 2 branch *DOES* support IE 11 using https://www.npmjs.com/package/custom-event-polyfill
-
 
 &nbsp;\
 &nbsp;

@@ -6,7 +6,6 @@
         <List class="list1">
           <drop-list
             :items="items1"
-            no-animations
             @reorder="$event.apply(items1)"
             @insert="insert1"
           >
