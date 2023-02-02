@@ -94,6 +94,8 @@ export default {
           if (this.forbiddenKeys !== null && this.feedbackKey !== null) {
             return !this.forbiddenKeys.includes(this.feedbackKey);
           }
+
+          return true;
         }
       }
 
