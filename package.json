@@ -6,6 +6,7 @@
     "serve": "vue-cli-service serve",
     "build-dev": "cd ./lib && rollup --config rollup.config.mjs",
     "build": "cd ./lib && rollup --config rollup.config.mjs --environment BUILD:production",
+    "publish": "cd ./lib && npm publish",
     "lint": "vue-cli-service lint ./src ./lib"
   },
   "dependencies": {
