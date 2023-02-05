@@ -1,7 +1,6 @@
 <template>
   <component
     :is="tag"
-    v-bind="$attrs"
     :class="cssClasses"
   >
     <slot v-bind="$slots['default'] || {}" />

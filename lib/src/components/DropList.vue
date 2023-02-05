@@ -54,7 +54,7 @@ export default {
     },
     rootProps () {
       if (this.noAnimations) {
-        return this.$attrs;
+        return {};
       }
 
       return {
@@ -141,12 +141,6 @@ export default {
         'inserting': this.reordering === false,
         ...(this.reordering === false ? this.cssClasses : { 'dnd-drop': true })
       };
-    },
-    style () {
-      if (this.reordering === false) {
-        return this.cssStyle;
-      }
-      return {};
     },
     showDragFeedback () {
       return this.dragInProgress && this.typeAllowed && !this.reordering;
@@ -430,7 +424,6 @@ export default {
       {
         ref: 'component',
         class: this.clazz,
-        style: this.style,
         ...this.rootProps
       },
       {
