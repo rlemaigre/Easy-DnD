@@ -84,7 +84,7 @@ The following demo displays information about the current drag operation when it
 
 https://codesandbox.io/s/example-5-j8qo9
 
-![demo](img/vid6.gif)
+![demo](docs/img/vid6.gif)
 &nbsp;\
 &nbsp;
 # Components
@@ -126,7 +126,7 @@ An example of `go-back` prop
 
 https://codesandbox.io/s/example-1-l6p54
 
-![demo](img/vid12.gif)
+![demo](docs/img/vid12.gif)
 
 ### CSS classes
 
@@ -146,7 +146,7 @@ The following demo illustrates the use of types. There are two types in use : 's
 
 https://codesandbox.io/s/example-3-g7io8
 
-![demo](img/vid4.gif)
+![demo](docs/img/vid4.gif)
 
 ### Drag image
 
@@ -172,7 +172,7 @@ The following demo illustrate the use of custom drag images, nested Drop compone
 
 https://codesandbox.io/s/example-4-6h8zy
 
-![demo](img/vid5.gif)
+![demo](docs/img/vid5.gif)
 
 &nbsp;\
 &nbsp;
@@ -224,7 +224,7 @@ The following demo illustrates modes in action :
 
 https://codesandbox.io/s/example-2-r8n1k
 
-![demo](img/vid3.gif)
+![demo](docs/img/vid3.gif)
 
 ### Restricting droppable data
 
@@ -234,7 +234,7 @@ The following demo defines five Drag components that can be dragged into three D
 
 https://codesandbox.io/s/easy-dnd-demo-fo078
 
-![demo](img/vid1.gif)
+![demo](docs/img/vid1.gif)
 
 &nbsp;\
 &nbsp;
@@ -249,7 +249,7 @@ Prop Name | Type / Default | Description
 ### Demo
 https://codesandbox.io/s/example-1-gvwsw
 
-![demo](img/vid2.gif)
+![demo](docs/img/vid2.gif)
 
 &nbsp;\
 &nbsp;
@@ -287,7 +287,7 @@ Slot Name | Description
 ### Demo
 https://codesandbox.io/s/droplist-ozs8b
 
-![demo](img/vid9.gif)
+![demo](docs/img/vid9.gif)
 
 ### Nested DropLists
 Drop lists can be nested providing the following conditions are satisfied :
@@ -300,7 +300,7 @@ Example :
 
 https://codesandbox.io/s/nested-drop-lists-nw605
 
-![demo](img/vid11.gif)
+![demo](docs/img/vid11.gif)
 
 &nbsp;\
 &nbsp;
@@ -313,17 +313,17 @@ The following demo features list reordering, drag and drop between two lists, cu
 
 https://codesandbox.io/s/easy-dnd-demo-9mbij
 
-![demo](img/vid7.gif)
+![demo](docs/img/vid7.gif)
 
 The following demo features drag and drop between a table and a list, custom drag images and a custom style for drop areas when the drop is allowed.
 
 https://codesandbox.io/s/easy-dnd-demo-2-xnqbz
 
-![demo](img/vid8.gif)
+![demo](docs/img/vid8.gif)
 
 The following demo features nested drop lists and a custom drag image. It is a tool to design dashboards by WYSIWYG. New widgets can be dragged into the dashboard from the palette on the left and widgets can be moved around by drag and drop.
 
-![demo](img/vid10.gif)
+![demo](docs/img/vid10.gif)
 
 
 
