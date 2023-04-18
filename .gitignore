@@ -65,3 +65,5 @@ typings/
 .idea/
 *.iml
 lib/dist/
+
+docs/.vitepress/cache/
