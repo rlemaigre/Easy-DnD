@@ -4,23 +4,32 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "Vue-Easy-DnD",
   description: "A HTML5 drag-and-drop replacement",
+  base: "/easy-dnd/",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
+      { text: 'API', link: '/installation' },
       { text: 'FAQ', link: '/faq' }
     ],
 
     sidebar: [
       {
-        text: 'Examples',
+        text: 'Getting Started',
         items: [
-          { text: 'Get Started', link: '/get-started' },
           { text: 'Installation', link: '/installation' },
-          { text: 'Components', link: '/components' },
-          { text: 'Events', link: '/events' },
-          { text: 'Advanced Demos', link: '/advanced-demos' },
-          { text: 'FAQ', link: '/faq' }
+          { text: 'FAQ', link: '/faq' },
+          { text: 'Events / Mixins', link: '/events' },
+          { text: 'Advanced Demos', link: '/advanced-demos' }
+        ]
+      },
+      {
+        text: 'Components',
+        items: [
+          { text: 'Drag', link: '/components/drag' },
+          { text: 'Drop', link: '/components/drop' },
+          { text: 'DropList', link: '/components/droplist' },
+          { text: 'DropMask', link: '/components/dropmask' }
         ]
       }
     ],

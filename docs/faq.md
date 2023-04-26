@@ -1,10 +1,10 @@
 # FAQ
 
-### Does it support touch devices ?
+### Does it support touch devices?
 
 Yes, including tap `vibration` prop on Drag component.
 
-### Does it support SSR ?
+### Does it support SSR?
 
 Yes.
 
@@ -13,7 +13,7 @@ Yes.
 Yes. ESC key can be pressed to cancel the drag.
 
 
-### Can this be used in Nuxt? ?
+### Can this be used with Nuxt?
 
 Yes.
 

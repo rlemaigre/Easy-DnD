@@ -4,12 +4,12 @@ layout: home
 
 hero:
   name: "Vue-Easy-DnD"
-  text: "A HTML5 drag-and-drop replacement"
-  tagline: Easy-DnD is a drag and drop implementation for Vue 3 that uses only standard mouse events instead of the HTML5 drag and drop API, which is impossible to work with.
+  text: "Drag & Drop for Vue"
+  tagline: A drag and drop implementation for Vue which replaces the *impossible* HTML5 drag and drop API
   actions:
     - theme: brand
       text: Get Started
-      link: /get-started
+      link: /installation
     - theme: alt
       text: Live Example
       link: https://codesandbox.io/s/droplist-ozs8b
@@ -19,8 +19,7 @@ features:
   - title: Simple API
     details: With a simple API, you can create complex and scalable solutions.
   - title: Easy Installation
-    details: Quick to install and supports SSR, Vue 3 and 2.
+    details: Quick to install and supports SSR, Nuxt and Vue!
   - title: Easy to use
-    details: Tools are very simple compared to other DnD APIs.
+    details: Tools are very simple compared to other drop and drop packages.
 ---
-

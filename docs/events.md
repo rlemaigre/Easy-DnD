@@ -1,5 +1,6 @@
 # Events
 
+## Structure
 All emit events carry the current state of the drag operation by means of the following properties :
 
 * `type` : the type of the data being transferred
