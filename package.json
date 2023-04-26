@@ -7,7 +7,10 @@
     "build-dev": "cd ./lib && rollup --config rollup.config.mjs",
     "build": "cd ./lib && rollup --config rollup.config.mjs --environment BUILD:production",
     "publish": "cd ./lib && npm publish",
-    "lint": "vue-cli-service lint ./src ./lib"
+    "lint": "vue-cli-service lint ./src ./lib",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
@@ -32,7 +35,8 @@
     "rollup-plugin-scss": "^4.0.0",
     "rollup-plugin-vue": "^6.0.0",
     "sass": "^1.56.1",
-    "sass-loader": "^13.2.0"
+    "sass-loader": "^13.2.0",
+    "vitepress": "^1.0.0-alpha.72"
   },
   "eslintConfig": {
     "root": true,
