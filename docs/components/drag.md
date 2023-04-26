@@ -17,7 +17,7 @@ Prop Name | Type / Default | Description
 `drag-image-opacity` | Number (`0.7`) | 0-1 defining the opacity of the drag image
 `disabled` | Boolean (`false`) | Whether to temporarily disable dragging this component
 `go-back` | Boolean (`false`) | If a drag is not successful, the drag image will animate back to where the drag originated (demo below)
-`handle` | String (`undefined`) | A handle / grabber for this Drag component
+`handle` | String (`undefined`) | A handle / grabber for this Drag component (eg: `.drag-handle`)
 `delta` | Number (`3`px) | A pixel-distance which defines whether a drag has begun
 `delay` | Number (`0`ms) | The number of milliseconds of which the user must hold down the Drag element until it is recognised as a drag (useful for allowing scrolling on Touch devices without it automatically trying to drag the element) (`0` = no delay)
 `drag-class` | String (`null`) | A class to bind to the image / ghost being dragged around
