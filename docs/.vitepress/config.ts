@@ -4,7 +4,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "Vue-Easy-DnD",
   description: "A HTML5 drag-and-drop replacement",
-  base: "/easy-dnd/",
+  base: "/Easy-DnD/",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
