@@ -7,7 +7,7 @@ Think of it as a way to transfer data from some components to others using the m
 ## Documentation
 Our documentation has moved to Github Pages!
 
-### [View Documentation Here](https://rlemaigre.github.io/easy-dnd)
+### [View Documentation Here](https://rlemaigre.github.io/Easy-DnD)
 
 ## Examples
 View more examples within our documentation
