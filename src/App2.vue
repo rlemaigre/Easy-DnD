@@ -33,10 +33,15 @@
               {{ item }}
             </drag>
           </template>
+
           <template #feedback="{data}">
             <div :key="data" class="item feedback">
               {{ data }}
             </div>
+          </template>
+
+          <template #default>
+            Default
           </template>
         </drop-list>
       </div>

@@ -419,6 +419,18 @@ export default {
       ));
     }
 
+    if (this.$slots['default']) {
+      defaultArr.push(h(
+        'div',
+        {
+          class: '__default-content',
+          ref: 'default-content',
+          key: 'default-content'
+        },
+        this.$slots['default']()
+      ));
+    }
+
     return h(
       this.rootTag,
       {
