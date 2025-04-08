@@ -12,10 +12,9 @@
     "src"
   ],
   "dependencies": {
-    "vue": "^3.0.0",
-    "mitt": "^3.0.0"
+    "mitt": "^3.0.1",
+    "vue": "^3.0.0"
   },
-  "devDependencies": {},
   "browserslist": [
     "> 1%",
     "last 2 versions",
