@@ -67,3 +67,4 @@ typings/
 lib/dist/
 
 docs/.vitepress/cache/
+docs/.vitepress/dist/

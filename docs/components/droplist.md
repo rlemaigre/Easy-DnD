@@ -43,6 +43,6 @@ Drop lists can be nested providing the following conditions are satisfied :
 
 Example :
 
-https://codesandbox.io/s/nested-drop-lists-nw605
+https://codesandbox.io/p/sandbox/nested-drop-lists-forked-qjq5tl
 
 ![demo](../img/vid11.gif)
