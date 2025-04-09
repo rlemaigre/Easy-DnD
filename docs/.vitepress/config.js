@@ -1,7 +1,5 @@
-import { defineConfig } from 'vitepress'
-
 // https://vitepress.dev/reference/site-config
-export default defineConfig({
+export default {
   title: "Vue-Easy-DnD",
   description: "A HTML5 drag-and-drop replacement",
   base: "/Easy-DnD/",
@@ -38,4 +36,4 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/rlemaigre/Easy-DnD' }
     ]
   }
-})
+}
