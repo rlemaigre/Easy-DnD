@@ -19,12 +19,31 @@ npm install vue-easy-dnd@latest --save
 
 # Use yarn
 yarn add vue-easy-dnd@latest
-
-(REQUIRED FOR Vue 3): Make sure to import the generated CSS file
-import 'vue-easy-dnd/dist/dnd.css'
-Vue 3 also relies on the Options API and mixins. So make sure you have enabled the Options API in your project (enabled by default)
 ```
 
+#### Requirements
+
+1. This package relies on the Options API and mixins. So make sure you have enabled the Options API in your project (enabled by default by Vue)
+
+2. Make sure to import the generated CSS file:
+
+```javascript
+import 'vue-easy-dnd/dist/dnd.css'
+```
+#### @vue/compat warning
+
+If you use @vue/compat, you may need to switch the MODE of our components
+
+More details about this issue can be found here https://github.com/rlemaigre/Easy-DnD/issues/145
+
+```javascript
+DragList.compatConfig = {
+  MODE: 3
+};
+Drag.compatConfig = {
+  MODE: 3
+};
+```
 
 ### Vue 2
 The Vue2 variant is no longer maintained. Please use with caution.
