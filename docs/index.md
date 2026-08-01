@@ -12,7 +12,7 @@ hero:
       link: /installation
     - theme: alt
       text: Live Example
-      link: https://codesandbox.io/s/droplist-ozs8b
+      link: /#try-the-dashboard-demo
 
 
 features:
@@ -23,3 +23,11 @@ features:
   - title: Easy to use
     details: Tools are very simple compared to other drop and drop packages.
 ---
+
+## Try the dashboard demo
+
+Build a dashboard visually by dragging widgets from the palette and rearranging them across nested rows and columns.
+
+<DashboardBuilderDemo />
+
+[Explore all demos →](/advanced-demos)

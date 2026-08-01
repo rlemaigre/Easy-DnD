@@ -30,9 +30,7 @@ Slot Name | Description
 `empty` | Defined content to display if the list is empty and not being dragged into. Make sure to define a `key` prop for each element directly inside this slot.
 
 ## Demo
-https://codesandbox.io/s/droplist-ozs8b
-
-![demo](../img/vid9.gif)
+<DropListTransferDemo />
 
 ## Nested DropLists
 Drop lists can be nested providing the following conditions are satisfied :
@@ -43,6 +41,4 @@ Drop lists can be nested providing the following conditions are satisfied :
 
 Example :
 
-https://codesandbox.io/p/sandbox/nested-drop-lists-forked-qjq5tl
-
-![demo](../img/vid11.gif)
+<NestedDropListDemo />

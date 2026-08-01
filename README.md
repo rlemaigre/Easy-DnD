@@ -1,25 +1,60 @@
-# Vue-Easy-DnD 
-### A HTML5 drag-and-drop replacement
-Easy-DnD is a drag and drop implementation for Vue that uses only standard mouse events instead of the HTML5 drag and drop API, which is [impossible to work with](https://www.quirksmode.org/blog/archives/2009/09/the_html5_drag.html).
+# Vue-Easy-DnD
 
-Think of it as a way to transfer data from some components to others using the mouse or support for a mouse assisted copy/cut - paste. It also allows for lists to be reordered by drag and drop.
+Vue-Easy-DnD helps you make Vue components draggable.
 
-## Documentation
-Our documentation has moved to Github Pages!
+If you have cards, tasks, rows, or widgets that users need to move around, this library gives you a simple way to drag-and-drop.
 
-### [View Documentation Here](https://rlemaigre.github.io/Easy-DnD)
+## What this package helps with
 
-## Examples
-View more examples within our documentation
+- Make a source item draggable with `Drag`
+- Make a target accept dropped items with `Drop`
+- Build reorderable lists with `DropList` (drag to reorder, or move between lists)
+- Ignore drops in specific zones using `DropMask`
+- Use `useDrag`, `useDrop`, and `useDragAware` when you need custom logic instead of a full component
+- Restrict what can be dropped using type/data rules (`accepts-type`, `accepts-data`, `candidate`)
+- Support copy/cut-style interactions and list events like `reorder` and `insert`
+- Customize the drag preview with `drag-image`
 
-![demo](docs/img/vid4.gif)
-![demo](docs/img/vid7.gif)
+## Install
 
+```bash
+npm install vue-easy-dnd
+```
 
+Vue 3.2+ is required.
 
+## Quick example
 
+```vue
+<script setup>
+import { Drag, Drop, useDragAware } from 'vue-easy-dnd'
+import 'vue-easy-dnd/style.css'
 
+const { dragInProgress } = useDragAware()
 
+function handleDrop(event) {
+  console.log('Dropped item:', event.data)
+}
+</script>
 
+<template>
+  <Drag type="task" :data="{ id: 1 }">
+    <div>Drag this item</div>
+  </Drag>
 
+  <Drop accepts-type="task" @drop="handleDrop">
+    Drop zone
+  </Drop>
 
+  <p v-if="dragInProgress">Drag in progress</p>
+</template>
+```
+
+For examples like dashboards, nested zones, and full list workflows, use the linked docs and demos.
+
+## Docs and examples
+
+### [View Documentation](https://rlemaigre.github.io/Easy-DnD)
+
+- [All demos](https://rlemaigre.github.io/Easy-DnD/advanced-demos/)
+- [Dashboard demo on homepage](https://rlemaigre.github.io/Easy-DnD/#try-the-dashboard-demo)

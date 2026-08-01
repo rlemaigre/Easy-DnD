@@ -156,6 +156,10 @@ export function useDrag (props: DragProps, emit: DnDEmit, options: DragOptions) 
     }
   };
   const onEasyDnDMove = (event: Event) => dnd.mouseMove(event as EasyDnDMoveEvent, null);
+  const onNativeDragStart = (event: DragEvent) => {
+    if (!downEvent.value) return;
+    event.preventDefault();
+  };
   const cancelDragActions = () => {
     dragInitialised.value = false;
     if (delayTimer.value !== undefined) clearTimeout(delayTimer.value);
@@ -358,6 +362,7 @@ export function useDrag (props: DragProps, emit: DnDEmit, options: DragOptions) 
     const element = getRootElement();
     element.addEventListener('mousedown', onMouseDown, { passive: true });
     element.addEventListener('touchstart', onMouseDown, { passive: true });
+    element.addEventListener('dragstart', onNativeDragStart, { capture: true });
   });
 
   onBeforeUnmount(() => {
@@ -368,6 +373,7 @@ export function useDrag (props: DragProps, emit: DnDEmit, options: DragOptions) 
     dnd.off('dragend', dndDragEnd);
     options.rootElement.value?.removeEventListener('mousedown', onMouseDown);
     options.rootElement.value?.removeEventListener('touchstart', onMouseDown);
+    options.rootElement.value?.removeEventListener('dragstart', onNativeDragStart);
     if (downEvent.value) {
       cancelDragActions();
       finishDrag();

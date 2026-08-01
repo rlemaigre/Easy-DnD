@@ -19,7 +19,7 @@ All emit events carry the current state of the drag operation by means of the fo
 
 The `useDragAware` composable makes components reactive to drag operations. Import it from the package and call it inside `setup`:
 
-```js
+```ts
 import { useDragAware } from 'vue-easy-dnd';
 
 const {
@@ -43,6 +43,4 @@ It returns the following computed refs reflecting the current drag state:
 
 The following demo displays information about the current drag operation when it is in progress:
 
-https://codesandbox.io/p/sandbox/example-5-forked-ph7969
-
-![demo](img/vid6.gif)
+<DragStateDemo />

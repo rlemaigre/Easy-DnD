@@ -33,9 +33,7 @@ Slot Name | Description
 ## Demo
 An example of `go-back` prop
 
-https://codesandbox.io/s/example-1-l6p54
-
-![demo](../img/vid12.gif)
+<DragGoBackDemo />
 
 ## CSS classes
 
@@ -53,9 +51,7 @@ A Drop component is said to participate in a drag operation if it accepts its ty
 
 The following demo illustrates the use of types. There are two types in use : 'string' and 'number'. The Drag components that contain '1' and '2' are of type 'number', the ones containing 'a' and 'b' are of type 'string'. The two Drop components on the left accept numbers, the ones on the right accept strings. When you drag a number/string (respectively), only Drop components that accept numbers/strings (respectively) react (i.e. drag images, CSS classes, cursors are applied). The other ones are left alone.
 
-https://codesandbox.io/s/example-3-g7io8
-
-![demo](../img/vid4.gif)
+<TypeAcceptanceDemo />
 
 ## Drag image
 
@@ -79,6 +75,4 @@ The position of the drag image relative to the mouse cursor can be controlled by
 
 The following demo illustrate the use of custom drag images, nested Drop components and a mask :
 
-https://codesandbox.io/s/example-4-6h8zy
-
-![demo](../img/vid5.gif)
+<CustomDragImageDemo />

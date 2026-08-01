@@ -1,0 +1,242 @@
+.dnd-demo {
+  margin: 1.5rem 0;
+  overflow: hidden;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  &__header,
+  &__footer {
+    padding: 0.85rem 1rem;
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 1px solid var(--vp-c-divider);
+
+    > div {
+      min-width: 0;
+    }
+
+    p {
+      margin: 0.2rem 0 0;
+      color: var(--vp-c-text-2);
+      font-size: 0.875rem;
+    }
+
+    button {
+      flex: none;
+      padding: 0.35rem 0.7rem;
+      border: 1px solid var(--vp-c-divider);
+      border-radius: 7px;
+      background: var(--vp-c-bg);
+      color: var(--vp-c-text-1);
+      cursor: pointer;
+    }
+  }
+
+  &__surface {
+    container-type: inline-size;
+    min-width: 0;
+    padding: 1rem;
+  }
+
+  &__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    border-top: 1px solid var(--vp-c-divider);
+    color: var(--vp-c-text-2);
+    font-size: 0.85rem;
+
+    a {
+      margin-left: auto;
+      color: var(--vp-c-brand-1);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: var(--vp-c-brand-2);
+      text-decoration: underline;
+    }
+  }
+
+  &__row,
+  &__grid,
+  &__palette {
+    min-width: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  }
+
+  &__grid > *,
+  &__row > *,
+  &__list > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  &__item,
+  &__card,
+  &__widget {
+    border: 1px solid var(--vp-c-divider);
+    border-radius: 8px;
+    background: var(--vp-c-bg);
+    box-shadow: var(--vp-shadow-1);
+  }
+
+  &__item {
+    display: inline-flex;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0.75rem;
+    user-select: none;
+  }
+
+  &__card,
+  &__widget {
+    padding: 0.65rem 0.75rem;
+  }
+
+  &__card {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+
+    > * {
+      min-width: 0;
+    }
+  }
+
+  &__widget {
+    width: 100%;
+    flex: none;
+    min-width: 0;
+  }
+
+  &__list--row > &__widget {
+    width: auto;
+    flex: 1 1 8rem;
+  }
+
+  &__list--row > .nested-list {
+    width: auto;
+    flex: 1 1 10rem;
+  }
+
+  &__card small,
+  &__widget small {
+    display: block;
+    margin-top: 0.15rem;
+    color: var(--vp-c-text-2);
+  }
+
+  &__zone,
+  &__list {
+    min-height: 5rem;
+    padding: 0.75rem;
+    border: 2px dashed var(--vp-c-divider);
+    border-radius: 9px;
+    background: color-mix(in srgb, var(--vp-c-bg) 75%, transparent);
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__list--row {
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  &__label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--vp-c-text-2);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  &__feedback {
+    min-height: 2rem;
+    border: 2px dashed var(--vp-c-brand-1);
+    border-radius: 7px;
+    background: color-mix(in srgb, var(--vp-c-brand-soft) 65%, transparent);
+  }
+
+  &__ghost {
+    max-width: min(22rem, calc(100vw - 2rem));
+    padding: 0.45rem 0.7rem;
+    border-radius: 7px;
+    background: var(--vp-c-brand-1);
+    color: white;
+    box-shadow: var(--vp-shadow-3);
+    overflow-wrap: anywhere;
+  }
+
+  &__status {
+    margin: 0;
+    color: var(--vp-c-text-2);
+  }
+
+  .drop-in.drop-allowed {
+    border-color: var(--vp-c-brand-1);
+    background: var(--vp-c-brand-soft);
+  }
+
+  .drop-in.drop-forbidden {
+    border-color: var(--vp-c-danger-1);
+    background: var(--vp-c-danger-soft);
+  }
+
+  .drag-source {
+    opacity: 0.45;
+  }
+
+  img,
+  table {
+    max-width: 100%;
+  }
+
+  strong,
+  small,
+  p,
+  li,
+  td,
+  th {
+    overflow-wrap: anywhere;
+  }
+}
+
+@container (max-width: 420px) {
+  .dnd-demo__grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,19 +1,87 @@
 # Advanced Demos
 
-These demos are meant to be pretty and reflect real life examples.
+Every interactive example from the documentation is collected here. Start with the focused component examples, then explore the more complete interfaces built from the same API pieces.
 
-The following demo features list reordering, drag and drop between two lists, custom drag images and custom feedback when inserting new items.
+## Drag
 
-https://codesandbox.io/s/easy-dnd-demo-9mbij
+### Return unsuccessful drags
 
-![demo](img/vid7.gif)
+See how the [`go-back` prop works on the Drag component](/components/drag#demo).
 
-The following demo features drag and drop between a table and a list, custom drag images and a custom style for drop areas when the drop is allowed.
+<DragGoBackDemo />
 
-https://codesandbox.io/s/easy-dnd-demo-2-xnqbz
+### Accept drag types
 
-![demo](img/vid8.gif)
+Use typed drag data to control which targets participate in an operation.
 
-The following demo features nested drop lists and a custom drag image. It is a tool to design dashboards by WYSIWYG. New widgets can be dragged into the dashboard from the palette on the left and widgets can be moved around by drag and drop.
+<TypeAcceptanceDemo />
 
-![demo](img/vid10.gif)
+### Custom drag images
+
+Change the drag image at the source and as the pointer moves through nested targets.
+
+<CustomDragImageDemo />
+
+## Drop
+
+### Copy and cut modes
+
+Compare copy and cut behavior and see how the source reacts to a successful drop.
+
+<DropModesDemo />
+
+### Filter drag data
+
+Use `accepts-data` to accept or reject individual values of the same type.
+
+<DataAcceptanceDemo />
+
+## DropList
+
+### Reorder and transfer list items
+
+Reorder items in place or transfer them between lists.
+
+<DropListTransferDemo />
+
+### Nested drop lists
+
+Compose row and column lists into a nested layout.
+
+<NestedDropListDemo />
+
+## DropMask
+
+### Mask part of a drop target
+
+Keep part of a Drop component insensitive to drag-and-drop interactions.
+
+<DropMaskDemo />
+
+## Composables
+
+### Observe drag state
+
+Watch the reactive state exposed by `useDragAware` throughout a drag operation.
+
+<DragStateDemo />
+
+## Complete interface examples
+
+### Transfer rich cards
+
+This example combines list reordering, transfers between lists, custom drag images, and custom insertion feedback.
+
+<CardTransferDemo />
+
+### Copy table rows into a list
+
+This example combines a table source, a list target, copy mode, custom drag images, and insertion feedback.
+
+<TableToListDemo />
+
+### Build a dashboard
+
+This example uses nested drop lists to build a dashboard visually. Drag new widgets from the palette or move existing widgets between regions.
+
+<DashboardBuilderDemo />

@@ -5,11 +5,21 @@ export default defineConfig({
   title: 'Vue-Easy-DnD',
   description: 'A HTML5 drag-and-drop replacement',
   base: '/Easy-DnD/',
+  vite: {
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: 'modern-compiler'
+        }
+      }
+    }
+  },
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
       { text: 'API', link: '/installation' },
+      { text: 'Demos', link: '/advanced-demos' },
       { text: 'FAQ', link: '/faq' }
     ],
 
@@ -19,7 +29,7 @@ export default defineConfig({
         items: [
           { text: 'Installation', link: '/installation' },
           { text: 'FAQ', link: '/faq' },
-          { text: 'Events / Mixins', link: '/events' },
+          { text: 'Events / Composables', link: '/events' },
           { text: 'Advanced Demos', link: '/advanced-demos' }
         ]
       },

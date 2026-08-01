@@ -20,6 +20,10 @@
     "src/**/*.vue",
     "lib/src/**/*.ts",
     "lib/src/**/*.vue",
+    "docs/demos/**/*.ts",
+    "docs/demos/**/*.vue",
+    "docs/.vitepress/theme/**/*.ts",
+    "docs/.vitepress/theme/**/*.vue",
     "*.config.ts",
     "docs/.vitepress/config.ts"
   ]

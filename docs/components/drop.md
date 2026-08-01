@@ -44,9 +44,7 @@ If a drag operation originates from a Drag components that doesn't declare a lis
 
 The following demo illustrates modes in action :
 
-https://codesandbox.io/s/example-2-r8n1k
-
-![demo](../img/vid3.gif)
+<DropModesDemo />
 
 ## Restricting droppable data
 
@@ -54,6 +52,4 @@ Drop components can restrict the data they accept by mean of the `accepts-data` 
 
 The following demo defines five Drag components that can be dragged into three Drop components, one that accepts even numbers, one that accepts odd numbers and one that accepts any number but removes them once the drag is complete.
 
-https://codesandbox.io/s/easy-dnd-demo-fo078
-
-![demo](../img/vid1.gif)
+<DataAcceptanceDemo />
