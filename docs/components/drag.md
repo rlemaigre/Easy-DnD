@@ -82,7 +82,7 @@ For a handle outside the `Drag` root, pass a function returning the current hand
 
 ## Automatic scrolling
 
-Use `scrolling-edge-size` to control how close the pointer must be to an edge, `scrolling-speed` to control the maximum step, and `scrolling-propagation` to decide whether scrolling may continue through outer containers.
+Use `scrolling-edge-size` to control how close the pointer must be to an edge, `scrolling-speed` to control the per-step scroll delta, and `scrolling-propagation` to decide whether scrolling may continue through outer containers.
 
 An active `DropList` can override edge size and propagation with its own `scrolling-edge-size` and `scrolling-propagation` props. Scroll speed always comes from the source `Drag`.
 

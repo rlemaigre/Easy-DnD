@@ -131,6 +131,24 @@ Also disable the pinned item's `Drag`: `reorderable` prevents an allowed reorder
 <<< ../demos/PositionLockDemo.vue#demo-script{ts}
 :::
 
+## Drop onto list items
+
+A list item can contain a nested `Drop`. The nested target becomes active over its own element, while uncovered parts of the item continue to route movement to the parent `DropList`. This supports interfaces where the centre of a folder accepts files and narrow edge areas reorder the surrounding list.
+
+Set `row` or `column` on the parent list whenever an item contains a nested drop target. The list then uses the appropriate item edge for its insertion and reordering calculations. The nested target's dimensions define the centre threshold, so it can be adjusted with ordinary layout and CSS without another runtime prop.
+
+<FolderDropDemo />
+
+::: details View example code
+**Template**
+
+<<< ../demos/FolderDropDemo.vue#demo-template
+
+**TypeScript**
+
+<<< ../demos/FolderDropDemo.vue#demo-script{ts}
+:::
+
 ## Nested DropLists
 
 DropLists can be nested with these requirements:

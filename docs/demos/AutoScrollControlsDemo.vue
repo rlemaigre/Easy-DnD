@@ -1,7 +1,7 @@
 <template>
   <DemoFrame
     title="Control nested edge scrolling"
-    description="Adjust the maximum scroll step and choose whether scrolling can continue into the outer container."
+    description="Adjust the edge activation distance and scroll delta, then choose whether scrolling can continue into the outer container."
     docs-link="/components/drag.html#automatic-scrolling"
     docs-label="View automatic-scrolling docs →"
     @reset="reset"
@@ -9,9 +9,19 @@
     <!-- #region demo-template -->
     <div class="auto-scroll-demo__controls">
       <label>
-        Maximum step: <strong>{{ speed }}px</strong>
+        Edge activation distance: <strong>{{ edgeSize }}px</strong>
         <input
-          v-model.number="speed"
+          v-model.number="edgeSize"
+          type="range"
+          min="20"
+          max="140"
+          step="10"
+        />
+      </label>
+      <label>
+        Scroll delta: <strong>{{ scrollDelta }}px per step</strong>
+        <input
+          v-model.number="scrollDelta"
           type="range"
           min="2"
           max="80"
@@ -30,7 +40,7 @@
       </p>
       <DropList
         :items="items"
-        :scrolling-edge-size="50"
+        :scrolling-edge-size="edgeSize"
         :scrolling-propagation="propagate"
         class="dnd-demo__list auto-scroll-demo__inner"
         column
@@ -41,7 +51,8 @@
           <Drag
             :key="item"
             :data="item"
-            :scrolling-speed="speed"
+            :scrolling-edge-size="edgeSize"
+            :scrolling-speed="scrollDelta"
             :scrolling-propagation="propagate"
             class="dnd-demo__item auto-scroll-demo__item"
           >
@@ -73,11 +84,13 @@ import { ref } from 'vue';
 import { Drag, DropList } from 'vue-easy-dnd';
 
 const makeItems = () => Array.from({ length: 18 }, (_, index) => `Scrollable item ${index + 1}`);
-const speed = ref(12);
+const edgeSize = ref(50);
+const scrollDelta = ref(12);
 const propagate = ref(false);
 const items = ref(makeItems());
 const reset = () => {
-  speed.value = 12;
+  edgeSize.value = 50;
+  scrollDelta.value = 12;
   propagate.value = false;
   items.value = makeItems();
 };
@@ -93,7 +106,7 @@ const reset = () => {
   margin-bottom: 1rem;
 }
 
-.auto-scroll-demo__controls label:first-child {
+.auto-scroll-demo__controls label:not(.auto-scroll-demo__toggle) {
   display: grid;
   min-width: min(100%, 15rem);
   gap: 0.35rem;

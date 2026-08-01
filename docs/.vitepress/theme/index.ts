@@ -12,6 +12,7 @@ import DropListTransferDemo from '../../demos/DropListTransferDemo.vue';
 import DropMaskDemo from '../../demos/DropMaskDemo.vue';
 import DropModesDemo from '../../demos/DropModesDemo.vue';
 import ExternalHandleDemo from '../../demos/ExternalHandleDemo.vue';
+import FolderDropDemo from '../../demos/FolderDropDemo.vue';
 import NestedDropListDemo from '../../demos/NestedDropListDemo.vue';
 import PositionLockDemo from '../../demos/PositionLockDemo.vue';
 import ShadowDomDemo from '../../demos/ShadowDomDemo.vue';
@@ -34,6 +35,7 @@ export default {
     app.component('DropMaskDemo', DropMaskDemo);
     app.component('DropModesDemo', DropModesDemo);
     app.component('ExternalHandleDemo', ExternalHandleDemo);
+    app.component('FolderDropDemo', FolderDropDemo);
     app.component('NestedDropListDemo', NestedDropListDemo);
     app.component('PositionLockDemo', PositionLockDemo);
     app.component('ShadowDomDemo', ShadowDomDemo);

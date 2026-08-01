@@ -91,7 +91,7 @@ Select a card and drag it from a shared toolbar rendered outside every Drag comp
 
 ### Automatic scrolling controls
 
-Adjust edge-scrolling speed and toggle propagation between nested scroll containers.
+Adjust the edge activation distance and per-step scroll delta, then toggle propagation between nested scroll containers.
 
 <AutoScrollControlsDemo />
 
@@ -171,6 +171,22 @@ Pin one item while allowing every unlocked item to move around and across it.
 **TypeScript**
 
 <<< ./demos/PositionLockDemo.vue#demo-script{ts}
+:::
+
+### Drop files into folders
+
+Use the edges of a folder item to reorder it, or its inset centre to move a file into that folder.
+
+<FolderDropDemo />
+
+::: details View example code
+**Template**
+
+<<< ./demos/FolderDropDemo.vue#demo-template
+
+**TypeScript**
+
+<<< ./demos/FolderDropDemo.vue#demo-script{ts}
 :::
 
 ### Nested drop lists
