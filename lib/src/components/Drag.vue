@@ -20,12 +20,13 @@
 </template>
 
 <script>
-import DragMixin from '../mixins/DragMixin';
+import { computed, defineComponent } from 'vue';
+import { dragEmits, dragProps, useDrag } from '../composables/useDrag';
 
-export default {
+export default defineComponent({
   name: 'Drag',
-  mixins: [DragMixin],
   props: {
+    ...dragProps,
     /**
      * Tag to be used as root of this component. Defaults to div.
      */
@@ -34,12 +35,17 @@ export default {
       default: 'div'
     }
   },
-  computed: {
-    dynamicSlots () {
-      return Object.entries(this.$slots).filter(([key]) => key !== 'drag-image' && key !== 'default');
-    }
+  emits: dragEmits,
+  setup (props, { emit, slots }) {
+    const dynamicSlots = computed(() => Object.entries(slots)
+      .filter(([key]) => key !== 'drag-image' && key !== 'default'));
+
+    return {
+      ...useDrag(props, emit),
+      dynamicSlots
+    };
   }
-};
+});
 </script>
 
 <style lang="scss">

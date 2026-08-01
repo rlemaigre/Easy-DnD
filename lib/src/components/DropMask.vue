@@ -7,36 +7,34 @@
 </template>
 
 <script>
-import DragAwareMixin from '../mixins/DragAwareMixin';
+import { defineComponent, getCurrentInstance, onBeforeUnmount, onMounted } from 'vue';
+import { useDragAware } from '../composables/useDragAware';
 import { dnd } from '../js/DnD';
 
-export default {
+export default defineComponent({
   name: 'DropMask',
-  mixins: [DragAwareMixin],
   props: {
     tag: {
       type: [String, Object, Function],
       default: 'div'
     }
   },
-  data () {
+  setup () {
+    const instance = getCurrentInstance();
+    const dragAware = useDragAware();
+    dragAware.isDropMask.value = true;
+
+    const createDragImage = () => 'source';
+    const onDndMove = (event) => dnd.mouseMove(event, instance.proxy);
+
+    onMounted(() => instance.proxy.$el.addEventListener('easy-dnd-move', onDndMove));
+    onBeforeUnmount(() => instance.proxy.$el.removeEventListener('easy-dnd-move', onDndMove));
+
     return {
-      isDropMask: true
+      ...dragAware,
+      createDragImage,
+      onDndMove
     };
-  },
-  mounted () {
-    this.$el.addEventListener('easy-dnd-move', this.onDndMove);
-  },
-  beforeUnmount () {
-    this.$el.removeEventListener('easy-dnd-move', this.onDndMove);
-  },
-  methods: {
-    createDragImage () {
-      return 'source';
-    },
-    onDndMove (e) {
-      dnd.mouseMove(e, this);
-    }
   }
-};
+});
 </script>

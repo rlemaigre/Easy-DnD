@@ -24,26 +24,33 @@
 </template>
 
 <script>
-import DropMixin from '../mixins/DropMixin';
+import { computed, defineComponent } from 'vue';
+import { dropEmits, dropProps, useDrop } from '../composables/useDrop';
 
-export default {
+export default defineComponent({
   name: 'Drop',
-  mixins: [DropMixin],
   props: {
+    ...dropProps,
     tag: {
       type: [String, Object, Function],
       default: 'div'
     }
   },
-  computed: {
-    dynamicSlots () {
-      return Object.entries(this.$slots).filter(([key]) => key !== 'drag-image' && key !== 'default');
-    },
-    showDragImage () {
-      return this.dragInProgress && this.typeAllowed && !!this.$slots['drag-image'];
-    }
+  emits: dropEmits,
+  setup (props, { emit, slots }) {
+    const drop = useDrop(props, emit);
+    const dynamicSlots = computed(() => Object.entries(slots)
+      .filter(([key]) => key !== 'drag-image' && key !== 'default'));
+    const showDragImage = computed(() => drop.dragInProgress.value &&
+      drop.typeAllowed.value && !!slots['drag-image']);
+
+    return {
+      ...drop,
+      dynamicSlots,
+      showDragImage
+    };
   }
-};
+});
 </script>
 
 <style lang="scss">

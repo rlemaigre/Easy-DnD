@@ -14,10 +14,25 @@ All emit events carry the current state of the drag operation by means of the fo
 
 &nbsp;\
 &nbsp;
-# Mixins
-## DragAwareMixin
+# Composables
+## useDragAware
 
-A mixin is available to make components sensitive to drag operations. It adds the following computed to components that incorporate it, reflecting the current state of the drag :
+The `useDragAware` composable makes components reactive to drag operations. Import it from the package and call it inside `setup`:
+
+```js
+import { useDragAware } from 'vue-easy-dnd';
+
+const {
+  dragInProgress,
+  dragType,
+  dragData,
+  dragPosition,
+  dragSource,
+  dragTop
+} = useDragAware();
+```
+
+It returns the following computed refs reflecting the current drag state:
 
 * `dragInProgress` : true if a drag operation is in progress, false otherwise
 * `dragType` : the type of the current drag operation
@@ -26,7 +41,7 @@ A mixin is available to make components sensitive to drag operations. It adds th
 * `dragSource` : the Drag component from which the drag operation originated
 * `dragTop` : the foremost Drop component under the mouse if any
 
-The following demo displays information about the current drag operation when it is in progress :
+The following demo displays information about the current drag operation when it is in progress:
 
 https://codesandbox.io/p/sandbox/example-5-forked-ph7969
 

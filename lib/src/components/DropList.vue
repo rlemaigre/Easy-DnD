@@ -1,16 +1,26 @@
 <script>
-import { TransitionGroup, h } from 'vue';
-import DropMixin, { dropAllowed, doDrop, candidate } from '../mixins/DropMixin';
+import {
+  computed,
+  defineComponent,
+  getCurrentInstance,
+  h,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  TransitionGroup
+} from 'vue';
+import { dropEmits, dropProps, useDrop } from '../composables/useDrop';
 import DragFeedback from './DragFeedback.vue';
 import Grid from '../js/Grid';
 import { InsertEvent, ReorderEvent } from '../js/events';
 import { createDragImage } from '../js/createDragImage';
 import { dnd } from '../js/DnD';
 
-export default {
+export default defineComponent({
   name: 'DropList',
-  mixins: [DropMixin],
   props: {
+    ...dropProps,
     tag: {
       type: [String, Object, Function],
       default: 'div'
@@ -36,238 +46,193 @@ export default {
       default: undefined
     }
   },
-  emits: ['reorder', 'insert'],
-  data () {
-    return {
-      grid: null,
-      forbiddenKeys: [],
-      feedbackKey: null,
-      fromIndex: null
+  emits: [...dropEmits, 'reorder', 'insert'],
+  setup (props, { emit, slots }) {
+    const instance = getCurrentInstance();
+    const component = () => instance.proxy;
+    const grid = ref(null);
+    const forbiddenKeys = ref([]);
+    const feedbackKey = ref(null);
+    const fromIndex = ref(null);
+    const rootTag = computed(() => props.noAnimations ? props.tag : TransitionGroup);
+    const rootProps = computed(() => props.noAnimations ? {} : { tag: props.tag, css: false });
+    const direction = computed(() => props.row ? 'row' : props.column ? 'column' : 'auto');
+    const reordering = computed(() => dnd.inProgress
+      ? dnd.source.$el.parentElement === component().$el
+      : null);
+    const closestIndex = computed(() => grid.value ? grid.value.closestIndex(dnd.position) : null);
+
+    const getDropAllowed = () => {
+      if (!drop.dragInProgress.value) return null;
+      if (reordering.value) return props.items.length > 1;
+      if (!drop.baseDropAllowed.value) return false;
+      if (forbiddenKeys.value !== null && feedbackKey.value !== null) {
+        return !forbiddenKeys.value.includes(feedbackKey.value);
+      }
+      return true;
     };
-  },
-  computed: {
-    rootTag () {
-      if (this.noAnimations) {
-        return this.tag;
-      }
-      return TransitionGroup;
-    },
-    rootProps () {
-      if (this.noAnimations) {
-        return {};
-      }
-
-      return {
-        tag: this.tag,
-        css: false
-      };
-    },
-    direction () {
-      // todo - rewrite this logic
-      if (this.row) return 'row';
-      if (this.column) return 'column';
-      return 'auto';
-    },
-    reordering () {
-      if (dnd.inProgress) {
-        return dnd.source.$el.parentElement === this.$el;
-      }
-      return null;
-    },
-    closestIndex () {
-      if (this.grid) {
-        return this.grid.closestIndex(dnd.position);
-      }
-      return null;
-    },
-    dropAllowed () {
-      if (this.dragInProgress) {
-        if (this.reordering) {
-          return this.items.length > 1;
-        }
-        else {
-          // todo - eventually refactor so that this isn't necessary
-          if (!dropAllowed(this)) {
-            return false;
-          }
-
-          if (this.forbiddenKeys !== null && this.feedbackKey !== null) {
-            return !this.forbiddenKeys.includes(this.feedbackKey);
-          }
-
-          return true;
-        }
-      }
-
-      return null;
-    },
-    itemsBeforeFeedback () {
-      if (this.closestIndex === 0) {
-        return [];
-      }
-      return this.items.slice(0, this.closestIndex);
-    },
-    itemsAfterFeedback () {
-      if (this.closestIndex === this.items.length) {
-        return [];
-      }
-      return this.items.slice(this.closestIndex);
-    },
-    itemsBeforeReorderingFeedback () {
-      if (this.closestIndex <= this.fromIndex) {
-        return this.items.slice(0, this.closestIndex);
-      }
-      return this.items.slice(0, this.closestIndex + 1);
-    },
-    itemsAfterReorderingFeedback () {
-      if (this.closestIndex <= this.fromIndex) {
-        return this.items.slice(this.closestIndex);
-      }
-      return this.items.slice(this.closestIndex + 1);
-    },
-    reorderedItems () {
-      const toIndex = this.closestIndex;
-      const reordered = [...this.items];
-      const temp = reordered[this.fromIndex];
-
-      reordered.splice(this.fromIndex, 1);
-      reordered.splice(toIndex, 0, temp);
-      return reordered;
-    },
-    clazz () {
-      return {
-        'drop-list': true,
-        'reordering': this.reordering === true,
-        'inserting': this.reordering === false,
-        ...(this.reordering === false ? this.cssClasses : { 'dnd-drop': true })
-      };
-    },
-    showDragFeedback () {
-      return this.dragInProgress && this.typeAllowed && !this.reordering;
-    },
-    showInsertingDragImage () {
-      return this.dragInProgress && this.typeAllowed && !this.reordering && !!this.$slots['drag-image'];
-    },
-    showReorderingDragImage () {
-      return this.dragInProgress && this.reordering && !!this.$slots['reordering-drag-image'];
-    },
-    hasReorderingFeedback () {
-      return !!this.$slots['reordering-feedback'];
-    },
-    hasEmptySlot () {
-      return !!this.$slots['empty'];
-    }
-  },
-  created () {
-    dnd.on('dragstart', this.onDragStart);
-    dnd.on('dragend', this.onDragEnd);
-  },
-  beforeUnmount () {
-    dnd.off('dragstart', this.onDragStart);
-    dnd.off('dragend', this.onDragEnd);
-  },
-  methods: {
-    // Presence of feedback node in the DOM and of keys in the virtual DOM required => delayed until what
-    // depends on drag data has been processed.
-    refresh () {
-      this.$nextTick(() => {
-        this.grid = this.computeInsertingGrid();
-        this.feedbackKey = this.computeFeedbackKey();
-        this.forbiddenKeys = this.computeForbiddenKeys();
-      });
-    },
-    onDragStart (event) {
-      if (this.candidate(dnd.type)) {
-        if (this.reordering) {
-          this.fromIndex = Array.prototype.indexOf.call(event.source.$el.parentElement.children, event.source.$el);
-          this.grid = this.computeReorderingGrid();
-        }
-        else {
-          this.refresh();
-        }
-      }
-    },
-    onDragEnd () {
-      this.fromIndex = null;
-      this.feedbackKey = null;
-      this.forbiddenKeys = null;
-      this.grid = null;
-    },
-    doDrop (event) {
-      if (this.reordering) {
-        if (this.fromIndex !== this.closestIndex) {
-          this.$emit('reorder', new ReorderEvent(
-            this.fromIndex,
-            this.closestIndex
-          ));
+    const handleDrop = (event) => {
+      if (reordering.value) {
+        if (fromIndex.value !== closestIndex.value) {
+          emit('reorder', new ReorderEvent(fromIndex.value, closestIndex.value));
         }
       }
       else {
-        // todo - eventually remove the need for this
-        doDrop(this, event);
-        this.$emit('insert', new InsertEvent(
-          event.type,
-          event.data,
-          this.closestIndex
-        ));
+        emit('drop', event);
+        event.source.$emit(props.mode, event);
+        emit('insert', new InsertEvent(event.type, event.data, closestIndex.value));
       }
-    },
-    candidate (type) {
-      return candidate(this, type) || this.reordering;
-    },
-    computeForbiddenKeys () {
-      return (this.noAnimations ? [] : this.$refs.component.$slots['default']())
-        .map(vn => vn.key)
-        .filter(k => !!k && k !== 'drag-image' && k !== 'drag-feedback');
-    },
-    computeFeedbackKey () {
-      return this.$refs['feedback']['$slots']['default']()[0]['key'];
-    },
-    computeInsertingGrid () {
-      if (this.$refs.feedback.$el.children.length < 1) {
-        return null;
-      }
+    };
+    const isCandidate = (type) => drop.effectiveAcceptsType(type) || reordering.value;
+    const makeDragImage = () => {
+      const proxy = component();
+      const element = proxy.$refs['drag-image'];
+      if (!element) return 'source';
 
-      const feedback = this.$refs.feedback.$el.children[0];
-      const clone = feedback.cloneNode(true);
-      const tg = this.$el;
-      if (tg.children.length > this.items.length) {
-        tg.insertBefore(clone, tg.children[this.items.length]);
-      }
-      else {
-        tg.appendChild(clone);
-      }
-      const grid = new Grid(tg.children, this.items.length, this.direction, null);
-      tg.removeChild(clone);
-      return grid;
-    },
-    computeReorderingGrid () {
-      return new Grid(this.$el.children, this.items.length - 1, this.direction, this.fromIndex);
-    },
-    createDragImage () {
-      let image;
-      if (this.$refs['drag-image']) {
-        const el = this.$refs['drag-image'];
-        let model;
-        if (el.childElementCount !== 1) {
-          model = el;
-        }
-        else {
-          model = el.children.item(0);
-        }
-        const clone = model.cloneNode(true);
-        const tg = this.$el;
-        tg.appendChild(clone);
-        image = createDragImage(clone);
-        tg.removeChild(clone);
-        image['__opacity'] = this.dragImageOpacity;
-        image.classList.add('dnd-ghost');
-      }
-      else {
-        image = 'source';
-      }
+      const model = element.childElementCount !== 1 ? element : element.children.item(0);
+      const clone = model.cloneNode(true);
+      proxy.$el.appendChild(clone);
+      const image = createDragImage(clone);
+      proxy.$el.removeChild(clone);
+      image.__opacity = props.dragImageOpacity;
+      image.classList.add('dnd-ghost');
       return image;
-    }
+    };
+    const drop = useDrop(props, emit, {
+      getDropAllowed,
+      doDrop: handleDrop,
+      candidate: isCandidate,
+      createDragImage: makeDragImage
+    });
+
+    const itemsBeforeFeedback = computed(() => closestIndex.value === 0
+      ? []
+      : props.items.slice(0, closestIndex.value));
+    const itemsAfterFeedback = computed(() => closestIndex.value === props.items.length
+      ? []
+      : props.items.slice(closestIndex.value));
+    const itemsBeforeReorderingFeedback = computed(() => closestIndex.value <= fromIndex.value
+      ? props.items.slice(0, closestIndex.value)
+      : props.items.slice(0, closestIndex.value + 1));
+    const itemsAfterReorderingFeedback = computed(() => closestIndex.value <= fromIndex.value
+      ? props.items.slice(closestIndex.value)
+      : props.items.slice(closestIndex.value + 1));
+    const reorderedItems = computed(() => {
+      const items = [...props.items];
+      const item = items[fromIndex.value];
+      items.splice(fromIndex.value, 1);
+      items.splice(closestIndex.value, 0, item);
+      return items;
+    });
+    const clazz = computed(() => ({
+      'drop-list': true,
+      'reordering': reordering.value === true,
+      'inserting': reordering.value === false,
+      ...(reordering.value === false ? drop.cssClasses.value : { 'dnd-drop': true })
+    }));
+    const showDragFeedback = computed(() => drop.dragInProgress.value &&
+      drop.typeAllowed.value && !reordering.value);
+    const showInsertingDragImage = computed(() => drop.dragInProgress.value &&
+      drop.typeAllowed.value && !reordering.value && !!slots['drag-image']);
+    const showReorderingDragImage = computed(() => drop.dragInProgress.value &&
+      reordering.value && !!slots['reordering-drag-image']);
+    const hasReorderingFeedback = computed(() => !!slots['reordering-feedback']);
+    const hasEmptySlot = computed(() => !!slots['empty']);
+
+    const computeForbiddenKeys = () => (props.noAnimations
+      ? []
+      : component().$refs.component.$slots.default())
+      .map(vnode => vnode.key)
+      .filter(key => !!key && key !== 'drag-image' && key !== 'drag-feedback');
+    const computeFeedbackKey = () => component().$refs.feedback.$slots.default()[0].key;
+    const computeInsertingGrid = () => {
+      const proxy = component();
+      if (proxy.$refs.feedback.$el.children.length < 1) return null;
+
+      const feedback = proxy.$refs.feedback.$el.children[0];
+      const clone = feedback.cloneNode(true);
+      const element = proxy.$el;
+      if (element.children.length > props.items.length) {
+        element.insertBefore(clone, element.children[props.items.length]);
+      }
+      else {
+        element.appendChild(clone);
+      }
+      const result = new Grid(element.children, props.items.length, direction.value, null);
+      element.removeChild(clone);
+      return result;
+    };
+    const computeReorderingGrid = () => new Grid(
+      component().$el.children,
+      props.items.length - 1,
+      direction.value,
+      fromIndex.value
+    );
+    const refresh = async () => {
+      await nextTick();
+      grid.value = computeInsertingGrid();
+      feedbackKey.value = computeFeedbackKey();
+      forbiddenKeys.value = computeForbiddenKeys();
+    };
+    const onDragStart = (event) => {
+      if (!isCandidate(dnd.type)) return;
+      if (reordering.value) {
+        fromIndex.value = Array.prototype.indexOf.call(
+          event.source.$el.parentElement.children,
+          event.source.$el
+        );
+        grid.value = computeReorderingGrid();
+      }
+      else {
+        refresh();
+      }
+    };
+    const onDragEnd = () => {
+      fromIndex.value = null;
+      feedbackKey.value = null;
+      forbiddenKeys.value = null;
+      grid.value = null;
+    };
+
+    onMounted(() => {
+      dnd.on('dragstart', onDragStart);
+      dnd.on('dragend', onDragEnd);
+    });
+    onBeforeUnmount(() => {
+      dnd.off('dragstart', onDragStart);
+      dnd.off('dragend', onDragEnd);
+    });
+
+    return {
+      ...drop,
+      grid,
+      forbiddenKeys,
+      feedbackKey,
+      fromIndex,
+      rootTag,
+      rootProps,
+      direction,
+      reordering,
+      closestIndex,
+      itemsBeforeFeedback,
+      itemsAfterFeedback,
+      itemsBeforeReorderingFeedback,
+      itemsAfterReorderingFeedback,
+      reorderedItems,
+      clazz,
+      showDragFeedback,
+      showInsertingDragImage,
+      showReorderingDragImage,
+      hasReorderingFeedback,
+      hasEmptySlot,
+      refresh,
+      onDragStart,
+      onDragEnd,
+      computeForbiddenKeys,
+      computeFeedbackKey,
+      computeInsertingGrid,
+      computeReorderingGrid
+    };
   },
   render () {
     if (!this.$slots['item']) {
@@ -431,7 +396,7 @@ export default {
       }
     );
   }
-};
+});
 </script>
 
 <style scoped lang="scss">
