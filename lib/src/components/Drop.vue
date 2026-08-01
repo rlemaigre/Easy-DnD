@@ -24,41 +24,34 @@
   </component>
 </template>
 
-<script>
-import { computed, defineComponent, ref } from 'vue';
+<script setup>
+import { computed, ref, useSlots } from 'vue';
 import { dropEmits, dropProps, useDrop } from '../composables/useDrop';
 
-export default defineComponent({
+defineOptions({
   name: 'Drop',
-  props: {
-    ...dropProps,
-    tag: {
-      type: [String, Object, Function],
-      default: 'div'
-    }
-  },
-  emits: dropEmits,
-  setup (props, { emit, slots }) {
-    const rootElement = ref(null);
-    const dragImageElement = ref(null);
-    const drop = useDrop(props, emit, {
-      rootElement,
-      dragImageElement
-    });
-    const dynamicSlots = computed(() => Object.entries(slots)
-      .filter(([key]) => key !== 'drag-image' && key !== 'default'));
-    const showDragImage = computed(() => drop.dragInProgress.value &&
-      drop.typeAllowed.value && !!slots['drag-image']);
+});
 
-    return {
-      ...drop,
-      rootElement,
-      dragImageElement,
-      dynamicSlots,
-      showDragImage
-    };
+const props = defineProps({
+  ...dropProps,
+  tag: {
+    type: [String, Object, Function],
+    default: 'div'
   }
 });
+const emit = defineEmits(dropEmits);
+const slots = useSlots();
+const rootElement = ref(null);
+const dragImageElement = ref(null);
+const drop = useDrop(props, emit, {
+  rootElement,
+  dragImageElement
+});
+const { cssClasses, dragData, dragInProgress, dragType, typeAllowed } = drop;
+const dynamicSlots = computed(() => Object.entries(slots)
+  .filter(([key]) => key !== 'drag-image' && key !== 'default'));
+const showDragImage = computed(() => dragInProgress.value &&
+  typeAllowed.value && !!slots['drag-image']);
 </script>
 
 <style lang="scss">

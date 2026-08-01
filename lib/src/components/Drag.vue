@@ -20,40 +20,34 @@
   </component>
 </template>
 
-<script>
-import { computed, defineComponent, ref } from 'vue';
+<script setup>
+import { computed, ref, useSlots } from 'vue';
 import { dragEmits, dragProps, useDrag } from '../composables/useDrag';
 
-export default defineComponent({
+defineOptions({
   name: 'Drag',
-  props: {
-    ...dragProps,
-    /**
-     * Tag to be used as root of this component. Defaults to div.
-     */
-    tag: {
-      type: [String, Object, Function],
-      default: 'div'
-    }
-  },
-  emits: dragEmits,
-  setup (props, { emit, slots }) {
-    const rootElement = ref(null);
-    const dragImageElement = ref(null);
-    const dynamicSlots = computed(() => Object.entries(slots)
-      .filter(([key]) => key !== 'drag-image' && key !== 'default'));
+});
 
-    return {
-      ...useDrag(props, emit, {
-        rootElement,
-        dragImageElement,
-        hasDragImage: () => !!slots['drag-image']
-      }),
-      rootElement,
-      dragImageElement,
-      dynamicSlots
-    };
+const props = defineProps({
+  ...dragProps,
+  /**
+   * Tag to be used as root of this component. Defaults to div.
+   */
+  tag: {
+    type: [String, Object, Function],
+    default: 'div'
   }
+});
+const emit = defineEmits(dragEmits);
+const slots = useSlots();
+const rootElement = ref(null);
+const dragImageElement = ref(null);
+const dynamicSlots = computed(() => Object.entries(slots)
+  .filter(([key]) => key !== 'drag-image' && key !== 'default'));
+const { cssClasses, dragInitialised } = useDrag(props, emit, {
+  rootElement,
+  dragImageElement,
+  hasDragImage: () => !!slots['drag-image']
 });
 </script>
 
