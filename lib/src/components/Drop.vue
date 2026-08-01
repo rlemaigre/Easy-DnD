@@ -1,6 +1,7 @@
 <template>
   <component
     :is="tag"
+    ref="rootElement"
     :class="cssClasses"
   >
     <slot v-bind="$slots['default'] || {}" />
@@ -11,7 +12,7 @@
 
     <div
       v-if="showDragImage"
-      ref="drag-image"
+      ref="dragImageElement"
       class="__drag-image"
     >
       <slot
@@ -24,7 +25,7 @@
 </template>
 
 <script>
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import { dropEmits, dropProps, useDrop } from '../composables/useDrop';
 
 export default defineComponent({
@@ -38,7 +39,12 @@ export default defineComponent({
   },
   emits: dropEmits,
   setup (props, { emit, slots }) {
-    const drop = useDrop(props, emit);
+    const rootElement = ref(null);
+    const dragImageElement = ref(null);
+    const drop = useDrop(props, emit, {
+      rootElement,
+      dragImageElement
+    });
     const dynamicSlots = computed(() => Object.entries(slots)
       .filter(([key]) => key !== 'drag-image' && key !== 'default'));
     const showDragImage = computed(() => drop.dragInProgress.value &&
@@ -46,6 +52,8 @@ export default defineComponent({
 
     return {
       ...drop,
+      rootElement,
+      dragImageElement,
       dynamicSlots,
       showDragImage
     };

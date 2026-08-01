@@ -2,7 +2,6 @@
 import {
   computed,
   defineComponent,
-  getCurrentInstance,
   h,
   nextTick,
   onBeforeUnmount,
@@ -48,8 +47,9 @@ export default defineComponent({
   },
   emits: [...dropEmits, 'reorder', 'insert'],
   setup (props, { emit, slots }) {
-    const instance = getCurrentInstance();
-    const component = () => instance.proxy;
+    const rootElement = ref(null);
+    const feedbackElement = ref(null);
+    const dragImageElement = ref(null);
     const grid = ref(null);
     const forbiddenKeys = ref([]);
     const feedbackKey = ref(null);
@@ -58,7 +58,7 @@ export default defineComponent({
     const rootProps = computed(() => props.noAnimations ? {} : { tag: props.tag, css: false });
     const direction = computed(() => props.row ? 'row' : props.column ? 'column' : 'auto');
     const reordering = computed(() => dnd.inProgress
-      ? dnd.source.$el.parentElement === component().$el
+      ? dnd.sourceController.getElement().parentElement === rootElement.value
       : null);
     const closestIndex = computed(() => grid.value ? grid.value.closestIndex(dnd.position) : null);
 
@@ -79,30 +79,33 @@ export default defineComponent({
       }
       else {
         emit('drop', event);
-        event.source.$emit(props.mode, event);
+        event.sourceController.notifyDrop(props.mode, event);
         emit('insert', new InsertEvent(event.type, event.data, closestIndex.value));
       }
     };
     const isCandidate = (type) => drop.effectiveAcceptsType(type) || reordering.value;
     const makeDragImage = () => {
-      const proxy = component();
-      const element = proxy.$refs['drag-image'];
+      const element = dragImageElement.value;
       if (!element) return 'source';
 
       const model = element.childElementCount !== 1 ? element : element.children.item(0);
       const clone = model.cloneNode(true);
-      proxy.$el.appendChild(clone);
+      rootElement.value.appendChild(clone);
       const image = createDragImage(clone);
-      proxy.$el.removeChild(clone);
+      rootElement.value.removeChild(clone);
       image.__opacity = props.dragImageOpacity;
       image.classList.add('dnd-ghost');
       return image;
     };
     const drop = useDrop(props, emit, {
+      rootElement,
+      dragImageElement,
       getDropAllowed,
       doDrop: handleDrop,
       candidate: isCandidate,
-      createDragImage: makeDragImage
+      createDragImage: makeDragImage,
+      getReordering: () => reordering.value,
+      getScrollingEdgeSize: () => props.scrollingEdgeSize
     });
 
     const itemsBeforeFeedback = computed(() => closestIndex.value === 0
@@ -139,19 +142,20 @@ export default defineComponent({
     const hasReorderingFeedback = computed(() => !!slots['reordering-feedback']);
     const hasEmptySlot = computed(() => !!slots['empty']);
 
-    const computeForbiddenKeys = () => (props.noAnimations
-      ? []
-      : component().$refs.component.$slots.default())
+    const computeForbiddenKeys = () => (props.noAnimations ? [] : props.items.flatMap((item, index) =>
+      slots.item({ item, index, reorder: false })))
       .map(vnode => vnode.key)
       .filter(key => !!key && key !== 'drag-image' && key !== 'drag-feedback');
-    const computeFeedbackKey = () => component().$refs.feedback.$slots.default()[0].key;
+    const computeFeedbackKey = () => slots.feedback({
+      type: drop.dragType.value,
+      data: drop.dragData.value
+    })[0].key;
     const computeInsertingGrid = () => {
-      const proxy = component();
-      if (proxy.$refs.feedback.$el.children.length < 1) return null;
+      if (!feedbackElement.value || feedbackElement.value.children.length < 1) return null;
 
-      const feedback = proxy.$refs.feedback.$el.children[0];
+      const feedback = feedbackElement.value.children[0];
       const clone = feedback.cloneNode(true);
-      const element = proxy.$el;
+      const element = rootElement.value;
       if (element.children.length > props.items.length) {
         element.insertBefore(clone, element.children[props.items.length]);
       }
@@ -163,7 +167,7 @@ export default defineComponent({
       return result;
     };
     const computeReorderingGrid = () => new Grid(
-      component().$el.children,
+      rootElement.value.children,
       props.items.length - 1,
       direction.value,
       fromIndex.value
@@ -178,8 +182,8 @@ export default defineComponent({
       if (!isCandidate(dnd.type)) return;
       if (reordering.value) {
         fromIndex.value = Array.prototype.indexOf.call(
-          event.source.$el.parentElement.children,
-          event.source.$el
+          event.sourceController.getElement().parentElement.children,
+          event.sourceController.getElement()
         );
         grid.value = computeReorderingGrid();
       }
@@ -193,6 +197,12 @@ export default defineComponent({
       forbiddenKeys.value = null;
       grid.value = null;
     };
+    const setRootElement = (vnode) => {
+      rootElement.value = vnode.el;
+    };
+    const setFeedbackElement = (vnode) => {
+      feedbackElement.value = vnode.el;
+    };
 
     onMounted(() => {
       dnd.on('dragstart', onDragStart);
@@ -205,6 +215,9 @@ export default defineComponent({
 
     return {
       ...drop,
+      rootElement,
+      feedbackElement,
+      dragImageElement,
       grid,
       forbiddenKeys,
       feedbackKey,
@@ -228,6 +241,8 @@ export default defineComponent({
       refresh,
       onDragStart,
       onDragEnd,
+      setRootElement,
+      setFeedbackElement,
       computeForbiddenKeys,
       computeFeedbackKey,
       computeInsertingGrid,
@@ -339,8 +354,9 @@ export default defineComponent({
         DragFeedback,
         {
           class: '__feedback',
-          ref: 'feedback',
-          key: 'drag-feedback'
+          key: 'drag-feedback',
+          onVnodeMounted: this.setFeedbackElement,
+          onVnodeUpdated: this.setFeedbackElement
         },
         {
           default: () => this.$slots['feedback']({
@@ -356,7 +372,7 @@ export default defineComponent({
         'div',
         {
           class: '__drag-image',
-          ref: 'drag-image',
+          ref: 'dragImageElement',
           key: 'reordering-drag-image'
         },
         {
@@ -372,7 +388,7 @@ export default defineComponent({
         'div',
         {
           class: '__drag-image',
-          ref: 'drag-image',
+          ref: 'dragImageElement',
           key: 'inserting-drag-image'
         },
         {
@@ -387,8 +403,9 @@ export default defineComponent({
     return h(
       this.rootTag,
       {
-        ref: 'component',
         class: this.clazz,
+        onVnodeMounted: this.setRootElement,
+        onVnodeUpdated: this.setRootElement,
         ...this.rootProps
       },
       {
