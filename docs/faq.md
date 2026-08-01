@@ -1,3 +1,8 @@
+---
+title: Vue 3 Drag and Drop FAQ
+description: Answers about Vue Easy DnD support for touch devices, SSR, Nuxt, keyboard controls, Shadow DOM, styles, and Vue 3 integration.
+---
+
 # FAQ
 
 ## Does it support touch devices?

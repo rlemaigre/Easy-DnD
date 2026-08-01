@@ -1,3 +1,8 @@
+---
+title: Vue 3 Drag and Drop Examples
+description: Explore live Vue 3 drag-and-drop examples for sortable lists, nested drop zones, custom previews, dashboards, touch input, and Shadow DOM.
+---
+
 # Advanced Demos
 
 Every interactive example from the documentation is collected here. Start with the focused component examples, then explore the more complete interfaces built from the same API pieces.

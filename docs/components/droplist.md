@@ -1,3 +1,8 @@
+---
+title: Vue 3 Sortable and Reorderable Lists
+description: Create sortable Vue 3 lists with reordering, cross-list transfers, nested layouts, insertion feedback, autoscrolling, and position locking.
+---
+
 # DropList
 
 `DropList` is a specialized `Drop` that renders an array, calculates insertion positions, and supports in-list reordering.

@@ -1,5 +1,5 @@
 import { createApp } from 'vue';
-import App from './App24.vue';
+import App from './App22.vue';
 
 import Generic from './components/Generic.vue';
 

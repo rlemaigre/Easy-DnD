@@ -1,3 +1,8 @@
+---
+title: Vue Easy DnD v3 Migration Guide
+description: Migrate Vue Easy DnD applications from version 2 to version 3, including Composition API, TypeScript, packaging, events, and drag-image changes.
+---
+
 # Version 3 changelog and migration guide
 
 Version 3 modernizes Vue-Easy-DnD's public API, packaging, and internals while preserving the component API used by most applications. This guide covers migration from the latest version 2 release to version 3.

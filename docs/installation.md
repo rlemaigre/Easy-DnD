@@ -1,3 +1,8 @@
+---
+title: Install Vue Easy DnD
+description: Install and configure the Vue Easy DnD drag-and-drop component library in Vue 3, TypeScript, SSR, and Nuxt applications.
+---
+
 # Installation
 
 ## About

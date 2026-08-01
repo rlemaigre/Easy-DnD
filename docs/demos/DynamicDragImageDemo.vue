@@ -1,7 +1,7 @@
 <template>
   <DemoFrame
     title="Update a drag image during an active drag"
-    description="Move the card more than 120px horizontally to replace the compact preview with its expanded state."
+    description="Move 180px beyond any edge of the original source card to replace the compact preview with its expanded state."
     docs-link="/components/drag.html#dynamic-drag-images"
     docs-label="View dynamic drag-image docs →"
     @reset="reset"
@@ -13,18 +13,18 @@
         <Drag
           class="dnd-demo__card dynamic-image-demo__source"
           type="dynamic-preview"
-          :data="reportName"
+          :data="itemName"
           @dragstart="onDragStart"
           @dragend="onDragEnd"
         >
-          <strong>{{ reportName }}</strong>
-          <small>Drag horizontally to expand the preview</small>
+          <strong>{{ itemName }}</strong>
+          <small>Move 180px beyond any edge to expand</small>
 
           <template #drag-image>
             <div class="dnd-demo__ghost dynamic-image-demo__preview" :class="previewMode">
-              <strong>{{ reportName }}</strong>
+              <strong>{{ itemName }}</strong>
               <small v-if="previewMode === 'expanded'">
-                Revenue, retention, and customer-growth summary
+                Additional content rendered during this drag
               </small>
             </div>
           </template>
@@ -41,10 +41,6 @@
       </Drop>
     </div>
     <!-- #endregion demo-template -->
-
-    <template #footer>
-      Preview state: {{ previewMode }}
-    </template>
   </DemoFrame>
 </template>
 
@@ -56,16 +52,22 @@ import { ref, watch } from 'vue';
 import { Drag, Drop, refreshDragImage, useDragAware } from 'vue-easy-dnd';
 import type { DnDEventPayload } from 'vue-easy-dnd';
 
-const reportName = 'Quarterly report';
+const itemName = 'Demo item';
 const { dragPosition } = useDragAware();
+const expansionDistance = 180;
 const previewMode = ref<'compact' | 'expanded'>('compact');
-const startX = ref(0);
+const sourceBounds = ref<Pick<DOMRect, 'left' | 'right' | 'top' | 'bottom'> | null>(null);
 const ownsDrag = ref(false);
-const result = ref('Drop the report here');
+const result = ref('Drop the item here');
 
 watch(dragPosition, position => {
-  if (!ownsDrag.value || !position) return;
-  const nextMode = Math.abs(position.x - startX.value) > 120 ? 'expanded' : 'compact';
+  const bounds = sourceBounds.value;
+  if (!ownsDrag.value || !position || !bounds) return;
+  const isOutsideSource = position.x < bounds.left - expansionDistance ||
+    position.x > bounds.right + expansionDistance ||
+    position.y < bounds.top - expansionDistance ||
+    position.y > bounds.bottom + expansionDistance;
+  const nextMode = isOutsideSource ? 'expanded' : 'compact';
   if (nextMode === previewMode.value) return;
   previewMode.value = nextMode;
   void refreshDragImage();
@@ -73,18 +75,23 @@ watch(dragPosition, position => {
 
 const onDragStart = (event: DnDEventPayload) => {
   ownsDrag.value = true;
-  startX.value = event.position?.x ?? 0;
+  const bounds = event.sourceController?.getElement().getBoundingClientRect();
+  sourceBounds.value = bounds
+    ? { left: bounds.left, right: bounds.right, top: bounds.top, bottom: bounds.bottom }
+    : null;
 };
 const onDragEnd = () => {
   ownsDrag.value = false;
+  sourceBounds.value = null;
   previewMode.value = 'compact';
 };
 const onDrop = (event: DnDEventPayload) => {
   result.value = `Received: ${String(event.data)}`;
 };
 const reset = () => {
+  sourceBounds.value = null;
   previewMode.value = 'compact';
-  result.value = 'Drop the report here';
+  result.value = 'Drop the item here';
 };
 // #endregion demo-script
 </script>

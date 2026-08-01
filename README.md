@@ -1,8 +1,8 @@
-# Vue-Easy-DnD
+# Vue Easy DnD — Vue 3 Drag and Drop Library
 
-Vue-Easy-DnD helps you make Vue components draggable.
+Vue Easy DnD is a lightweight Vue 3 drag-and-drop component library for mouse and touch interfaces.
 
-If you have cards, tasks, rows, or widgets that users need to move around, this library gives you a simple way to drag-and-drop.
+Use it to build sortable lists, nested drop zones, dashboards, card transfers, and custom drag-and-drop workflows with TypeScript, SSR, and Nuxt support.
 
 ## What this package helps with
 
@@ -55,7 +55,7 @@ For examples like dashboards, nested zones, and full list workflows, use the lin
 
 ## Docs and examples
 
-### [View Documentation](https://rlemaigre.github.io/Easy-DnD)
+### [View Documentation](https://rlemaigre.github.io/Easy-DnD/)
 
 - [All demos](https://rlemaigre.github.io/Easy-DnD/advanced-demos.html)
 - [Version 3 migration guide](https://rlemaigre.github.io/Easy-DnD/changelog.html)

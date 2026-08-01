@@ -1,3 +1,8 @@
+---
+title: Mask Vue Drop Zones
+description: Use Vue Easy DnD DropMask to prevent drops within selected areas of a Vue 3 Drop or DropList target.
+---
+
 # DropMask
 
 `DropMask` creates an area inside a `Drop` or `DropList` that does not accept a drop. Moving over the mask clears the active target and prevents the masked element's enclosing target from receiving that movement.

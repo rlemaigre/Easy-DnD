@@ -1,3 +1,8 @@
+---
+title: Vue Drag and Drop Events and Composables
+description: Reference Vue Easy DnD event payloads, lifecycle timing, reactive drag state, and the useDrag, useDrop, and useDragAware composables.
+---
+
 # Events and composables
 
 ## Drag-and-drop event payload

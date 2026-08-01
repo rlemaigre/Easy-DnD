@@ -25,12 +25,14 @@ export function createDragImage (el: HTMLElement): DragImageElement {
 function deepClone (el: HTMLElement): DragImageElement {
   const clone = el.cloneNode(true) as DragImageElement;
   copyStyle(el, clone);
+  copyCanvasContents(el, clone);
   const vSrcElements = el.getElementsByTagName('*');
   const vDstElements = clone.getElementsByTagName('*');
   for (let i = vSrcElements.length; i--;) {
     const vSrcElement = vSrcElements[i];
     const vDstElement = vDstElements[i];
     copyStyle(vSrcElement, vDstElement);
+    copyCanvasContents(vSrcElement, vDstElement);
   }
   return clone;
 }
@@ -50,4 +52,12 @@ function copyStyle (src: Element, destination: Element) {
     );
   }
   styledDestination.style.pointerEvents = 'none';
+}
+
+/**
+ * cloneNode copies a canvas element and its dimensions, but not its bitmap.
+ */
+function copyCanvasContents (src: Element, destination: Element) {
+  if (!(src instanceof HTMLCanvasElement) || !(destination instanceof HTMLCanvasElement)) return;
+  destination.getContext('2d')?.drawImage(src, 0, 0);
 }

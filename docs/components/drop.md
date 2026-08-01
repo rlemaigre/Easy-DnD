@@ -1,3 +1,8 @@
+---
+title: Vue 3 Drop Zone Component
+description: Build typed Vue 3 drop zones with data filtering, copy and cut modes, nested targets, custom drag previews, and lifecycle events.
+---
+
 # Drop
 
 `Drop` defines an area into which data can be dropped. Targets can be nested to form hierarchies of arbitrary depth; the foremost participating target under the pointer becomes active.

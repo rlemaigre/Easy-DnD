@@ -1,7 +1,7 @@
 {
   "name": "vue-easy-dnd",
   "version": "2.2.2",
-  "description": "Drag and drop components for Vue 3 using mouse and touch events.",
+  "description": "Lightweight Vue 3 drag-and-drop components for sortable lists, nested drop zones, mouse, and touch input.",
   "type": "module",
   "main": "./dist/vue-easy-dnd.cjs",
   "module": "./dist/vue-easy-dnd.mjs",
@@ -40,14 +40,27 @@
     "vuejs",
     "vue3",
     "vuejs3",
+    "vue-dnd",
+    "vue-drag-and-drop",
+    "vue3-drag-and-drop",
     "drag-and-drop",
+    "drag-drop",
+    "draggable",
+    "droppable",
     "sortable",
-    "dnd"
+    "sortable-list",
+    "reorderable",
+    "drop-zone",
+    "dnd",
+    "touch",
+    "typescript",
+    "nuxt",
+    "ssr"
   ],
   "author": "Régis Lemaigre <rlemaigre.github@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/rlemaigre/Easy-DnD/issues"
   },
-  "homepage": "https://github.com/rlemaigre/Easy-DnD#readme"
+  "homepage": "https://rlemaigre.github.io/Easy-DnD/"
 }

@@ -1,3 +1,8 @@
+---
+title: Vue 3 Draggable Component
+description: Make Vue 3 components draggable with handles, typed data, touch input, automatic scrolling, custom drag images, and reactive previews.
+---
+
 # Drag
 
 `Drag` defines an area from which typed data can be dragged.
