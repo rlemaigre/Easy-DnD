@@ -1,6 +1,6 @@
 {
   "name": "vue-easy-dnd",
-  "version": "2.2.2",
+  "version": "3.0.0",
   "description": "Lightweight Vue 3 drag-and-drop components for sortable lists, nested drop zones, mouse, and touch input.",
   "type": "module",
   "main": "./dist/vue-easy-dnd.cjs",
