@@ -1,19 +1,31 @@
 {
   "name": "vue-easy-dnd",
   "version": "2.2.2",
-  "description": "Easy-DnD is a drag and drop implementation for Vue 3 that uses only standard mouse events instead of the HTML5 drag and drop API, which is [impossible to work with](https://www.quirksmode.org/blog/archives/2009/09/the_html5_drag.html). Think of it as a way to transfer data from some components to others using the mouse or support for a mouse assisted copy/cut - paste. It also allows for lists to be reordred by drag and drop.",
-  "main": "./dist/vue-easy-dnd.ssr.js",
-  "module": "./dist/vue-easy-dnd.esm.js",
-  "browser": {
-    "./dist/vue-easy-dnd.ssr.js": "./dist/vue-easy-dnd.js"
+  "description": "Drag and drop components for Vue 3 using mouse and touch events.",
+  "type": "module",
+  "main": "./dist/vue-easy-dnd.cjs",
+  "module": "./dist/vue-easy-dnd.mjs",
+  "unpkg": "./dist/vue-easy-dnd.global.js",
+  "jsdelivr": "./dist/vue-easy-dnd.global.js",
+  "exports": {
+    ".": {
+      "import": "./dist/vue-easy-dnd.mjs",
+      "require": "./dist/vue-easy-dnd.cjs"
+    },
+    "./style.css": "./dist/dnd.css",
+    "./dist/dnd.css": "./dist/dnd.css"
   },
   "files": [
-    "dist",
-    "src"
+    "dist"
+  ],
+  "sideEffects": [
+    "**/*.css"
   ],
   "dependencies": {
-    "mitt": "^3.0.1",
-    "vue": "^3.0.0"
+    "mitt": "^3.0.1"
+  },
+  "peerDependencies": {
+    "vue": "^3.2.25"
   },
   "browserslist": [
     "> 1%",
@@ -27,8 +39,6 @@
   "keywords": [
     "vue",
     "vuejs",
-    "vue2",
-    "vuejs2",
     "vue3",
     "vuejs3",
     "drag-and-drop",
@@ -40,8 +50,5 @@
   "bugs": {
     "url": "https://github.com/rlemaigre/Easy-DnD/issues"
   },
-  "homepage": "https://github.com/rlemaigre/Easy-DnD#readme",
-  "engines": {
-    "node": ">= 14"
-  }
+  "homepage": "https://github.com/rlemaigre/Easy-DnD#readme"
 }

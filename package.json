@@ -2,104 +2,34 @@
   "name": "vue-easy-dnd",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.13.0"
+  },
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build-dev": "cd ./lib && rollup --config rollup.config.mjs",
-    "build": "cd ./lib && rollup --config rollup.config.mjs --environment BUILD:production",
-    "publish": "cd ./lib && npm publish",
-    "lint": "vue-cli-service lint ./src ./lib",
+    "dev": "vite",
+    "serve": "vite",
+    "build": "vite build --config vite.lib.config.js",
+    "build:demo": "vite build",
+    "preview": "vite preview",
+    "publish": "npm run build && cd lib && npm publish",
+    "lint": "eslint src lib/src *.config.js",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
   },
-  "dependencies": {
-    "@babel/polyfill": "^7.12.1",
-    "@segi/template": "file:lib",
-    "core-js": "^3.41.0",
-    "mitt": "^3.0.1",
-    "vue": "^3.2.45"
-  },
   "devDependencies": {
-    "@babel/core": "^7.26.10",
-    "@babel/eslint-parser": "^7.27.0",
-    "@rollup/plugin-node-resolve": "^15.3.1",
-    "@vue/cli-plugin-babel": "~5.0.0",
-    "@vue/cli-plugin-eslint": "~5.0.0",
-    "@vue/cli-service": "~5.0.0",
-    "eslint": "^7.32.0",
-    "eslint-plugin-css": "^0.6.0",
-    "eslint-plugin-vue": "^8.7.1",
-    "rollup": "^3.29.5",
-    "rollup-plugin-cpy": "^2.0.1",
-    "rollup-plugin-delete": "^2.2.0",
-    "rollup-plugin-scss": "^4.0.1",
-    "rollup-plugin-vue": "^6.0.0",
-    "sass": "^1.86.3",
-    "sass-loader": "^13.3.3",
-    "vitepress": "^1.6.3"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/vue3-recommended",
-      "eslint:recommended",
-      "plugin:css/recommended"
-    ],
-    "parserOptions": {
-      "parser": "@babel/eslint-parser"
-    },
-    "rules": {
-      "vue/multi-word-component-names": "off",
-      "vue/no-unused-vars": "off",
-      "no-prototype-builtins": "off",
-      "vue/no-mutating-props": "off",
-      "vue/max-attributes-per-line": [
-        "error",
-        {
-          "singleline": 2,
-          "multiline": 1
-        }
-      ],
-      "vue/html-self-closing": [
-        "error",
-        {
-          "html": {
-            "void": "always",
-            "normal": "always",
-            "component": "always"
-          },
-          "svg": "always",
-          "math": "always"
-        }
-      ],
-      "vue/no-v-html": "off",
-      "no-multiple-empty-lines": "error",
-      "semi": "error",
-      "space-before-function-paren": "error",
-      "prefer-const": "error",
-      "object-curly-spacing": [
-        "error",
-        "always"
-      ],
-      "quotes": [
-        "error",
-        "single"
-      ],
-      "indent": [
-        "error",
-        2
-      ],
-      "brace-style": [
-        "error",
-        "stroustrup",
-        {
-          "allowSingleLine": true
-        }
-      ]
-    }
+    "@eslint/js": "^10.0.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "@vitejs/plugin-vue": "^6.0.8",
+    "eslint": "^10.8.0",
+    "eslint-plugin-vue": "^10.10.0",
+    "globals": "^17.8.0",
+    "mitt": "^3.0.1",
+    "sass": "^1.102.0",
+    "vite": "^8.2.0",
+    "vitepress": "^1.6.4",
+    "vue": "^3.5.40"
   },
   "browserslist": [
     "> 1%",
