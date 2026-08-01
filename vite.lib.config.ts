@@ -7,16 +7,18 @@ export default defineConfig({
   plugins: [
     vue(),
     dts({
-      entryRoot: 'lib/src',
-      include: ['lib/src'],
-      outDirs: ['lib/dist'],
-      tsconfigPath: './tsconfig.lib.json'
+      root: resolve(import.meta.dirname, 'lib'),
+      entryRoot: 'src',
+      include: ['src'],
+      outDirs: 'dist',
+      tsconfigPath: resolve(import.meta.dirname, 'tsconfig.lib.json'),
+      bundleTypes: true
     })
   ],
   publicDir: false,
   build: {
-    target: 'es2019',
-    sourcemap: true,
+    target: 'es2022',
+    sourcemap: false,
     emptyOutDir: true,
     outDir: resolve(import.meta.dirname, 'lib/dist'),
     lib: {

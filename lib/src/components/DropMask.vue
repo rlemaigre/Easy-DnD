@@ -4,14 +4,17 @@
     @vue:mounted="setRootElement"
     @vue:updated="setRootElement"
   >
-    <template v-for="(args, slot) of $slots" #[slot]>
-      <slot :name="slot" v-bind="args" />
+    <template #default="args">
+      <slot v-bind="args || {}" />
+    </template>
+    <template v-for="slot of dynamicSlots()" #[slot]="args">
+      <slot :name="slot" v-bind="args || {}" />
     </template>
   </component>
 </template>
 
 <script lang="ts" setup>
-import { getCurrentInstance, markRaw, onBeforeUnmount, onMounted, ref, type VNode } from 'vue';
+import { getCurrentInstance, markRaw, onBeforeUnmount, onMounted, ref, useSlots, watch, type VNode } from 'vue';
 import { dnd } from '../js/DnD';
 import type { DropMaskController } from '../types';
 
@@ -27,6 +30,8 @@ defineProps({
 });
 
 const instance = getCurrentInstance()!;
+const slots = useSlots();
+const dynamicSlots = () => Object.keys(slots).filter(key => key !== 'default');
 const rootElement = ref<HTMLElement | null>(null);
 const setRootElement = (vnode: VNode) => {
   rootElement.value = vnode.el instanceof HTMLElement ? vnode.el : null;
@@ -45,7 +50,20 @@ const controller: DropMaskController = markRaw({
   getElement: getRootElement
 });
 const onDndMove = (event: Event) => dnd.mouseMove(event as CustomEvent, controller);
+let mounted = false;
 
-onMounted(() => getRootElement().addEventListener('easy-dnd-move', onDndMove));
-onBeforeUnmount(() => rootElement.value?.removeEventListener('easy-dnd-move', onDndMove));
+watch(rootElement, (element, previousElement) => {
+  if (!mounted || element === previousElement) return;
+  previousElement?.removeEventListener('easy-dnd-move', onDndMove);
+  element?.addEventListener('easy-dnd-move', onDndMove);
+}, { flush: 'sync' });
+
+onMounted(() => {
+  mounted = true;
+  getRootElement().addEventListener('easy-dnd-move', onDndMove);
+});
+onBeforeUnmount(() => {
+  mounted = false;
+  rootElement.value?.removeEventListener('easy-dnd-move', onDndMove);
+});
 </script>

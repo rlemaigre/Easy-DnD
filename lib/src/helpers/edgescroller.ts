@@ -265,12 +265,14 @@ export function performEdgeScroll (
   // do this, we'll invoke the adjustment logic immediately. Then, we'll setup
   // a timer that continues to invoke the adjustment logic while the window can
   // still be scrolled in a particular direction.
-  (function checkForWindowScroll () {
+  const scrolled = (function checkForWindowScroll (): boolean {
     cancelScrollAction();
-    
-    if (adjustWindowScroll()) {
+
+    const adjusted = adjustWindowScroll();
+    if (adjusted) {
       timer = setTimeout( checkForWindowScroll, 30 );
     }
+    return adjusted;
   })();
   
   // Adjust the window scroll based on the user's mouse position. Returns True
@@ -288,5 +290,5 @@ export function performEdgeScroll (
     return false;
   }
   
-  return true;
+  return scrolled;
 }

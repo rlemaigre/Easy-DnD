@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import { defineComponent, markRaw, nextTick } from 'vue';
+import { defineComponent, h, markRaw, nextTick } from 'vue';
 import { describe, expect, it, vi } from 'vitest';
 import Drag from '../../../lib/src/components/Drag.vue';
 import { dnd } from '../../../lib/src/js/DnD';
@@ -86,14 +86,32 @@ describe('Drag component', () => {
 
   it('forwards non-reserved slots to a component tag', () => {
     const CustomTag = markRaw(defineComponent({
-      template: '<section><slot /><slot name="badge" /></section>'
+      template: '<section><slot /><slot name="badge" label="new" /></section>'
     }));
     const wrapper = mount(Drag, {
       props: { tag: CustomTag, type: 'widget' },
-      slots: { default: 'body', badge: '<b class="badge">new</b>' }
+      slots: {
+        default: 'body',
+        badge: ({ label }: { label: string }) => h('b', { class: 'badge' }, label)
+      }
     });
 
     expect(wrapper.text()).toContain('body');
     expect(wrapper.get('.badge').text()).toBe('new');
+  });
+
+  it('rebinds drag listeners when its root tag changes', async () => {
+    const wrapper = mount(Drag, {
+      attachTo: document.body,
+      props: { tag: 'div', type: 'widget' },
+      slots: { default: '<span class="content">Drag me</span>' }
+    });
+
+    await wrapper.setProps({ tag: 'section' });
+    await beginDrag(wrapper.get('.content').element);
+    expect(wrapper.element.tagName).toBe('SECTION');
+    expect(dnd.inProgress).toBe(true);
+    document.dispatchEvent(new MouseEvent('mouseup'));
+    await vi.waitFor(() => expect(dnd.inProgress).toBe(false));
   });
 });

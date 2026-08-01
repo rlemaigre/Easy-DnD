@@ -80,7 +80,7 @@ describe('DnD state machine', () => {
     dnd.mouseMove(moveEvent(2, 2), rejected);
 
     expect(dnd.topController).toBe(accepted);
-    expect(dnd.position).toEqual({ x: 2, y: 2 });
+    expect(dnd.position).toEqual({ x: 1, y: 1 });
   });
 
   it('uses a drop mask to clear a target without selecting the mask', () => {
@@ -133,5 +133,26 @@ describe('DnD state machine', () => {
     expect(ended).toHaveBeenCalledWith(expect.objectContaining({ success: false, type: 7 }));
     expect(dnd).toMatchObject({ inProgress: false, sourceController: null, position: null });
     dnd.off('dragend', ended);
+  });
+
+  it('always resets state when an event subscriber throws', () => {
+    const failure = () => {
+      throw new Error('subscriber failed');
+    };
+    dnd.on('dragend', failure);
+    dnd.startDrag(makeDragController(), new Event('mousedown'), 0, 0, 'widget', null);
+
+    expect(() => dnd.cancelDrag(new Event('cancel'))).toThrow('subscriber failed');
+    expect(dnd).toMatchObject({ inProgress: false, sourceController: null, position: null });
+    dnd.off('dragend', failure);
+  });
+
+  it('keeps wildcard event-bus subscriptions compatible', () => {
+    const wildcard = vi.fn();
+    dnd.eventBus.on('*', wildcard);
+    dnd.startDrag(makeDragController(), new Event('mousedown'), 1, 2, 'widget', null);
+
+    expect(wildcard).toHaveBeenCalledWith('dragstart', expect.objectContaining({ type: 'widget' }));
+    dnd.eventBus.off('*', wildcard);
   });
 });

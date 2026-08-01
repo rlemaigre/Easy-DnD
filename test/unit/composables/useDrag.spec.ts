@@ -166,6 +166,18 @@ describe('useDrag', () => {
     expect(document.documentElement.style.userSelect).toBe('text');
   });
 
+  it('cleans up an active gesture when touch input is cancelled', () => {
+    const { wrapper, getApi } = mountHarness();
+    down(wrapper.get('.content').element);
+    getApi().onMouseMove(movement(wrapper.get('.content').element, 10, 10));
+    expect(dnd.inProgress).toBe(true);
+
+    getApi().onCancel(new Event('touchcancel'));
+    expect(dnd.inProgress).toBe(false);
+    expect(getApi().downEvent.value).toBeNull();
+    expect(document.documentElement.classList.contains('drag-in-progress')).toBe(false);
+  });
+
   it('cancels its own active drag when unmounted', async () => {
     const { wrapper, getApi } = mountHarness();
     down(wrapper.get('.content').element);

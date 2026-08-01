@@ -5,24 +5,26 @@
     @vue:mounted="setRootElement"
     @vue:updated="setRootElement"
   >
-    <slot v-bind="$slots['default'] || {}" />
+    <template #default="args">
+      <slot v-bind="args || {}" />
 
-    <template v-for="[slot, args] of dynamicSlots" #[slot]>
-      <slot :name="slot" v-bind="args" />
+      <div
+        v-if="dragInitialised"
+        ref="dragImageElement"
+        class="__drag-image"
+      >
+        <slot name="drag-image" />
+      </div>
     </template>
 
-    <div
-      v-if="dragInitialised"
-      ref="dragImageElement"
-      class="__drag-image"
-    >
-      <slot name="drag-image" />
-    </div>
+    <template v-for="slot of dynamicSlots()" #[slot]="args">
+      <slot :name="slot" v-bind="args || {}" />
+    </template>
   </component>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, useSlots, type VNode } from 'vue';
+import { ref, useSlots, type VNode } from 'vue';
 import { dragEmits, dragProps, useDrag } from '../composables/useDrag';
 
 defineOptions({
@@ -46,8 +48,8 @@ const dragImageElement = ref<HTMLElement | null>(null);
 const setRootElement = (vnode: VNode) => {
   rootElement.value = vnode.el instanceof HTMLElement ? vnode.el : null;
 };
-const dynamicSlots = computed(() => Object.entries(slots)
-  .filter(([key]) => key !== 'drag-image' && key !== 'default'));
+const dynamicSlots = () => Object.keys(slots)
+  .filter(key => key !== 'drag-image' && key !== 'default');
 const { cssClasses, dragInitialised } = useDrag(props, emit, {
   rootElement,
   dragImageElement,
@@ -85,6 +87,5 @@ html.drag-in-progress * {
   position: fixed;
   top: -10000px;
   left: -10000px;
-  will-change: left, top;
 }
 </style>

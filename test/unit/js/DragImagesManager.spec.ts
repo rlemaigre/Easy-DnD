@@ -1,3 +1,4 @@
+import { nextTick } from 'vue';
 import { describe, expect, it, vi } from 'vitest';
 import { DragImagesManager } from '../../../lib/src/js/DragImagesManager';
 import { dnd } from '../../../lib/src/js/DnD';
@@ -11,9 +12,16 @@ const freshManager = (): DragImagesManager => Object.assign(
     clones: null,
     source: null,
     sourcePos: null,
-    sourceClone: null
+    sourceClone: null,
+    activeClone: null,
+    activeTarget: undefined,
+    generation: 0,
+    fadingClone: null,
+    fadeTimer: undefined,
+    goBackTimer: undefined,
+    handlers: {}
   }
-) as DragImagesManager;
+) as unknown as DragImagesManager;
 
 const payload = (overrides: Partial<DnDEventPayload> = {}): DnDEventPayload => ({
   type: 'widget',
@@ -76,17 +84,65 @@ describe('DragImagesManager', () => {
     expect(manager.clones!.get(target)).toBe(sourceImage);
   });
 
-  it('moves every created clone and removes them during cleanup', () => {
+  it('bounds retained target imagery to the active and fading clones', () => {
+    vi.useFakeTimers();
+    const firstImage = document.createElement('div') as DragImageElement;
+    const secondImage = document.createElement('div') as DragImageElement;
+    const manager = freshManager();
+    manager.source = makeDragController();
+    manager.clones = new Map();
+
+    manager.switch(makeDropController({ createDragImage: () => firstImage }));
+    manager.switch(makeDropController({ createDragImage: () => secondImage }));
+    expect(firstImage.isConnected).toBe(true);
+    expect(secondImage.isConnected).toBe(true);
+    expect(manager.clones.size).toBe(1);
+
+    vi.advanceTimersByTime(220);
+    expect(firstImage.isConnected).toBe(false);
+    expect(secondImage.isConnected).toBe(true);
+    manager.cleanUp();
+    vi.useRealTimers();
+  });
+
+  it('uses a timeout fallback to clean up go-back imagery', async () => {
+    vi.useFakeTimers();
+    const image = document.createElement('div') as DragImageElement;
+    const manager = freshManager();
+    manager.source = makeDragController(undefined, {
+      getGoBack: () => true,
+      createDragImage: () => image
+    });
+    manager.sourcePos = { x: 5, y: 8 };
+    manager.clones = new Map();
+    const frame = vi.spyOn(window, 'requestAnimationFrame').mockImplementation(callback => {
+      callback(0);
+      return 1;
+    });
+
+    manager.onDragEnd(payload({ success: false }));
+    await nextTick();
+    expect(image.isConnected).toBe(true);
+    vi.advanceTimersByTime(600);
+    expect(image.isConnected).toBe(false);
+    expect(manager.source).toBeNull();
+
+    frame.mockRestore();
+    vi.useRealTimers();
+  });
+
+  it('moves only the active clone and removes every clone during cleanup', () => {
     const sourceImage = document.createElement('div') as DragImageElement;
     const targetImage = document.createElement('div') as DragImageElement;
     document.body.append(sourceImage, targetImage);
     const manager = freshManager();
     manager.sourceClone = sourceImage;
     manager.clones = new Map([[makeDropController(), targetImage]]);
+    manager.activeClone = targetImage;
     dnd.position = { x: 44, y: 55 };
 
     manager.onDragPositionChanged();
-    expect(sourceImage.style.left).toBe('44px');
+    expect(sourceImage.style.left).toBe('');
     expect(targetImage.style.top).toBe('55px');
     manager.cleanUp();
 

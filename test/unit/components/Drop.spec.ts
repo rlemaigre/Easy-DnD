@@ -64,4 +64,16 @@ describe('Drop component', () => {
     await nextTick();
     expect(wrapper.get('.target-preview').text()).toBe('target preview');
   });
+
+  it('accepts numeric drag types without a Vue prop warning', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const wrapper = mount(Drop, { props: { acceptsType: 7 } });
+    dnd.startDrag(makeDragController(), new Event('mousedown'), 0, 0, 7, null);
+    wrapper.element.dispatchEvent(moveEvent(5, 5));
+    await nextTick();
+
+    expect(dnd.topController).not.toBeNull();
+    expect(warn).not.toHaveBeenCalled();
+    warn.mockRestore();
+  });
 });

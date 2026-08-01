@@ -75,4 +75,8 @@ describe('edge scrolling', () => {
   it('returns false when edge scrolling is disabled', () => {
     expect(performEdgeScroll(makeScrollable().element, 95, 95, 0)).toBe(false);
   });
+
+  it('returns false when the active edge has no remaining scroll space', () => {
+    expect(performEdgeScroll(makeScrollable().element, 5, 5, 20)).toBe(false);
+  });
 });

@@ -1,4 +1,4 @@
-import { computed, getCurrentInstance, markRaw, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, getCurrentInstance, markRaw, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { Ref } from 'vue';
 import { createDragImage as cloneDragImage } from '../js/createDragImage';
 import { dnd } from '../js/DnD';
@@ -32,7 +32,7 @@ export interface DropOptions {
 
 export const dropProps = {
   acceptsType: {
-    type: [String, Array, Function],
+    type: [String, Number, Array, Function],
     default: null
   },
   acceptsData: {
@@ -50,6 +50,8 @@ export const dropProps = {
 };
 
 export const dropEmits = ['dragover', 'dragenter', 'dragleave', 'dragend', 'drop'];
+const isDrop = ref(true);
+const compatibleMode = computed(() => dnd.inProgress ? true : null);
 
 export function useDrop (props: DropProps, emit: DnDEmit, options: DropOptions) {
   const instance = getCurrentInstance()!;
@@ -62,7 +64,6 @@ export function useDrop (props: DropProps, emit: DnDEmit, options: DropOptions) 
     return element;
   };
   const dragAware = useDragAware();
-  const isDrop = ref(true);
   const controller: DropController = markRaw({
     get component () {
       return instance.exposeProxy ?? component;
@@ -75,7 +76,11 @@ export function useDrop (props: DropProps, emit: DnDEmit, options: DropOptions) 
     getDropAllowed: () => dropAllowed.value,
     getReordering: () => options.getReordering?.() ?? false,
     candidate: (type, data, sourceController) => candidate(type, data, sourceController),
-    createDragImage: () => createDragImage()
+    createDragImage: () => createDragImage(),
+    notifyDragPosition: (event) => onDragPositionChanged(event),
+    notifyDragTopChanged: (event) => onDragTopChanged(event),
+    notifyDrop: (event) => onDrop(event),
+    notifyDragEnd: (event) => onDragEnd(event)
   });
 
   const effectiveAcceptsType = (type: DragType): boolean => {
@@ -93,7 +98,6 @@ export function useDrop (props: DropProps, emit: DnDEmit, options: DropOptions) 
 
   const effectiveAcceptsData = (data: DragData, type: DragType): boolean =>
     props.acceptsData(data, type);
-  const compatibleMode = computed(() => dragAware.dragInProgress.value ? true : null);
   const dropIn = computed(() => dragAware.dragInProgress.value ? dnd.topController === controller : null);
   const typeAllowed = computed(() => dragAware.dragInProgress.value
     ? effectiveAcceptsType(dragAware.dragType.value)
@@ -168,21 +172,22 @@ export function useDrop (props: DropProps, emit: DnDEmit, options: DropOptions) 
   };
   const onDnDMove = (event: Event) => dnd.mouseMove(event as CustomEvent, controller);
 
+  let mounted = false;
+  watch(options.rootElement, (element, previousElement) => {
+    if (!mounted || element === previousElement) return;
+    previousElement?.removeEventListener('easy-dnd-move', onDnDMove);
+    element?.addEventListener('easy-dnd-move', onDnDMove);
+  }, { flush: 'sync' });
+
   onMounted(() => {
-    dnd.on('dragpositionchanged', onDragPositionChanged);
-    dnd.on('dragtopchanged', onDragTopChanged);
-    dnd.on('drop', onDrop);
-    dnd.on('dragend', onDragEnd);
+    mounted = true;
     getRootElement().addEventListener('easy-dnd-move', onDnDMove);
   });
 
   onBeforeUnmount(() => {
+    mounted = false;
     if (dnd.topController === controller) dnd.clearTop();
     options.rootElement.value?.removeEventListener('easy-dnd-move', onDnDMove);
-    dnd.off('dragpositionchanged', onDragPositionChanged);
-    dnd.off('dragtopchanged', onDragTopChanged);
-    dnd.off('drop', onDrop);
-    dnd.off('dragend', onDragEnd);
   });
 
   return {

@@ -15,6 +15,7 @@ export function createDragImage (el: HTMLElement): DragImageElement {
   clone.style.margin = '0';
   clone.style.zIndex = '1000';
   clone.style.transition = 'opacity 0.2s';
+  clone.style.willChange = 'left, top';
   return clone;
 }
 

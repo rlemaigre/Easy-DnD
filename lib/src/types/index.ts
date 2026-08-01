@@ -23,6 +23,8 @@ export interface DragController {
   getGoBack(): boolean;
   createDragImage(selfTransform: string | null): DragImageElement;
   notifyDrop(mode: DropMode, event: DnDEventPayload): void;
+  notifyDragStart?(event: DnDEventPayload): void;
+  notifyDragEnd?(event: DnDEventPayload): void;
 }
 
 export interface DropController {
@@ -36,6 +38,10 @@ export interface DropController {
   getReordering(): boolean;
   candidate(type: DragType, data: DragData, source: DragController | null): boolean;
   createDragImage(selfTransform?: string | null): DragImage;
+  notifyDragPosition?(event: DnDEventPayload): void;
+  notifyDragTopChanged?(event: DnDEventPayload): void;
+  notifyDrop?(event: DnDEventPayload): void;
+  notifyDragEnd?(event: DnDEventPayload): void;
 }
 
 export interface DropMaskController {

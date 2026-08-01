@@ -8,6 +8,7 @@ import {
   onMounted,
   ref,
   TransitionGroup,
+  watch,
   type Component,
   type PropType,
   type VNode
@@ -151,9 +152,6 @@ export default defineComponent({
       drop.typeAllowed.value && !reordering.value && !!slots['drag-image']);
     const showReorderingDragImage = computed(() => drop.dragInProgress.value &&
       reordering.value && !!slots['reordering-drag-image']);
-    const hasReorderingFeedback = computed(() => !!slots['reordering-feedback']);
-    const hasEmptySlot = computed(() => !!slots['empty']);
-
     const computeForbiddenKeys = () => (props.noAnimations ? [] : props.items.flatMap((item, index) =>
       slots.item!({ item, index, reorder: false })))
       .map(vnode => vnode.key)
@@ -162,7 +160,7 @@ export default defineComponent({
     const computeFeedbackKey = () => slots.feedback!({
       type: drop.dragType.value,
       data: drop.dragData.value
-    })[0].key;
+    })[0]?.key ?? null;
     const computeInsertingGrid = () => {
       if (!feedbackElement.value || feedbackElement.value.children.length < 1) return null;
 
@@ -176,9 +174,12 @@ export default defineComponent({
       else {
         element.appendChild(clone);
       }
-      const result = new Grid(element.children, props.items.length, direction.value, null);
-      element.removeChild(clone);
-      return result;
+      try {
+        return new Grid(element.children, props.items.length, direction.value, null);
+      }
+      finally {
+        element.removeChild(clone);
+      }
     };
     const computeReorderingGrid = () => rootElement.value && fromIndex.value !== null ? new Grid(
       rootElement.value.children,
@@ -186,8 +187,11 @@ export default defineComponent({
       direction.value,
       fromIndex.value
     ) : null;
+    let refreshGeneration = 0;
     const refresh = async () => {
+      const generation = ++refreshGeneration;
       await nextTick();
+      if (generation !== refreshGeneration || !dnd.inProgress || reordering.value) return;
       grid.value = computeInsertingGrid();
       feedbackKey.value = computeFeedbackKey();
       forbiddenKeys.value = computeForbiddenKeys();
@@ -208,6 +212,7 @@ export default defineComponent({
       }
     };
     const onDragEnd = () => {
+      refreshGeneration++;
       fromIndex.value = null;
       feedbackKey.value = null;
       forbiddenKeys.value = null;
@@ -225,8 +230,22 @@ export default defineComponent({
       dnd.on('dragend', onDragEnd);
     });
     onBeforeUnmount(() => {
+      refreshGeneration++;
       dnd.off('dragstart', onDragStart);
       dnd.off('dragend', onDragEnd);
+    });
+    watch([() => props.items, () => props.items.length, direction], () => {
+      if (!dnd.inProgress || !isCandidate(dnd.type)) return;
+      if (reordering.value) {
+        const generation = refreshGeneration;
+        void nextTick(() => {
+          if (generation !== refreshGeneration || !dnd.inProgress || !reordering.value) return;
+          grid.value = computeReorderingGrid();
+        });
+      }
+      else {
+        void refresh();
+      }
     });
 
     return {
@@ -252,8 +271,6 @@ export default defineComponent({
       showDragFeedback,
       showInsertingDragImage,
       showReorderingDragImage,
-      hasReorderingFeedback,
-      hasEmptySlot,
       refresh,
       onDragStart,
       onDragEnd,
@@ -277,7 +294,7 @@ export default defineComponent({
     let defaultArr: VNode[] = [];
     if (this.dropIn && this.dropAllowed) {
       if (this.reordering) {
-        if (this.hasReorderingFeedback) {
+        if (this.$slots['reordering-feedback']) {
           const itemsReorderingBefore = this.itemsBeforeReorderingFeedback.map((item, index) => {
             return this.$slots['item']!({
               item: item,
@@ -360,7 +377,7 @@ export default defineComponent({
       if (defaultItems.length > 0) {
         defaultArr = defaultArr.concat(defaultItems);
       }
-      else if (this.hasEmptySlot) {
+      else if (this.$slots['empty']) {
         defaultArr.push(this.$slots['empty']!()[0]);
       }
     }
@@ -444,7 +461,6 @@ export default defineComponent({
   position: fixed;
   top: -10000px;
   left: -10000px;
-  will-change: left, top;
 }
 </style>
 

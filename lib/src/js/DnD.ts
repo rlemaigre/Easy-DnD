@@ -1,5 +1,4 @@
 import { shallowReactive } from 'vue';
-import mitt from 'mitt';
 import type {
   DnDComponent,
   DnDEventMap,
@@ -15,6 +14,28 @@ import type {
   Point
 } from '../types';
 
+type DnDHandler = (payload: DnDEventPayload) => void;
+type DnDWildcardHandler = (event: DnDEventName, payload: DnDEventPayload) => void;
+
+class DnDEventBus {
+  all = new Map<DnDEventName | '*', Set<DnDHandler | DnDWildcardHandler>>();
+
+  on (event: DnDEventName | '*', callback: DnDHandler | DnDWildcardHandler) {
+    let handlers = this.all.get(event);
+    if (!handlers) this.all.set(event, handlers = new Set());
+    handlers.add(callback);
+  }
+
+  off (event: DnDEventName | '*', callback: DnDHandler | DnDWildcardHandler) {
+    this.all.get(event)?.delete(callback);
+  }
+
+  emit (event: DnDEventName, payload: DnDEventPayload) {
+    this.all.get(event)?.forEach(handler => (handler as DnDHandler)(payload));
+    this.all.get('*')?.forEach(handler => (handler as DnDWildcardHandler)(event, payload));
+  }
+}
+
 /**
  * Holds the reactive state of the active drag operation. Vue component
  * instances remain available through source/top for API compatibility, while
@@ -28,7 +49,7 @@ export class DnD {
   sourceController: DragController | null = null;
   topController: DropController | null = null;
   position: Point | null = null;
-  eventBus = mitt<DnDEventMap>();
+  eventBus = new DnDEventBus();
   success: boolean | null = null;
 
   get source (): DnDComponent {
@@ -53,11 +74,23 @@ export class DnD {
     this.topController = null;
     this.position = { x, y };
     this.inProgress = true;
-    this.emit(event, 'dragstart');
-    this.emit(event, 'dragtopchanged', {
-      previousTop: null,
-      previousTopController: null
-    });
+    try {
+      this.emit(event, 'dragstart');
+      this.emit(event, 'dragtopchanged', {
+        previousTop: null,
+        previousTopController: null
+      });
+    }
+    catch (error) {
+      this.success = false;
+      try {
+        this.emit(event, 'dragend');
+      }
+      finally {
+        this.resetVariables();
+      }
+      throw error;
+    }
   }
 
   resetVariables () {
@@ -74,17 +107,35 @@ export class DnD {
     this.success = !!(this.topController !== null &&
       this.topController.getCompatibleMode() &&
       this.topController.getDropAllowed());
-    if (this.topController !== null) {
-      this.emit(event, 'drop');
+    let failure: unknown;
+    try {
+      if (this.topController !== null) {
+        this.emit(event, 'drop');
+      }
     }
-    this.emit(event, 'dragend');
-    this.resetVariables();
+    catch (error) {
+      failure = error;
+    }
+    try {
+      this.emit(event, 'dragend');
+    }
+    catch (error) {
+      failure ??= error;
+    }
+    finally {
+      this.resetVariables();
+    }
+    if (failure) throw failure;
   }
 
   cancelDrag (event: DnDNativeEvent) {
     this.success = false;
-    this.emit(event, 'dragend');
-    this.resetVariables();
+    try {
+      this.emit(event, 'dragend');
+    }
+    finally {
+      this.resetVariables();
+    }
   }
 
   clearTop (native: DnDNativeEvent = null) {
@@ -101,22 +152,23 @@ export class DnD {
   mouseMove (event: EasyDnDMoveEvent, controller: DropTargetController | null) {
     if (!this.inProgress) return;
 
-    let prevent = false;
     const previousTopController = this.topController;
     if (controller === null) {
       this.topController = null;
-      prevent = true;
     }
     else if (!('candidate' in controller)) {
       this.topController = null;
-      prevent = true;
     }
     else if (controller.candidate(this.type, this.data, this.sourceController)) {
       this.topController = controller;
-      prevent = true;
+    }
+    else {
+      // Let the event bubble to a compatible ancestor. The accepting target (or
+      // the document fallback) owns the single position update for this move.
+      return;
     }
 
-    if (prevent) event.stopPropagation();
+    event.stopPropagation();
     if (this.topController !== previousTopController) {
       this.emit(event.detail.native, 'dragtopchanged', {
         previousTop: previousTopController?.component ?? null,
@@ -135,7 +187,7 @@ export class DnD {
     event: DnDEventName,
     data: Partial<DnDEventPayload> = {}
   ) {
-    this.eventBus.emit(event, {
+    const payload: DnDEventPayload = {
       type: this.type,
       data: this.data,
       top: this.top,
@@ -146,7 +198,44 @@ export class DnD {
       success: this.success,
       native,
       ...data
-    });
+    };
+
+    let failure: unknown;
+    try {
+      this.notifyControllers(event, payload);
+    }
+    catch (error) {
+      failure = error;
+    }
+    try {
+      this.eventBus.emit(event, payload);
+    }
+    catch (error) {
+      failure ??= error;
+    }
+    if (failure) throw failure;
+  }
+
+  private notifyControllers (event: DnDEventName, payload: DnDEventPayload) {
+    if (event === 'dragstart') {
+      payload.sourceController?.notifyDragStart?.(payload);
+    }
+    else if (event === 'dragpositionchanged') {
+      payload.topController?.notifyDragPosition?.(payload);
+    }
+    else if (event === 'dragtopchanged') {
+      payload.topController?.notifyDragTopChanged?.(payload);
+      if (payload.previousTopController !== payload.topController) {
+        payload.previousTopController?.notifyDragTopChanged?.(payload);
+      }
+    }
+    else if (event === 'drop') {
+      payload.topController?.notifyDrop?.(payload);
+    }
+    else if (event === 'dragend') {
+      payload.topController?.notifyDragEnd?.(payload);
+      payload.sourceController?.notifyDragEnd?.(payload);
+    }
   }
 
   on<K extends DnDEventName> (event: K, callback: (payload: DnDEventMap[K]) => void) {

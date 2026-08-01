@@ -18,9 +18,10 @@ export default class Grid {
         throw new TypeError('Easy-DnD requires a list with an HTML element parent.');
       }
       this.reference = first.parentNode;
+      const referenceRect = this.reference.getBoundingClientRect();
       this.referenceOriginalPosition = {
-        x: this.reference.getBoundingClientRect().left - this.reference.scrollLeft,
-        y: this.reference.getBoundingClientRect().top - this.reference.scrollTop,
+        x: referenceRect.left - this.reference.scrollLeft,
+        y: referenceRect.top - this.reference.scrollTop,
       };
       let index = 0;
       for (const child of collection) {
@@ -95,20 +96,23 @@ export default class Grid {
      * difference between the current position of the parent element and its position when the drag started.
      */
     correction (): Point {
+      const rect = this.reference.getBoundingClientRect();
       return {
-        x: this.reference.getBoundingClientRect().left  - this.reference.scrollLeft - this.referenceOriginalPosition.x,
-        y: this.reference.getBoundingClientRect().top - this.reference.scrollTop - this.referenceOriginalPosition.y,
+        x: rect.left - this.reference.scrollLeft - this.referenceOriginalPosition.x,
+        y: rect.top - this.reference.scrollTop - this.referenceOriginalPosition.y,
       };
     }
 
     closestIndex (position: Point): number {
       const x = position.x - this.correction().x;
       const y = position.y - this.correction().y;
-      let minDist = 999999;
+      let minDist = Number.POSITIVE_INFINITY;
       let index = -1;
       for (let i = 0; i < this.magnets.length; i++) {
         const magnet = this.magnets[i];
-        const dist = Math.sqrt(Math.pow(magnet.x - x, 2) + Math.pow(magnet.y - y, 2));
+        const deltaX = magnet.x - x;
+        const deltaY = magnet.y - y;
+        const dist = deltaX * deltaX + deltaY * deltaY;
         if (dist < minDist) {
           minDist = dist;
           index = i;
