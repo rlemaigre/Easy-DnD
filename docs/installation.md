@@ -1,57 +1,68 @@
 # Installation
 
 ## About
-Easy-DnD is a drag and drop implementation for Vue that uses only standard mouse events instead of the HTML5 drag and drop API, which is [impossible to work with](https://www.quirksmode.org/blog/archives/2009/09/the_html5_drag.html).
-
-Think of it as a way to transfer data from some components to others using the mouse or support for a mouse assisted copy/cut - paste. It also allows for lists to be reordered by drag and drop.
-
+Vue-Easy-DnD provides mouse and touch drag-and-drop for Vue 3 without using the native HTML5 drag-and-drop API. It supports data transfer, copy/cut workflows, reorderable lists, custom drag images, nested targets, and autoscrolling.
 
 ## Installation
 
-Install via [npm](https://npmjs.com) or [yarn](https://yarnpkg.com)
-
+Install via [npm](https://npmjs.com) or [yarn](https://yarnpkg.com).
 
 ### Vue 3
 
-```
+```bash
 # Use npm
-npm install vue-easy-dnd@latest --save
+npm install vue-easy-dnd@^3
 
 # Use yarn
-yarn add vue-easy-dnd@latest
+yarn add vue-easy-dnd@^3
 ```
 
 #### Requirements
 
-1. This package relies on the Options API and mixins. So make sure you have enabled the Options API in your project (enabled by default by Vue)
+Vue `^3.2.25` is required. The library uses the Composition API internally and works in both Composition API and Options API applications.
 
-2. Make sure to import the generated CSS file:
+The distributed JavaScript targets ES2022. Applications supporting older browsers must transpile Vue-Easy-DnD through their own build pipeline.
 
-```javascript
-import 'vue-easy-dnd/dist/dnd.css'
+Import the library CSS once in your application entry:
+
+```js
+import 'vue-easy-dnd/style.css'
 ```
-#### @vue/compat warning
 
-If you use @vue/compat, you may need to switch the MODE of our components
+The version 2 stylesheet path, `vue-easy-dnd/dist/dnd.css`, remains available for compatibility.
 
-More details about this issue can be found here https://github.com/rlemaigre/Easy-DnD/issues/145
+Import the components you need from the package root:
 
-```javascript
-DragList.compatConfig = {
-  MODE: 3
-};
-Drag.compatConfig = {
-  MODE: 3
-};
+```vue
+<script setup>
+import { Drag, Drop } from 'vue-easy-dnd'
+
+function onDrop (event) {
+  console.log(event.data)
+}
+</script>
+
+<template>
+  <Drag type="task" :data="{ id: 1 }">
+    Drag this task
+  </Drag>
+
+  <Drop accepts-type="task" @drop="onDrop">
+    Drop here
+  </Drop>
+</template>
 ```
+
+Upgrading from version 2? Read the [version 3 changelog and migration guide](./changelog.md).
 
 ### Vue 2
-The Vue2 variant is no longer maintained. Please use with caution.
-```
+
+The legacy Vue 2 variant is version 1 and is no longer maintained. Use it with caution.
+
+```bash
 # Use npm
-npm install vue-easy-dnd@^1 --save
+npm install vue-easy-dnd@^1
 
 # Use yarn
 yarn add vue-easy-dnd@^1
 ```
-

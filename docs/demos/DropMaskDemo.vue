@@ -6,6 +6,7 @@
     docs-label="View DropMask component docs →"
     @reset="status = 'Nothing dropped yet'"
   >
+    <!-- #region demo-template -->
     <Drag
       class="dnd-demo__item"
       data="Masked example"
@@ -19,6 +20,7 @@
         DropMask
       </DropMask>
     </Drop>
+    <!-- #endregion demo-template -->
     <template #footer>
       {{ status }}
     </template>
@@ -26,14 +28,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Drag, Drop, DropMask } from '../../lib/src';
 import DemoFrame from './shared/DemoFrame.vue';
+
+// #region demo-script
+import { ref } from 'vue';
+import { Drag, Drop, DropMask } from 'vue-easy-dnd';
 
 const status = ref('Nothing dropped yet');
 const onDrop = () => {
   status.value = 'Dropped on the unmasked target';
 };
+// #endregion demo-script
 </script>
 
 <style scoped>

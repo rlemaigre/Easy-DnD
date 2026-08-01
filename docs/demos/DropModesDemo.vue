@@ -6,6 +6,7 @@
     docs-label="View Drop modes docs →"
     @reset="reset"
   >
+    <!-- #region demo-template -->
     <div class="dnd-demo__row">
       <Drag
         v-for="item in items"
@@ -33,6 +34,7 @@
         <span class="dnd-demo__label">Cut</span>
       </Drop>
     </div>
+    <!-- #endregion demo-template -->
     <template #footer>
       {{ status }} · {{ items.length }} source items remain
     </template>
@@ -40,10 +42,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Drag, Drop } from '../../lib/src';
-import type { DnDEventPayload } from '../../lib/src';
 import DemoFrame from './shared/DemoFrame.vue';
+
+// #region demo-script
+import { ref } from 'vue';
+import { Drag, Drop } from 'vue-easy-dnd';
+import type { DnDEventPayload } from 'vue-easy-dnd';
 
 const initialItems = ['One', 'Two', 'Three'];
 const items = ref([...initialItems]);
@@ -59,4 +63,5 @@ const reset = () => {
   items.value = [...initialItems];
   status.value = 'Choose a target';
 };
+// #endregion demo-script
 </script>

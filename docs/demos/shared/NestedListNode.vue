@@ -1,4 +1,5 @@
 <template>
+  <!-- #region demo-template -->
   <DropList
     class="dnd-demo__list nested-list"
     :class="{ 'dnd-demo__list--row': group.direction === 'row' }"
@@ -10,13 +11,13 @@
     @insert="insert"
     @reorder="reorder"
   >
-    <template #item="{ item, index }">
+    <template #item="{ item }">
       <NestedListNode
         v-if="isDemoGroup(item)"
         :key="item.id"
         :group="item"
         :rich="rich"
-        @update:group="updateChild(index, $event)"
+        @operation="emit('operation', $event)"
       />
       <Drag
         v-else
@@ -26,7 +27,7 @@
         :style="rich ? { '--widget-height': dashboardHeight(item.kind) } : undefined"
         type="widget"
         :data="item"
-        @cut="remove(index)"
+        @cut="remove(item)"
       >
         <DashboardWidgetPreview v-if="rich" :widget="item" />
         <template v-else>
@@ -69,11 +70,20 @@
       <small key="empty">Drop a widget here</small>
     </template>
   </DropList>
+  <!-- #endregion demo-template -->
 </template>
 
 <script setup lang="ts">
-import { Drag, DropList } from '../../../lib/src';
-import type { DemoGroup, DemoInsertEvent, DemoReorderEvent, DemoTreeItem, DemoWidget } from '../types';
+// #region demo-script
+import { Drag, DropList } from 'vue-easy-dnd';
+import type {
+  DemoGroup,
+  DemoInsertEvent,
+  DemoReorderEvent,
+  DemoTreeItem,
+  DemoTreeOperation,
+  DemoWidget
+} from '../types';
 import { createDemoId, isDemoGroup } from '../types';
 import DashboardWidgetPreview from './DashboardWidgetPreview.vue';
 
@@ -82,34 +92,33 @@ const props = defineProps<{
   rich?: boolean;
 }>();
 const emit = defineEmits<{
-  'update:group': [group: DemoGroup];
+  operation: [operation: DemoTreeOperation];
 }>();
 
-const updateItems = (items: DemoTreeItem[]) => {
-  emit('update:group', { ...props.group, items });
-};
 const insert = (event: DemoInsertEvent<DemoTreeItem>) => {
-  const items = [...props.group.items];
   const item = isDemoGroup(event.data)
     ? event.data
     : { ...event.data, id: createDemoId() };
-  items.splice(event.index, 0, item);
-  updateItems(items);
+  emit('operation', {
+    kind: 'insert',
+    groupId: props.group.id,
+    index: event.index,
+    item
+  });
 };
 const reorder = (event: DemoReorderEvent) => {
-  const items = [...props.group.items];
-  event.apply(items);
-  updateItems(items);
+  emit('operation', {
+    kind: 'reorder',
+    groupId: props.group.id,
+    event
+  });
 };
-const remove = (index: number) => {
-  const items = [...props.group.items];
-  items.splice(index, 1);
-  updateItems(items);
-};
-const updateChild = (index: number, child: DemoGroup) => {
-  const items = [...props.group.items];
-  items[index] = child;
-  updateItems(items);
+const remove = (item: DemoTreeItem) => {
+  emit('operation', {
+    kind: 'remove',
+    groupId: props.group.id,
+    itemId: item.id
+  });
 };
 
 const isRichDemoWidget = (value: unknown): value is DemoWidget => {
@@ -138,6 +147,7 @@ const dashboardHeight = (kind: DemoWidget['kind']) => {
   if (kind === 'activity') return '6.2rem';
   return '5rem';
 };
+// #endregion demo-script
 </script>
 
 <style scoped>

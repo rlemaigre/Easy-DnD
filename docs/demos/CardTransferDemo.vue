@@ -6,6 +6,7 @@
     docs-label="View DropList component docs →"
     @reset="reset"
   >
+    <!-- #region demo-template -->
     <div class="dnd-demo__grid">
       <div v-for="list in lists" :key="list.id">
         <span class="dnd-demo__label">{{ list.label }}</span>
@@ -57,17 +58,20 @@
         </DropList>
       </div>
     </div>
+    <!-- #endregion demo-template -->
   </DemoFrame>
 </template>
 
 <script setup lang="ts">
+import DemoFrame from './shared/DemoFrame.vue';
+
+// #region demo-script
 import { reactive } from 'vue';
-import { Drag, DropList } from '../../lib/src';
+import { Drag, DropList } from 'vue-easy-dnd';
 import avatarAlex from './assets/avatar-alex.jpg';
 import avatarJordan from './assets/avatar-jordan.jpg';
 import avatarSam from './assets/avatar-sam.jpg';
 import type { DemoCard, DemoInsertEvent } from './types';
-import DemoFrame from './shared/DemoFrame.vue';
 
 interface CardList {
   id: string;
@@ -118,6 +122,7 @@ const remove = (cards: DemoCard[], card: DemoCard) => {
   if (index >= 0) cards.splice(index, 1);
 };
 const reset = () => lists.splice(0, lists.length, ...makeLists());
+// #endregion demo-script
 </script>
 
 <style scoped>

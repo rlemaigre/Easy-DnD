@@ -6,6 +6,7 @@
     docs-label="View position-locking docs →"
     @reset="reset"
   >
+    <!-- #region demo-template -->
     <DropList
       :items="items"
       :reorderable="isReorderable"
@@ -31,6 +32,7 @@
         <div key="feedback" class="dnd-demo__feedback" />
       </template>
     </DropList>
+    <!-- #endregion demo-template -->
 
     <template #footer>
       {{ status }}
@@ -39,10 +41,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Drag, DropList } from '../../lib/src';
-import type { DemoReorderEvent } from './types';
 import DemoFrame from './shared/DemoFrame.vue';
+
+// #region demo-script
+import { ref } from 'vue';
+import { Drag, DropList } from 'vue-easy-dnd';
+import type { DemoReorderEvent } from './types';
 
 interface PositionLockItem {
   id: number;
@@ -69,6 +73,7 @@ const reset = () => {
   items.value = makeItems();
   status.value = 'Move an unlocked item across the pinned policy.';
 };
+// #endregion demo-script
 </script>
 
 <style scoped>

@@ -11,17 +11,18 @@ If you have cards, tasks, rows, or widgets that users need to move around, this 
 - Build reorderable lists with `DropList` (drag to reorder, or move between lists)
 - Ignore drops in specific zones using `DropMask`
 - Use `useDrag`, `useDrop`, and `useDragAware` when you need custom logic instead of a full component
-- Restrict what can be dropped using type/data rules (`accepts-type`, `accepts-data`, `candidate`)
+- Restrict what can be dropped using type/data rules (`accepts-type` and `accepts-data`)
 - Support copy/cut-style interactions and list events like `reorder` and `insert`
 - Customize the drag preview with `drag-image`
 
 ## Install
 
 ```bash
-npm install vue-easy-dnd
+npm install vue-easy-dnd@^3
 ```
 
-Vue 3.2+ is required.
+Vue `^3.2.25` is required.
+The distributed JavaScript targets ES2022.
 
 ## Quick example
 
@@ -56,5 +57,6 @@ For examples like dashboards, nested zones, and full list workflows, use the lin
 
 ### [View Documentation](https://rlemaigre.github.io/Easy-DnD)
 
-- [All demos](https://rlemaigre.github.io/Easy-DnD/advanced-demos/)
+- [All demos](https://rlemaigre.github.io/Easy-DnD/advanced-demos.html)
+- [Version 3 migration guide](https://rlemaigre.github.io/Easy-DnD/changelog.html)
 - [Dashboard demo on homepage](https://rlemaigre.github.io/Easy-DnD/#try-the-dashboard-demo)

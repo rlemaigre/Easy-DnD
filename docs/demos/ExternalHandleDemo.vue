@@ -6,6 +6,7 @@
     docs-label="View handle docs →"
     @reset="reset"
   >
+    <!-- #region demo-template -->
     <div class="external-handle-demo__toolbar">
       <button
         v-if="selectedId !== null"
@@ -44,14 +45,17 @@
         {{ result }}
       </Drop>
     </div>
+    <!-- #endregion demo-template -->
   </DemoFrame>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Drag, Drop } from '../../lib/src';
-import type { DnDEventPayload } from '../../lib/src';
 import DemoFrame from './shared/DemoFrame.vue';
+
+// #region demo-script
+import { ref } from 'vue';
+import { Drag, Drop } from 'vue-easy-dnd';
+import type { DnDEventPayload } from 'vue-easy-dnd';
 
 const items = [
   { id: 1, title: 'Design brief' },
@@ -73,6 +77,7 @@ const reset = () => {
   selectedId.value = null;
   result.value = 'Drop the selected card here';
 };
+// #endregion demo-script
 </script>
 
 <style scoped>

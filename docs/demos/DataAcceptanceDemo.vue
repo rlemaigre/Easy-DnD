@@ -6,6 +6,7 @@
     docs-label="View Drop acceptance docs →"
     @reset="reset"
   >
+    <!-- #region demo-template -->
     <div class="dnd-demo__row">
       <Drag
         v-for="number in numbers"
@@ -41,6 +42,7 @@
         <span class="dnd-demo__label">Cut any number</span>
       </Drop>
     </div>
+    <!-- #endregion demo-template -->
     <template #footer>
       {{ status }}
     </template>
@@ -48,10 +50,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Drag, Drop } from '../../lib/src';
-import type { DnDEventPayload, DragData } from '../../lib/src';
 import DemoFrame from './shared/DemoFrame.vue';
+
+// #region demo-script
+import { ref } from 'vue';
+import { Drag, Drop } from 'vue-easy-dnd';
+import type { DnDEventPayload, DragData } from 'vue-easy-dnd';
 
 const numbers = ref([1, 2, 3, 4, 5]);
 const status = ref('Try each target');
@@ -67,4 +71,5 @@ const reset = () => {
   numbers.value = [1, 2, 3, 4, 5];
   status.value = 'Try each target';
 };
+// #endregion demo-script
 </script>

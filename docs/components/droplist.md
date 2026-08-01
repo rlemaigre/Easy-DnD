@@ -1,52 +1,107 @@
 # DropList
-The `drop-list` component is a special kind of drop component that displays a list of items that support dragging into and reordering.
+
+`DropList` is a specialized `Drop` that renders an array, calculates insertion positions, and supports in-list reordering.
 
 ## Events
-Event Name | Description
----------- | -----------
-(Refer to `Drop` component) | DropList components also emit all events by Drop components
-`@insert` | Triggered when data is to be inserted into the list (properties : `type`, `data` and `index`). If no listener is provided for this event, the list cannot be inserted into.
-`@reorder` | Triggers when data needs to be reordered (properties : `from`, `to` and `apply` - apply is a function that applies the required reordering to the given array). If no listener is provided for this event, the list cannot be reordered.
 
-## Props
-Prop Name | Type / Default | Description
---------- | -------------- | -----------
-(Refer to `Drop` component) | |DropList components also inherit all props from Drop components
-`tag` | Any | This prop can be used to customize the root of the template, just like it can be with drop components, but it can only refer to an HTML element, not a Vue component (this is a restriction of Vue transition-groups - there is nothing I can do about it). However, when the no-animations prop is set to true, this restriction is lifted, and you can use any Vue component.
-`items` | Any (Array) | Array of data to use on this DropList
-`row` | Boolean (`null`) | Defining the direction of the DropList as horizontally-flowing. (Necessary for Nested DropLists) (Refer to **Nested Droplists** section below)
-`column` | Boolean (`null`) | Defining the direction of the DropList as vertically-flowing. (Necessary for Nested DropLists) (Refer to **Nested Droplists** section below)
-`no-animations` | Boolean (`false`) | Disable animations on the DropList (necessary if the tag is a custom Vue component)
-`reorderable` | Boolean or Function (`true`) | Controls in-list reordering. A function receives `(item, index)`. Returning `false` pins that item to its current position while unlocked items remain sortable across and around it. Set the corresponding Drag's `disabled` prop so the pinned item cannot start a drag.
-`scrolling-edge-size` | Number (`undefined`px) | When dragging a Drag component to the edge of this DropList, the pixel amount defines how close to the edge of the DropList a scroll will be triggered up/down/left/right (`0` = no scrolling on this DropList). `Undefined` default value means that this DropList will use whatever `scrolling-edge-size` is defined on the Drag component.
-`scrolling-propagation` | Boolean (`undefined`) | Overrides the source Drag's scrolling propagation while this list is active. Set it to `false` to stop at this list's nearest scroll container.
+`DropList` emits the `Drop` lifecycle events plus these list events:
 
-## Slots
-Slot Name | Description
----------- | -----------
-`default` | Default content to add at the end of the DropList. Make sure to define a `key` prop for each element directly inside this slot.
-`item` | Used to render each list item. It has three properties, `item` , `index` and `reorder`. Reorder is true when the item is the one subject to reordering. **Don't forget to provide a key for the content of this slot !!**
-`feedback` | Used to render a placeholder to show the position where the new item would be inserted if the drag operation ended at the current mouse position. It has two properties : `type` and `data`. **Don't forget to provide a key for the content of this slot !!**
-`reordering-drag-image` | Defines the drag image to be used when reordering the list (Refer to  **Drag Image** section above).
-`reordering-feedback` | Used to control the feedback used during reordering <br> * If this slot isn't defined, then the items switch positions during reordering to display in real time the order that will be achieved if the drag terminates at the current position <br> * If this slot is defined, then its content is inserted into the list to display the new location of the item being dragged (for an example of this, see nested drop lists)
-`empty` | Defined content to display if the list is empty and not being dragged into. Make sure to define a `key` prop for each element directly inside this slot.
+Event | Payload | Description
+----- | ------- | -----------
+`insert` | `InsertEvent` | External data was dropped at a calculated `index`. The payload also contains `type` and `data`.
+`reorder` | `ReorderEvent` | An item from this list moved from `from` to `to`. `apply(array)` performs the move and respects the `locked` indices.
 
-## Demo
-<DropListTransferDemo />
-
-## Position locking
-
-Use the `reorderable` predicate to pin an item to its current list position. Unlocked items can still move from one side of that position to the other. Pass the same condition to the pinned item's `Drag` as `disabled` so it cannot initiate a drag itself.
+Event handlers own all application-state changes:
 
 ```vue
 <DropList
   :items="items"
-  :reorderable="(item) => !item.locked"
+  @insert="items.splice($event.index, 0, $event.data)"
+  @reorder="$event.apply(items)"
+>
+  <!-- slots -->
+</DropList>
+```
+
+An external permitted drop still completes if there is no `insert` listener, but no item is added automatically. Likewise, a reorder is not persisted unless the handler updates the array.
+
+For an external insertion, `drop` is emitted before `insert`. An internal reorder emits `reorder`, not `drop` or `insert`.
+
+## Props
+
+`DropList` accepts all [`Drop` props](./drop.md#props), plus:
+
+Prop | Type / Default | Description
+---- | -------------- | -----------
+`tag` | String or component (`'div'`) | Root tag. With animations enabled, use an HTML tag supported by Vue's `TransitionGroup`. With `no-animations`, a Vue component is allowed if it renders one HTML root.
+`items` | Array (required) | Items rendered by the `item` slot.
+`row` | Boolean (`false`) | Declares a horizontal layout. Required when this list contains nested drop targets arranged in a row.
+`column` | Boolean (`false`) | Declares a vertical layout. Required when this list contains nested drop targets arranged in a column.
+`no-animations` | Boolean (`false`) | Renders `tag` directly instead of using `TransitionGroup` and disables built-in move transitions.
+`reorderable` | Boolean or Function (`true`) | Enables reordering globally or through `(item, index) => boolean`. `false` positions remain pinned.
+`scrolling-edge-size` | Number or `undefined` (`undefined`) | Overrides the source edge threshold while this list is active. `undefined` inherits it; `0` disables autoscroll for this list.
+`scrolling-propagation` | Boolean or `undefined` (`undefined`) | Overrides the source propagation setting while this list is active.
+
+If both `row` and `column` are true, `row` takes precedence. They can both remain false for a non-nested layout, where item centers are used automatically.
+
+## Slots
+
+`item` and `feedback` are required. Slot render functions should return one keyed root node; additional root nodes are ignored by the list renderer.
+
+Slot | Props | Description
+---- | ----- | -----------
+`item` | `item`, `index`, `reorder` | Renders an item. `reorder` is true for the item shown at the prospective location during live reordering.
+`feedback` | `type`, `data` | Required insertion placeholder used to calculate and display the external drop position.
+`default` | None | Content appended after managed item or empty content, such as a footer or add button. Key direct children when animations are enabled.
+`empty` | None | Content rendered when `items` is empty and no external drag is being inserted.
+`drag-image` | `type`, `data` | Image used while external data is dragged over this list.
+`reordering-drag-image` | `item` | Image used while an item is reordered inside this list.
+`reordering-feedback` | `item` | Optional explicit reordering placeholder. Without it, items move live to preview the resulting order.
+
+The `feedback`, `empty`, and explicit `reordering-feedback` roots should have stable keys when animations are enabled.
+
+## CSS classes
+
+Class | Applied when
+----- | ------------
+`drop-list` | Always on the root.
+`dnd-drop` | Always on the root, matching the base `Drop` contract.
+`inserting` | A drag from outside this list is active.
+`reordering` | The active source is a direct child of this list.
+`type-allowed` / `type-forbidden` | An external drag type is accepted or rejected.
+`drop-in` / `drop-out` | This list is or is not the active target.
+`drop-allowed` / `drop-forbidden` | The current external insertion or internal reorder is permitted or forbidden.
+
+## Reorder and transfer items
+
+<DropListTransferDemo />
+
+::: details View example code
+**Template**
+
+<<< ../demos/DropListTransferDemo.vue#demo-template
+
+**TypeScript**
+
+<<< ../demos/DropListTransferDemo.vue#demo-script{ts}
+:::
+
+## Position locking
+
+Use the `reorderable` predicate to pin an item to its current array position. Unlocked items can still move from one side of that position to the other.
+
+Also disable the pinned item's `Drag`: `reorderable` prevents an allowed reorder, while `Drag.disabled` prevents the item from initiating a gesture at all.
+
+```vue
+<DropList
+  :items="items"
+  :reorderable="item => !item.locked"
   @reorder="$event.apply(items)"
 >
   <template #item="{ item }">
     <Drag
       :key="item.id"
+      :data="item"
       :disabled="item.locked"
     >
       {{ item.label }}
@@ -61,13 +116,44 @@ Use the `reorderable` predicate to pin an item to its current list position. Unl
 
 <PositionLockDemo />
 
+::: details View example code
+**Template**
+
+<<< ../demos/PositionLockDemo.vue#demo-template
+
+**TypeScript**
+
+<<< ../demos/PositionLockDemo.vue#demo-script{ts}
+:::
+
 ## Nested DropLists
-Drop lists can be nested providing the following conditions are satisfied :
 
-* the `row` or `column` props must be defined to inform the drop list components of the direction the items are lining up (mandatory)
-* for lists that support reordering, the `reordering-feedback` slot must be defined (advisable)
-* both the `feedback` and `reordering-feedback` slots must take no space in the layout (for example, `flex: 0 0 0; align-self: strech; outline: 1px solid blue;`) (advisable)
+DropLists can be nested with these requirements:
 
-Example :
+- Set `row` or `column` on every list whose rendered items contain nested drop targets. This tells the position grid which edge of a nested item represents before/after.
+- An explicit `reordering-feedback` slot is recommended for predictable nested-list previews.
+- Keep `feedback` and `reordering-feedback` out of the normal layout until activated, for example with `flex: 0 0 0; align-self: stretch;` and a visible outline.
 
 <NestedDropListDemo />
+
+::: details View example code
+**Example template**
+
+<<< ../demos/NestedDropListDemo.vue#demo-template
+
+**Example TypeScript**
+
+<<< ../demos/NestedDropListDemo.vue#demo-script{ts}
+
+**Nested list template**
+
+<<< ../demos/shared/NestedListNode.vue#demo-template
+
+**Nested list TypeScript**
+
+<<< ../demos/shared/NestedListNode.vue#demo-script{ts}
+
+**Tree types and update helper**
+
+<<< ../demos/types.ts#demo-tree-types{ts}
+:::

@@ -6,6 +6,7 @@
     docs-label="View composables docs →"
     :resettable="false"
   >
+    <!-- #region demo-template -->
     <div class="dnd-demo__row">
       <Drag
         class="dnd-demo__item"
@@ -33,13 +34,16 @@
       <div><dt>Source component</dt><dd>{{ dragSource ? 'available' : '—' }}</dd></div>
       <div><dt>Top component</dt><dd>{{ dragTop ? 'available' : '—' }}</dd></div>
     </dl>
+    <!-- #endregion demo-template -->
   </DemoFrame>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Drag, Drop, useDragAware } from '../../lib/src';
 import DemoFrame from './shared/DemoFrame.vue';
+
+// #region demo-script
+import { computed } from 'vue';
+import { Drag, Drop, useDragAware } from 'vue-easy-dnd';
 
 const {
   dragInProgress,
@@ -52,6 +56,7 @@ const {
 const formattedPosition = computed(() => dragPosition.value
   ? `${Math.round(dragPosition.value.x)}, ${Math.round(dragPosition.value.y)}`
   : '—');
+// #endregion demo-script
 </script>
 
 <style scoped>

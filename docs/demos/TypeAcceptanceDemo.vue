@@ -6,6 +6,7 @@
     docs-label="View Drag types docs →"
     @reset="lastDrop = 'Try either item'"
   >
+    <!-- #region demo-template -->
     <div class="dnd-demo__row">
       <Drag
         class="dnd-demo__item"
@@ -38,6 +39,7 @@
         <span class="dnd-demo__label">Letters only</span>
       </Drop>
     </div>
+    <!-- #endregion demo-template -->
     <template #footer>
       {{ lastDrop }}
     </template>
@@ -45,13 +47,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Drag, Drop } from '../../lib/src';
-import type { DnDEventPayload } from '../../lib/src';
 import DemoFrame from './shared/DemoFrame.vue';
+
+// #region demo-script
+import { ref } from 'vue';
+import { Drag, Drop } from 'vue-easy-dnd';
+import type { DnDEventPayload } from 'vue-easy-dnd';
 
 const lastDrop = ref('Try either item');
 const record = (target: string, event: DnDEventPayload) => {
   lastDrop.value = `${target} accepted ${String(event.data)}`;
 };
+// #endregion demo-script
 </script>

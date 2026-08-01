@@ -6,6 +6,7 @@
     docs-label="View DropList component docs →"
     @reset="selected = []"
   >
+    <!-- #region demo-template -->
     <div class="dnd-demo__grid">
       <div class="demo-table-wrap">
         <span class="dnd-demo__label">Products</span>
@@ -55,14 +56,17 @@
         </DropList>
       </div>
     </div>
+    <!-- #endregion demo-template -->
   </DemoFrame>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Drag, DropList } from '../../lib/src';
-import type { DemoInsertEvent } from './types';
 import DemoFrame from './shared/DemoFrame.vue';
+
+// #region demo-script
+import { ref } from 'vue';
+import { Drag, DropList } from 'vue-easy-dnd';
+import type { DemoInsertEvent } from './types';
 import avatarAlex from './assets/avatar-alex.jpg';
 import avatarJordan from './assets/avatar-jordan.jpg';
 import avatarSam from './assets/avatar-sam.jpg';
@@ -84,6 +88,7 @@ const insert = (event: DemoInsertEvent<Product>) => {
   if (selected.value.some(item => item.id === event.data.id)) return;
   selected.value.splice(event.index, 0, event.data);
 };
+// #endregion demo-script
 </script>
 
 <style scoped>

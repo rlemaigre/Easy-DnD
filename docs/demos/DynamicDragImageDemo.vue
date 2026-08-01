@@ -6,6 +6,7 @@
     docs-label="View dynamic drag-image docs →"
     @reset="reset"
   >
+    <!-- #region demo-template -->
     <div class="dnd-demo__grid dynamic-image-demo">
       <div>
         <span class="dnd-demo__label">Source</span>
@@ -39,6 +40,7 @@
         {{ result }}
       </Drop>
     </div>
+    <!-- #endregion demo-template -->
 
     <template #footer>
       Preview state: {{ previewMode }}
@@ -47,10 +49,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { Drag, Drop, refreshDragImage, useDragAware } from '../../lib/src';
-import type { DnDEventPayload } from '../../lib/src';
 import DemoFrame from './shared/DemoFrame.vue';
+
+// #region demo-script
+import { ref, watch } from 'vue';
+import { Drag, Drop, refreshDragImage, useDragAware } from 'vue-easy-dnd';
+import type { DnDEventPayload } from 'vue-easy-dnd';
 
 const reportName = 'Quarterly report';
 const { dragPosition } = useDragAware();
@@ -82,6 +86,7 @@ const reset = () => {
   previewMode.value = 'compact';
   result.value = 'Drop the report here';
 };
+// #endregion demo-script
 </script>
 
 <style scoped>

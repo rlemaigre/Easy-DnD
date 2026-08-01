@@ -3,7 +3,13 @@ import { defineComponent, ref } from 'vue';
 import { mount } from '@vue/test-utils';
 import { ReorderEvent } from '../../../lib/src/js/events';
 import NestedListNode from '../../../docs/demos/shared/NestedListNode.vue';
-import type { DemoGroup, DemoTreeItem, DemoWidget } from '../../../docs/demos/types';
+import { applyDemoTreeOperation } from '../../../docs/demos/types';
+import type {
+  DemoGroup,
+  DemoTreeItem,
+  DemoTreeOperation,
+  DemoWidget
+} from '../../../docs/demos/types';
 
 const DragStub = defineComponent({
   name: 'Drag',
@@ -38,13 +44,13 @@ const createHarness = (initialGroup: DemoGroup) => {
   const wrapper = mount(defineComponent({
     components: { NestedListNode },
     setup () {
-      const onUpdate = (value: DemoGroup) => {
-        updates.value.push(value);
-        group.value = value;
+      const onOperation = (operation: DemoTreeOperation) => {
+        group.value = applyDemoTreeOperation(group.value, operation);
+        updates.value.push(group.value);
       };
-      return { group, onUpdate };
+      return { group, onOperation };
     },
-    template: '<NestedListNode :group="group" @update:group="onUpdate" />'
+    template: '<NestedListNode :group="group" @operation="onOperation" />'
   }), {
     global: {
       components: {
@@ -96,19 +102,28 @@ describe('NestedListNode demo component', () => {
     expect(updates.value.at(-1)?.items.some((item) => item.id === 40)).toBe(false);
   });
 
-  it('replaces an updated nested group without mutating siblings', async () => {
-    const nested = createGroup(3, [createWidget(30, 'Nested')]);
-    const initial = createGroup(4, [createWidget(40, 'Root One'), nested, createWidget(42, 'Root Two')]);
-    const { wrapper, updates } = createHarness(initial);
-    const nestedListNodes = wrapper.findAllComponents(NestedListNode);
-    expect(nestedListNodes).toHaveLength(2);
+  it('moves a widget between nested lists without restoring the cut source snapshot', async () => {
+    const moved = createWidget(30, 'Moved widget');
+    const source = createGroup(3, [moved]);
+    const target = createGroup(4, []);
+    const initial = createGroup(5, [source, target]);
+    const { wrapper, updates, group } = createHarness(initial);
+    const sourceDrag = wrapper.findAllComponents(DragStub)
+      .find(drag => (drag.props('data') as DemoTreeItem).id === moved.id);
+    const targetList = wrapper.findAllComponents(DropListStub)
+      .find(list => (list.props('items') as DemoTreeItem[]).length === 0);
+    expect(sourceDrag).toBeDefined();
+    expect(targetList).toBeDefined();
 
-    const updatedNested: DemoGroup = { ...nested, id: 9, items: [createWidget(99, 'Updated')] };
-    await nestedListNodes[1].vm.$emit('update:group', updatedNested);
+    sourceDrag!.vm.$emit('cut');
+    targetList!.vm.$emit('insert', { data: moved, index: 0 });
+    await wrapper.vm.$nextTick();
 
-    expect(updates.value).toHaveLength(1);
-    expect(updates.value[0].items[1]).toEqual(updatedNested);
-    expect(updates.value[0].items[0]).toEqual(initial.items[0]);
-    expect(updates.value[0].items[2]).toEqual(initial.items[2]);
+    expect(updates.value).toHaveLength(2);
+    const updatedSource = group.value.items.find(item => item.id === source.id) as DemoGroup;
+    const updatedTarget = group.value.items.find(item => item.id === target.id) as DemoGroup;
+    expect(updatedSource.items).toEqual([]);
+    expect(updatedTarget.items).toHaveLength(1);
+    expect(updatedTarget.items[0]).toMatchObject({ label: moved.label, kind: moved.kind });
   });
 });

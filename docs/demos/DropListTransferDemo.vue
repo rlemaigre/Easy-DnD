@@ -6,6 +6,7 @@
     docs-label="View DropList component docs →"
     @reset="reset"
   >
+    <!-- #region demo-template -->
     <div class="dnd-demo__grid">
       <div v-for="list in lists" :key="list.id">
         <span class="dnd-demo__label">{{ list.label }}</span>
@@ -36,14 +37,17 @@
         </DropList>
       </div>
     </div>
+    <!-- #endregion demo-template -->
   </DemoFrame>
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
-import { Drag, DropList } from '../../lib/src';
-import type { DemoInsertEvent } from './types';
 import DemoFrame from './shared/DemoFrame.vue';
+
+// #region demo-script
+import { reactive } from 'vue';
+import { Drag, DropList } from 'vue-easy-dnd';
+import type { DemoInsertEvent } from './types';
 
 interface DemoList {
   id: string;
@@ -67,4 +71,5 @@ const remove = (items: string[], item: string) => {
 const reset = () => {
   lists.splice(0, lists.length, ...makeLists());
 };
+// #endregion demo-script
 </script>

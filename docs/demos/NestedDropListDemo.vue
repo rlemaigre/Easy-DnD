@@ -6,14 +6,19 @@
     docs-label="View nested DropList docs →"
     @reset="tree = makeTree()"
   >
-    <NestedListNode :group="tree" @update:group="tree = $event" />
+    <!-- #region demo-template -->
+    <NestedListNode :group="tree" @operation="applyOperation" />
+    <!-- #endregion demo-template -->
   </DemoFrame>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import type { DemoGroup } from './types';
 import DemoFrame from './shared/DemoFrame.vue';
+
+// #region demo-script
+import { ref } from 'vue';
+import type { DemoGroup, DemoTreeOperation } from './types';
+import { applyDemoTreeOperation } from './types';
 import NestedListNode from './shared/NestedListNode.vue';
 
 const makeTree = (): DemoGroup => ({
@@ -39,4 +44,8 @@ const makeTree = (): DemoGroup => ({
   ]
 });
 const tree = ref<DemoGroup>(makeTree());
+const applyOperation = (operation: DemoTreeOperation) => {
+  tree.value = applyDemoTreeOperation(tree.value, operation);
+};
+// #endregion demo-script
 </script>

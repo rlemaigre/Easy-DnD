@@ -6,6 +6,7 @@
     docs-label="View automatic-scrolling docs →"
     @reset="reset"
   >
+    <!-- #region demo-template -->
     <div class="auto-scroll-demo__controls">
       <label>
         Maximum step: <strong>{{ speed }}px</strong>
@@ -56,6 +57,7 @@
         Outer scroll area below the list
       </p>
     </div>
+    <!-- #endregion demo-template -->
 
     <template #footer>
       {{ propagate ? 'Nested scrolling may continue outward.' : 'Scrolling stops at the inner list.' }}
@@ -64,9 +66,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Drag, DropList } from '../../lib/src';
 import DemoFrame from './shared/DemoFrame.vue';
+
+// #region demo-script
+import { ref } from 'vue';
+import { Drag, DropList } from 'vue-easy-dnd';
 
 const makeItems = () => Array.from({ length: 18 }, (_, index) => `Scrollable item ${index + 1}`);
 const speed = ref(12);
@@ -77,6 +81,7 @@ const reset = () => {
   propagate.value = false;
   items.value = makeItems();
 };
+// #endregion demo-script
 </script>
 
 <style scoped>

@@ -1,11 +1,20 @@
 import { defineConfig } from 'vitepress';
+import { fileURLToPath, URL } from 'node:url';
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: 'Vue-Easy-DnD',
-  description: 'A HTML5 drag-and-drop replacement',
+  description: 'Mouse and touch drag-and-drop components for Vue 3',
   base: '/Easy-DnD/',
   vite: {
+    resolve: {
+      alias: [
+        {
+          find: /^vue-easy-dnd$/,
+          replacement: fileURLToPath(new URL('../../lib/src/index.ts', import.meta.url))
+        }
+      ]
+    },
     css: {
       preprocessorOptions: {
         scss: {
@@ -19,6 +28,7 @@ export default defineConfig({
     nav: [
       { text: 'Home', link: '/' },
       { text: 'API', link: '/installation' },
+      { text: 'v3 Migration', link: '/changelog' },
       { text: 'Demos', link: '/advanced-demos' },
       { text: 'FAQ', link: '/faq' }
     ],
@@ -28,6 +38,7 @@ export default defineConfig({
         text: 'Getting Started',
         items: [
           { text: 'Installation', link: '/installation' },
+          { text: 'v3 Changelog & Migration', link: '/changelog' },
           { text: 'FAQ', link: '/faq' },
           { text: 'Events / Composables', link: '/events' },
           { text: 'Advanced Demos', link: '/advanced-demos' }

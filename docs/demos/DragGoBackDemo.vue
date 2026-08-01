@@ -6,6 +6,7 @@
     docs-label="View Drag component docs →"
     @reset="status = 'Nothing dropped yet'"
   >
+    <!-- #region go-back-example -->
     <div class="dnd-demo__grid">
       <div>
         <span class="dnd-demo__label">Source</span>
@@ -22,6 +23,7 @@
         Drop here
       </Drop>
     </div>
+    <!-- #endregion go-back-example -->
     <template #footer>
       {{ status }}
     </template>
@@ -29,13 +31,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Drag, Drop } from '../../lib/src';
-import type { DnDEventPayload } from '../../lib/src';
 import DemoFrame from './shared/DemoFrame.vue';
+
+// #region go-back-script
+import { ref } from 'vue';
+import { Drag, Drop } from 'vue-easy-dnd';
+import type { DnDEventPayload } from 'vue-easy-dnd';
 
 const status = ref('Nothing dropped yet');
 const onDrop = (event: DnDEventPayload) => {
   status.value = `Dropped: ${String(event.data)}`;
 };
+// #endregion go-back-script
 </script>

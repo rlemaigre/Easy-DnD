@@ -2,10 +2,11 @@
   <DemoFrame
     title="Custom drag images"
     description="Drag a profile icon and see how each drop zone can show a different drag image."
-    docs-link="/components/drag.html#drag-image"
+    docs-link="/components/drag.html#drag-images"
     docs-label="View Drag image docs →"
     @reset="status = 'Drag the item through both target levels'"
   >
+    <!-- #region demo-template -->
     <Drag
       class="dnd-demo__item"
       type="sample"
@@ -61,6 +62,7 @@
         </template>
       </Drop>
     </Drop>
+    <!-- #endregion demo-template -->
     <template #footer>
       {{ status }}
     </template>
@@ -68,9 +70,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Drag, Drop, DropMask } from '../../lib/src';
 import DemoFrame from './shared/DemoFrame.vue';
+
+// #region demo-script
+import { ref } from 'vue';
+import { Drag, Drop, DropMask } from 'vue-easy-dnd';
 import avatarAlex from './assets/avatar-alex.jpg';
 import avatarJordan from './assets/avatar-jordan.jpg';
 import avatarSam from './assets/avatar-sam.jpg';
@@ -80,6 +84,7 @@ const profileName = 'Profile';
 const record = (target: string) => {
   status.value = `Dropped on the ${target} target`;
 };
+// #endregion demo-script
 </script>
 
 <style scoped>

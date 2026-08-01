@@ -1,4 +1,5 @@
 <template>
+  <!-- #region demo-template -->
   <article class="dashboard-widget" :class="`dashboard-widget--${widget.kind}`">
     <template v-if="widget.kind === 'metric'">
       <small>{{ widget.label }}</small>
@@ -37,15 +38,18 @@
       <p>{{ widget.body ?? 'Add context for your team.' }}</p>
     </template>
   </article>
+  <!-- #endregion demo-template -->
 </template>
 
 <script setup lang="ts">
+// #region demo-script
 import revenueTrend from '../assets/revenue-trend.jpg';
 import type { DemoWidget } from '../types';
 
 defineProps<{
   widget: DemoWidget;
 }>();
+// #endregion demo-script
 </script>
 
 <style scoped>

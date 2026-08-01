@@ -4,19 +4,23 @@
     description="The source, target, event routing, and scroll-parent lookup all operate inside this isolated shadow root."
     :resettable="false"
   >
+    <!-- #region demo-template -->
     <div
       ref="host"
       class="shadow-dom-demo__host"
       aria-label="Shadow DOM drag-and-drop example"
     />
+    <!-- #endregion demo-template -->
   </DemoFrame>
 </template>
 
 <script setup lang="ts">
-import { createApp, defineComponent, h, onBeforeUnmount, onMounted, ref } from 'vue';
-import { Drag, Drop } from '../../lib/src';
-import type { DnDEventPayload } from '../../lib/src';
 import DemoFrame from './shared/DemoFrame.vue';
+
+// #region demo-script
+import { createApp, defineComponent, h, onBeforeUnmount, onMounted, ref } from 'vue';
+import { Drag, Drop } from 'vue-easy-dnd';
+import type { DnDEventPayload } from 'vue-easy-dnd';
 
 const shadowStyles = `
   :host { display: block; height: 20rem; overflow: auto; border: 2px solid #7c3aed; border-radius: 10px; }
@@ -59,6 +63,7 @@ onBeforeUnmount(() => {
   shadowApp?.unmount();
   shadowApp = null;
 });
+// #endregion demo-script
 </script>
 
 <style scoped>

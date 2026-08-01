@@ -6,6 +6,7 @@
     docs-label="View nested DropList docs →"
     @reset="dashboard = makeDashboard()"
   >
+    <!-- #region demo-template -->
     <div class="demo-dashboard-builder">
       <aside class="demo-dashboard-palette">
         <span class="dnd-demo__label">Widget library</span>
@@ -45,18 +46,22 @@
         <NestedListNode
           :group="dashboard"
           rich
-          @update:group="dashboard = $event"
+          @operation="applyOperation"
         />
       </section>
     </div>
+    <!-- #endregion demo-template -->
   </DemoFrame>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Drag } from '../../lib/src';
-import type { DemoGroup, DemoWidget } from './types';
 import DemoFrame from './shared/DemoFrame.vue';
+
+// #region demo-script
+import { ref } from 'vue';
+import { Drag } from 'vue-easy-dnd';
+import type { DemoGroup, DemoTreeOperation, DemoWidget } from './types';
+import { applyDemoTreeOperation } from './types';
 import NestedListNode from './shared/NestedListNode.vue';
 import avatarAlex from './assets/avatar-alex.jpg';
 import avatarJordan from './assets/avatar-jordan.jpg';
@@ -150,6 +155,10 @@ const makeDashboard = (): DemoGroup => ({
   ]
 });
 const dashboard = ref<DemoGroup>(makeDashboard());
+const applyOperation = (operation: DemoTreeOperation) => {
+  dashboard.value = applyDemoTreeOperation(dashboard.value, operation);
+};
+// #endregion demo-script
 </script>
 
 <style scoped>

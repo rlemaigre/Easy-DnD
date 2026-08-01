@@ -1,95 +1,156 @@
 # Drag
-The `drag` component is meant to define an area from which data can be exported.
+
+`Drag` defines an area from which typed data can be dragged.
 
 ## Events
-Event Name | Description
----------- | -----------
-`@dragstart` | Triggered when a drag operation starts
-`@dragend` | Triggered when a drag operation terminates (whether successfully or not)
-`@cut` / `@copy` | Triggered when a drag operation completes successfully on a Drop component that requires the data to be removed / copied (event name is dependant on the selected drop `mode` prop)
+
+Event | Description
+----- | -----------
+`dragstart` | Emitted when pointer movement exceeds `delta` after the gesture is initialized.
+`dragend` | Emitted when the operation succeeds, fails, is cancelled, or the source unmounts. Inspect `event.success` for the outcome.
+`copy` | Emitted after a successful drop onto a target whose `mode` is `copy`.
+`cut` | Emitted after a successful drop onto a target whose `mode` is `cut`. Use this event to remove or update source data; the library does not mutate it automatically.
+
+These events receive a [`DnDEventPayload`](../events.md#drag-and-drop-event-payload).
 
 ## Props
-Prop Name | Type / Default | Description
---------- | -------------- | -----------
-`tag` | Any | This prop can be used to customize the root of the template, Can refer to a custom Vue component, including its props, slots and listeners.
-`type` | String (`null`) | Refer to **Types** section below
-`data` | Any | Any data associated with this drag which will be sent with the emit event
-`drag-image-opacity` | Number (`0.7`) | 0-1 defining the opacity of the drag image
-`disabled` | Boolean (`false`) | Whether to temporarily disable dragging this component
-`go-back` | Boolean (`false`) | If a drag is not successful, the drag image will animate back to where the drag originated (demo below)
-`handle` | String or Function (`undefined`) | A handle / grabber for this Drag component. A selector such as `.drag-handle` is resolved lazily inside the Drag root. A function is resolved on pointer-down and may return an element anywhere in the document.
-`delta` | Number (`3`px) | A pixel-distance which defines whether a drag has begun
-`delay` | Number (`0`ms) | The number of milliseconds of which the user must hold down the Drag element until it is recognised as a drag (useful for allowing scrolling on Touch devices without it automatically trying to drag the element) (`0` = no delay)
-`drag-class` | String (`null`) | A class to bind to the image / ghost being dragged around
-`vibration` | Number (`0`ms) | Vibration feedback on supported mobile devices when a Drag event has started (`0` = no feedback)
-`scrolling-edge-size` | Number (`100`px) | When dragging this element to the edge of its bounding container/list, the pixel amount defines how close to the edge of the container it will automatically scroll up/down/left/right (`0` = no scrolling on its bounding container)
-`scrolling-speed` | Number (`50`px) | Maximum number of pixels applied by each automatic scrolling step. Lower values make edge scrolling slower.
-`scrolling-propagation` | Boolean (`true`) | Whether automatic scrolling may continue through outer scroll containers when the nearest one cannot scroll farther.
+
+Prop | Type / Default | Description
+---- | -------------- | -----------
+`tag` | String or component (`'div'`) | Root element or Vue component. A component must render one HTML root element; its props, attributes, listeners, and slots are forwarded.
+`type` | String, Number, or `null` (`null`) | Optional category used by targets to decide whether they participate.
+`data` | Unknown (`null`) | Data included in drag-and-drop event payloads.
+`drag-image-opacity` | Number (`0.7`) | Opacity applied to the source drag image.
+`disabled` | Boolean (`false`) | Prevents this component from beginning a drag.
+`go-back` | Boolean (`false`) | Animates an unsuccessful drag image back to its source.
+`handle` | String, Function, or `null` (`null`) | CSS selector matched inside the root, or a function returning an `Element` anywhere in the document.
+`delta` | Number (`0`px) | Pointer distance that must be exceeded before dragging begins. At `0`, dragging begins on the first movement.
+`delay` | Number (`0`ms) | Time the pointer must remain down before the gesture initializes. Moving beyond `delta` before the delay finishes cancels that attempt.
+`drag-class` | String or `null` (`null`) | Additional class applied to drag images created by this source.
+`vibration` | Number (`0`ms) | Vibration duration when a gesture initializes on supported devices. `0` disables vibration.
+`scrolling-edge-size` | Number (`100`px) | Distance from a scroll-container edge that activates autoscroll. `0` disables source autoscroll.
+`scrolling-speed` | Number (`50`px) | Maximum pixels applied by each autoscroll step.
+`scrolling-propagation` | Boolean (`true`) | Whether autoscroll may continue through outer scroll containers.
 
 ## Slots
-Slot Name | Description
----------- | -----------
-`default` | Default content to add at the end of the DropList. Make sure to define a `key` prop for each element directly inside this slot.
-`drag-image` | Refer to **Drag Image** section below
 
-## Demo
-An example of `go-back` prop
+Slot | Props | Description
+---- | ----- | -----------
+`default` | Props forwarded by a component passed to `tag` | Content rendered inside the draggable root.
+`drag-image` | None | Optional source drag-image model. See [Drag images](#drag-images).
+
+Other named slots are forwarded when `tag` is a Vue component.
+
+## Return unsuccessful drags
+
+Set `go-back` to animate the active image back to the source when a drag is released without a permitted target or is cancelled.
 
 <DragGoBackDemo />
 
+::: details View example code
+**Template**
+
+<<< ../demos/DragGoBackDemo.vue#go-back-example
+
+**TypeScript**
+
+<<< ../demos/DragGoBackDemo.vue#go-back-script{ts}
+:::
+
 ## Lazy and external handles
 
-A string `handle` selector is checked when pointer input begins, so matching content may be rendered after the Drag component mounts. For a handle outside the Drag root, pass a function that returns the current handle element. The function is also resolved lazily on pointer-down.
+A string `handle` selector is matched when pointer input begins, so matching content can be rendered after `Drag` mounts. Only the handle or one of its descendants can initiate the drag.
+
+For a handle outside the `Drag` root, pass a function returning the current handle element. The function is resolved on every pointer-down, so it can safely return a template ref that changes over time.
 
 <ExternalHandleDemo />
 
+::: details View example code
+**Template**
+
+<<< ../demos/ExternalHandleDemo.vue#demo-template
+
+**TypeScript**
+
+<<< ../demos/ExternalHandleDemo.vue#demo-script{ts}
+:::
+
 ## Automatic scrolling
 
-Use `scrolling-edge-size` to control how close the pointer must be to an edge, `scrolling-speed` to control the maximum step, and `scrolling-propagation` to decide whether scrolling may continue through outer containers. A DropList can override edge size and propagation while it is the active target.
+Use `scrolling-edge-size` to control how close the pointer must be to an edge, `scrolling-speed` to control the maximum step, and `scrolling-propagation` to decide whether scrolling may continue through outer containers.
+
+An active `DropList` can override edge size and propagation with its own `scrolling-edge-size` and `scrolling-propagation` props. Scroll speed always comes from the source `Drag`.
 
 <AutoScrollControlsDemo />
 
+::: details View example code
+**Template**
+
+<<< ../demos/AutoScrollControlsDemo.vue#demo-template
+
+**TypeScript**
+
+<<< ../demos/AutoScrollControlsDemo.vue#demo-script{ts}
+:::
+
 ## CSS classes
 
-Depending on the mode of the Drop component currently under the mouse cursor, the source Drag component is assigned the classes `drag-mode-copy`, `drag-mode-cut` and `drag-mode-reordering`.
+Class | Applied when
+----- | ------------
+`dnd-drag` | Always on the `Drag` root.
+`drag-source` | This component is the source of the active operation.
+`drag-mode-copy` | Its active permitted target uses `copy` mode.
+`drag-mode-cut` | Its active permitted target uses `cut` mode.
+`drag-mode-reordering` | It is being reordered within its current `DropList`.
+`drag-no-handle` | No `handle` prop is configured.
+`dnd-ghost` | On drag-image clones created by `Drag`, `Drop`, or `DropList`.
+`drag-in-progress` | On the document `<html>` element while an operation is active.
 
-If a drag is in progress, `dnd-ghost` will be bound to the ghost. The Drag component can also optionally accept an additional class (`drag-class` prop) to bind to the ghost. When using a DropList, the `dnd-ghost` class and `drag-class` prop will both **NOT** be bound if the `drag-image` slot is defined.
+`drag-class` is applied to images produced by the source `Drag`. A custom image produced by a target `Drop` or `DropList` receives `dnd-ghost`, but not the source's `drag-class`.
 
-To prevent dragging your Draggable component from a child element, you may attach the class `dnd-no-drag` to the child. That way the entire element remains draggable, whereas specific sub-children can have dragging from themselves disabled.
+Add `dnd-no-drag` to a child element to prevent gestures starting from that child or its descendants.
 
 ## Types
 
-A drag operation **may** have a type. The type is a data structure (can be a simple string) that defines the kind of data being transfered. The type of a drag operation is defined by the Drag component that initiates it using the `type` prop.
+A drag type is a `string`, `number`, or `null` category assigned through `Drag.type`. Targets use `accepts-type` to decide whether they participate. A target can accept one type, an array of types, or a predicate.
 
-A Drop component is said to participate in a drag operation if it accepts its type (the default is to accept any type). The type(s) a Drop component accepts can be defined by mean of the `accepts-type` prop (can be a string, an array of strings or a function that takes the type as parameter and returns a boolean).
-
-The following demo illustrates the use of types. There are two types in use : 'string' and 'number'. The Drag components that contain '1' and '2' are of type 'number', the ones containing 'a' and 'b' are of type 'string'. The two Drop components on the left accept numbers, the ones on the right accept strings. When you drag a number/string (respectively), only Drop components that accept numbers/strings (respectively) react (i.e. drag images, CSS classes, cursors are applied). The other ones are left alone.
+This filtering is separate from `accepts-data`: type acceptance decides whether the target participates, while data acceptance decides whether the active value may be dropped.
 
 <TypeAcceptanceDemo />
 
-## Drag image
+::: details View example code
+**Template**
 
-During the drag, an image may move along the mouse cursor. Easy-DnD makes it so that this image is always on top of everything else.
+<<< ../demos/TypeAcceptanceDemo.vue#demo-template
 
-Drag components provide the `drag-image` slot that can be used to set the default image displayed during the drag operation :
+**TypeScript**
 
-* if the slot isn't defined, the image is a clone of the Drag component.
-* if the slot is defined and empty, there is no image.
-* if the slot is not empty, a clone of its content is used.
+<<< ../demos/TypeAcceptanceDemo.vue#demo-script{ts}
+:::
 
-Drop and DropList components provide the `drag-image` slot (props : `data` and `type`) that can be used to set the image to be displayed when the mouse is over them, if they participates in the current drag operation (i.e. accept its type) :
+## Drag images
 
-* if the slot isn't defined, the default image set by the Drag component is used.
-* if the slot is defined and empty, there is no image.
-* if the slot is not empty, a clone of its content is used.
+During a drag, Vue-Easy-DnD positions an image in viewport coordinates above the page content.
 
-DropList components additionaly provide the `reordering-drag-image` slot (prop : `item` subject to reordering) that behaves the same way as `drag-image` but controls the drag image to be displayed during list reordering.
+The source `Drag` controls the initial image with its `drag-image` slot:
 
-The position of the drag image relative to the mouse cursor can be controlled by CSS using the transform property.
+- Without the slot, the `Drag` root is cloned.
+- With an empty slot, no visible image is rendered.
+- With slot content, that content is cloned.
+
+`Drop` and `DropList` also provide a `drag-image` slot with `data` and `type` props. When an accepting target becomes active:
+
+- Without a target slot, the source image remains active.
+- With an empty target slot, no visible image is rendered over that target.
+- With target slot content, that content replaces the source image.
+
+`DropList` additionally provides `reordering-drag-image`, with the item being reordered as its `item` prop.
+
+Use CSS `transform` on custom drag-image content to adjust its position relative to the pointer.
 
 ### Dynamic drag images
 
-If reactive content in the active drag image changes during a drag, call `refreshDragImage()` after updating that state. The helper waits for Vue's next render and replaces only the active clone.
+Drag images are DOM clones and do not update automatically when their Vue slot model changes. After updating reactive content used by the active image, call `refreshDragImage()`. It waits for Vue's next render and replaces the current clone.
 
 ```ts
 import { refreshDragImage } from 'vue-easy-dnd'
@@ -98,10 +159,32 @@ previewMode.value = 'expanded'
 void refreshDragImage()
 ```
 
+The returned promise resolves to the new image element or `null` if no operation remains active.
+
 <DynamicDragImageDemo />
+
+::: details View example code
+**Template**
+
+<<< ../demos/DynamicDragImageDemo.vue#demo-template
+
+**TypeScript**
+
+<<< ../demos/DynamicDragImageDemo.vue#demo-script{ts}
+:::
 
 ### Source and target drag images
 
-The following demo illustrate the use of custom drag images, nested Drop components and a mask :
+This example combines a custom source image, images supplied by nested targets, and a `DropMask`:
 
 <CustomDragImageDemo />
+
+::: details View example code
+**Template**
+
+<<< ../demos/CustomDragImageDemo.vue#demo-template
+
+**TypeScript**
+
+<<< ../demos/CustomDragImageDemo.vue#demo-script{ts}
+:::
