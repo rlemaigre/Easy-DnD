@@ -15,7 +15,8 @@ const scrollparent = (node: Node | null): HTMLElement => {
     return node;
   }
   
-  return scrollparent(node.parentNode);
+  const parent = node.parentNode ?? (node instanceof ShadowRoot ? node.host : null);
+  return scrollparent(parent);
 };
 
 export default scrollparent;

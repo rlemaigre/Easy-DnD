@@ -17,7 +17,9 @@ Prop Name | Type / Default | Description
 `row` | Boolean (`null`) | Defining the direction of the DropList as horizontally-flowing. (Necessary for Nested DropLists) (Refer to **Nested Droplists** section below)
 `column` | Boolean (`null`) | Defining the direction of the DropList as vertically-flowing. (Necessary for Nested DropLists) (Refer to **Nested Droplists** section below)
 `no-animations` | Boolean (`false`) | Disable animations on the DropList (necessary if the tag is a custom Vue component)
+`reorderable` | Boolean or Function (`true`) | Controls in-list reordering. A function receives `(item, index)`. Returning `false` pins that item to its current position while unlocked items remain sortable across and around it. Set the corresponding Drag's `disabled` prop so the pinned item cannot start a drag.
 `scrolling-edge-size` | Number (`undefined`px) | When dragging a Drag component to the edge of this DropList, the pixel amount defines how close to the edge of the DropList a scroll will be triggered up/down/left/right (`0` = no scrolling on this DropList). `Undefined` default value means that this DropList will use whatever `scrolling-edge-size` is defined on the Drag component.
+`scrolling-propagation` | Boolean (`undefined`) | Overrides the source Drag's scrolling propagation while this list is active. Set it to `false` to stop at this list's nearest scroll container.
 
 ## Slots
 Slot Name | Description
@@ -31,6 +33,33 @@ Slot Name | Description
 
 ## Demo
 <DropListTransferDemo />
+
+## Position locking
+
+Use the `reorderable` predicate to pin an item to its current list position. Unlocked items can still move from one side of that position to the other. Pass the same condition to the pinned item's `Drag` as `disabled` so it cannot initiate a drag itself.
+
+```vue
+<DropList
+  :items="items"
+  :reorderable="(item) => !item.locked"
+  @reorder="$event.apply(items)"
+>
+  <template #item="{ item }">
+    <Drag
+      :key="item.id"
+      :disabled="item.locked"
+    >
+      {{ item.label }}
+    </Drag>
+  </template>
+
+  <template #feedback>
+    <div key="feedback" />
+  </template>
+</DropList>
+```
+
+<PositionLockDemo />
 
 ## Nested DropLists
 Drop lists can be nested providing the following conditions are satisfied :

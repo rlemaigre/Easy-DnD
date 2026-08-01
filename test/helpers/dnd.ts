@@ -32,6 +32,7 @@ export const makeDropController = (
   getElement: () => makeElement(),
   getMode: () => 'copy',
   getScrollingEdgeSize: () => 100,
+  getScrollingPropagation: () => undefined,
   getCompatibleMode: () => true,
   getDropAllowed: () => true,
   getReordering: () => false,

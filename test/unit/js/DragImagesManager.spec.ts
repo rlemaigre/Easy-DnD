@@ -16,6 +16,7 @@ const freshManager = (): DragImagesManager => Object.assign(
     activeClone: null,
     activeTarget: undefined,
     generation: 0,
+    refreshRequest: 0,
     fadingClone: null,
     fadeTimer: undefined,
     goBackTimer: undefined,
@@ -150,5 +151,33 @@ describe('DragImagesManager', () => {
     expect(targetImage.isConnected).toBe(false);
     expect(manager.sourceClone).toBeNull();
     expect(manager.clones).toBeNull();
+  });
+
+  it('rebuilds a source drag image after its reactive model changes', async () => {
+    let label = 'compact';
+    const source = makeDragController(undefined, {
+      createDragImage: () => {
+        const image = document.createElement('div') as DragImageElement;
+        image.textContent = label;
+        return image;
+      }
+    });
+    const manager = freshManager();
+    manager.source = source;
+    manager.clones = new Map();
+    dnd.inProgress = true;
+    dnd.sourceController = source;
+    dnd.topController = null;
+    dnd.position = { x: 20, y: 30 };
+
+    const first = manager.switch(null)!;
+    expect(first.textContent).toBe('compact');
+    label = 'expanded';
+    const refreshed = await manager.refresh();
+
+    expect(refreshed).not.toBe(first);
+    expect(refreshed?.textContent).toBe('expanded');
+    manager.cleanUp();
+    dnd.resetVariables();
   });
 });

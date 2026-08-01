@@ -35,4 +35,17 @@ describe('public event classes', () => {
     expect(values).toEqual(expected);
     expect(event).toMatchObject({ from, to });
   });
+
+  it('keeps locked positions fixed while movable items cross them', () => {
+    const values = ['a', 'b', 'locked', 'c', 'd'];
+    const event = new ReorderEvent(0, 4, [2]);
+
+    event.apply(values);
+
+    expect(values).toEqual(['b', 'c', 'locked', 'd', 'a']);
+    expect(event.locked).toEqual([2]);
+
+    new ReorderEvent(4, 0, [2]).apply(values);
+    expect(values).toEqual(['a', 'b', 'locked', 'c', 'd']);
+  });
 });

@@ -17,7 +17,9 @@ const defaultProps: DragProps = {
   delay: 0,
   dragClass: null,
   vibration: 0,
-  scrollingEdgeSize: 0
+  scrollingEdgeSize: 0,
+  scrollingSpeed: 50,
+  scrollingPropagation: true
 };
 
 const mountHarness = (overrides: Partial<DragProps> = {}, withDragImage = false) => {
@@ -110,6 +112,25 @@ describe('useDrag', () => {
     expect(getApi().downEvent.value).toBeInstanceOf(MouseEvent);
   });
 
+  it('resolves a functional handle lazily outside the drag root', () => {
+    const externalHandle = document.createElement('button');
+    const nested = document.createElement('span');
+    externalHandle.appendChild(nested);
+    document.body.appendChild(externalHandle);
+    const handle = vi.fn(() => externalHandle);
+    const { getApi, wrapper } = mountHarness({ handle });
+
+    down(nested);
+    expect(handle).toHaveBeenCalledOnce();
+    expect(getApi().downEvent.value).toBeInstanceOf(MouseEvent);
+
+    getApi().onCancel(new Event('cancel'));
+    wrapper.unmount();
+    down(nested);
+    expect(handle).toHaveBeenCalledOnce();
+    externalHandle.remove();
+  });
+
   it('waits for the delay and performs optional vibration', () => {
     vi.useFakeTimers();
     const vibrate = vi.fn();
@@ -135,6 +156,74 @@ describe('useDrag', () => {
     image.dispatchEvent(nativeDrag);
 
     expect(nativeDrag.defaultPrevented).toBe(true);
+  });
+
+  it('dispatches movement from the original target across a shadow boundary', () => {
+    const { wrapper, getApi } = mountHarness();
+    const host = document.createElement('div');
+    const shadow = host.attachShadow({ mode: 'open' });
+    const shadowTarget = document.createElement('span');
+    shadow.appendChild(shadowTarget);
+    document.body.appendChild(host);
+    const moved = vi.fn();
+    document.addEventListener('easy-dnd-move', moved, { once: true });
+    down(wrapper.get('.content').element);
+    const event = movement(host, 10, 10);
+    vi.spyOn(event, 'composedPath').mockReturnValue([shadowTarget, shadow, host, document.body, document, window]);
+
+    getApi().onMouseMove(event);
+
+    expect(moved).toHaveBeenCalledOnce();
+    expect((moved.mock.calls[0]?.[0] as CustomEvent).composed).toBe(true);
+    getApi().onCancel(new Event('cancel'));
+    host.remove();
+  });
+
+  it('stops edge scrolling at the nearest container when propagation is disabled', () => {
+    vi.useFakeTimers();
+    const { wrapper, getApi } = mountHarness({
+      scrollingEdgeSize: 20,
+      scrollingPropagation: false
+    });
+    const outer = document.createElement('div');
+    const inner = document.createElement('div');
+    outer.style.overflow = 'auto';
+    inner.style.overflow = 'auto';
+    outer.appendChild(inner);
+    inner.appendChild(wrapper.element);
+    document.body.appendChild(outer);
+    for (const element of [outer, inner]) {
+      Object.defineProperties(element, {
+        clientWidth: { configurable: true, value: 100 },
+        clientHeight: { configurable: true, value: 100 },
+        offsetWidth: { configurable: true, value: 100 },
+        offsetHeight: { configurable: true, value: 100 }
+      });
+      vi.spyOn(element, 'getBoundingClientRect').mockReturnValue({
+        x: 0, y: 0, left: 0, top: 0, right: 100, bottom: 100, width: 100, height: 100,
+        toJSON: () => ({})
+      });
+    }
+    Object.defineProperties(inner, {
+      scrollWidth: { configurable: true, value: 100 },
+      scrollHeight: { configurable: true, value: 100 }
+    });
+    Object.defineProperties(outer, {
+      scrollWidth: { configurable: true, value: 300 },
+      scrollHeight: { configurable: true, value: 300 }
+    });
+    const outerScroll = vi.fn();
+    Object.defineProperty(outer, 'scrollTo', { configurable: true, value: outerScroll });
+
+    down(wrapper.get('.content').element);
+    getApi().onMouseMove(movement(wrapper.get('.content').element, 95, 95));
+
+    expect(outerScroll).not.toHaveBeenCalled();
+    getApi().onCancel(new Event('cancel'));
+    wrapper.unmount();
+    outer.remove();
+    vi.runOnlyPendingTimers();
+    vi.useRealTimers();
   });
 
   it('creates a styled clone from either the source or custom preview', async () => {

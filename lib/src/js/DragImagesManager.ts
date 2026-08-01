@@ -23,6 +23,7 @@ export class DragImagesManager {
   activeTarget: DropController | null | undefined;
 
   private generation = 0;
+  private refreshRequest = 0;
   private fadingClone: DragImageElement | null = null;
   private fadeTimer: ReturnType<typeof setTimeout> | undefined;
   private goBackTimer: ReturnType<typeof setTimeout> | undefined;
@@ -46,6 +47,23 @@ export class DragImagesManager {
     dnd.off('dragpositionchanged', this.handlers.dragpositionchanged);
     dnd.off('dragend', this.handlers.dragend);
     this.cleanUp();
+  }
+
+  /** Rebuilds the visible drag image after reactive slot content changes. */
+  async refresh (): Promise<DragImageElement | null> {
+    const request = ++this.refreshRequest;
+    const generation = this.generation;
+    await nextTick();
+    if (request !== this.refreshRequest || generation !== this.generation ||
+      !dnd.inProgress || !this.clones || !this.source) return null;
+
+    const previousSourceClone = this.sourceClone;
+    if (previousSourceClone && previousSourceClone !== this.activeClone) previousSourceClone.remove();
+    this.sourceClone = null;
+    this.activeTarget = undefined;
+    const image = this.switch(dnd.topController);
+    this.onDragPositionChanged();
+    return image;
   }
 
   onDragStart (event: DnDEventPayload) {
@@ -96,6 +114,7 @@ export class DragImagesManager {
 
   cleanUp () {
     this.generation++;
+    this.refreshRequest++;
     if (this.fadeTimer !== undefined) clearTimeout(this.fadeTimer);
     if (this.goBackTimer !== undefined) clearTimeout(this.goBackTimer);
 
@@ -189,4 +208,7 @@ export class DragImagesManager {
   }
 }
 
-new DragImagesManager();
+const dragImagesManager = new DragImagesManager();
+
+/** Refreshes the active drag image after Vue has rendered reactive slot changes. */
+export const refreshDragImage = (): Promise<DragImageElement | null> => dragImagesManager.refresh();

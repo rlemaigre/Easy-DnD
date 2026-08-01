@@ -23,6 +23,7 @@ export interface DropOptions {
   rootElement: Ref<HTMLElement | null>;
   dragImageElement?: Ref<HTMLElement | null>;
   getScrollingEdgeSize?: () => number | undefined;
+  getScrollingPropagation?: () => boolean | undefined;
   getReordering?: () => boolean;
   getDropAllowed?: () => boolean | null;
   doDrop?: (event: DnDEventPayload) => void;
@@ -72,6 +73,7 @@ export function useDrop (props: DropProps, emit: DnDEmit, options: DropOptions) 
     getElement: getRootElement,
     getMode: () => props.mode,
     getScrollingEdgeSize: () => options.getScrollingEdgeSize?.(),
+    getScrollingPropagation: () => options.getScrollingPropagation?.(),
     getCompatibleMode: () => compatibleMode.value,
     getDropAllowed: () => dropAllowed.value,
     getReordering: () => options.getReordering?.() ?? false,

@@ -47,8 +47,16 @@ export default defineComponent({
       type: Boolean,
       default: false
     },
+    reorderable: {
+      type: [Boolean, Function] as PropType<boolean | ((item: unknown, index: number) => boolean)>,
+      default: true
+    },
     scrollingEdgeSize: {
       type: Number,
+      default: undefined
+    },
+    scrollingPropagation: {
+      type: Boolean,
       default: undefined
     }
   },
@@ -70,10 +78,20 @@ export default defineComponent({
     const closestIndex = computed(() => grid.value && dnd.position
       ? grid.value.closestIndex(dnd.position)
       : null);
+    const isItemReorderable = (item: unknown, index: number) => typeof props.reorderable === 'function'
+      ? props.reorderable(item, index)
+      : props.reorderable;
+    const lockedIndices = computed(() => props.items.flatMap((item, index) =>
+      isItemReorderable(item, index) ? [] : [index]));
+    const isReorderAllowed = () => {
+      if (fromIndex.value === null || closestIndex.value === null) return false;
+      return isItemReorderable(props.items[fromIndex.value], fromIndex.value) &&
+        props.items.length - lockedIndices.value.length > 1;
+    };
 
     const getDropAllowed = () => {
       if (!drop.dragInProgress.value) return null;
-      if (reordering.value) return props.items.length > 1;
+      if (reordering.value) return props.items.length > 1 && isReorderAllowed();
       if (!drop.baseDropAllowed.value) return false;
       if (forbiddenKeys.value !== null && feedbackKey.value !== null) {
         return !forbiddenKeys.value.includes(feedbackKey.value);
@@ -83,7 +101,7 @@ export default defineComponent({
     const handleDrop = (event: DnDEventPayload) => {
       if (reordering.value) {
         if (fromIndex.value !== null && closestIndex.value !== null && fromIndex.value !== closestIndex.value) {
-          emit('reorder', new ReorderEvent(fromIndex.value, closestIndex.value));
+          emit('reorder', new ReorderEvent(fromIndex.value, closestIndex.value, lockedIndices.value));
         }
       }
       else {
@@ -117,7 +135,8 @@ export default defineComponent({
       candidate: isCandidate,
       createDragImage: makeDragImage,
       getReordering: () => !!reordering.value,
-      getScrollingEdgeSize: () => props.scrollingEdgeSize
+      getScrollingEdgeSize: () => props.scrollingEdgeSize,
+      getScrollingPropagation: () => props.scrollingPropagation
     });
 
     const itemsBeforeFeedback = computed(() => closestIndex.value === 0
@@ -135,17 +154,28 @@ export default defineComponent({
     const reorderedItems = computed(() => {
       const items = [...props.items];
       if (fromIndex.value === null || closestIndex.value === null) return items;
-      const item = items[fromIndex.value];
-      items.splice(fromIndex.value, 1);
-      items.splice(closestIndex.value, 0, item);
+      new ReorderEvent(fromIndex.value, closestIndex.value, lockedIndices.value).apply(items);
       return items;
     });
-    const clazz = computed(() => ({
-      'drop-list': true,
-      'reordering': reordering.value === true,
-      'inserting': reordering.value === false,
-      ...(reordering.value === false ? drop.cssClasses.value : { 'dnd-drop': true })
-    }));
+    const clazz = computed(() => {
+      const classes: Record<string, boolean> = {
+        'drop-list': true,
+        'reordering': reordering.value === true,
+        'inserting': reordering.value === false
+      };
+      if (reordering.value === false) return { ...classes, ...drop.cssClasses.value };
+
+      classes['dnd-drop'] = true;
+      if (drop.dropIn.value !== null) {
+        classes['drop-in'] = drop.dropIn.value;
+        classes['drop-out'] = !drop.dropIn.value;
+      }
+      if (drop.dropAllowed.value !== null) {
+        classes['drop-allowed'] = drop.dropAllowed.value;
+        classes['drop-forbidden'] = !drop.dropAllowed.value;
+      }
+      return classes;
+    });
     const showDragFeedback = computed(() => drop.dragInProgress.value &&
       drop.typeAllowed.value && !reordering.value);
     const showInsertingDragImage = computed(() => drop.dragInProgress.value &&
@@ -257,6 +287,9 @@ export default defineComponent({
       forbiddenKeys,
       feedbackKey,
       fromIndex,
+      lockedIndices,
+      isItemReorderable,
+      isReorderAllowed,
       rootTag,
       rootProps,
       direction,
@@ -380,6 +413,10 @@ export default defineComponent({
       else if (this.$slots['empty']) {
         defaultArr.push(this.$slots['empty']!()[0]);
       }
+    }
+
+    if (this.$slots.default) {
+      defaultArr.push(...this.$slots.default());
     }
 
     if (this.showDragFeedback) {

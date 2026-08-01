@@ -82,6 +82,11 @@ describe('useDrop', () => {
     expect(getDropAllowed).toHaveBeenCalled();
   });
 
+  it('exposes target scrolling propagation through its controller', () => {
+    const { getApi } = mountHarness({}, { getScrollingPropagation: () => false });
+    expect(getApi().controller.getScrollingPropagation?.()).toBe(false);
+  });
+
   it('emits enter, over, leave, dragend, drop, and source mode notifications', async () => {
     const source = makeDragController();
     const { wrapper, emitted } = mountHarness({ acceptsType: 'widget', mode: 'cut' });

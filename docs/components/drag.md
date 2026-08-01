@@ -17,12 +17,14 @@ Prop Name | Type / Default | Description
 `drag-image-opacity` | Number (`0.7`) | 0-1 defining the opacity of the drag image
 `disabled` | Boolean (`false`) | Whether to temporarily disable dragging this component
 `go-back` | Boolean (`false`) | If a drag is not successful, the drag image will animate back to where the drag originated (demo below)
-`handle` | String (`undefined`) | A handle / grabber for this Drag component (eg: `.drag-handle`)
+`handle` | String or Function (`undefined`) | A handle / grabber for this Drag component. A selector such as `.drag-handle` is resolved lazily inside the Drag root. A function is resolved on pointer-down and may return an element anywhere in the document.
 `delta` | Number (`3`px) | A pixel-distance which defines whether a drag has begun
 `delay` | Number (`0`ms) | The number of milliseconds of which the user must hold down the Drag element until it is recognised as a drag (useful for allowing scrolling on Touch devices without it automatically trying to drag the element) (`0` = no delay)
 `drag-class` | String (`null`) | A class to bind to the image / ghost being dragged around
 `vibration` | Number (`0`ms) | Vibration feedback on supported mobile devices when a Drag event has started (`0` = no feedback)
 `scrolling-edge-size` | Number (`100`px) | When dragging this element to the edge of its bounding container/list, the pixel amount defines how close to the edge of the container it will automatically scroll up/down/left/right (`0` = no scrolling on its bounding container)
+`scrolling-speed` | Number (`50`px) | Maximum number of pixels applied by each automatic scrolling step. Lower values make edge scrolling slower.
+`scrolling-propagation` | Boolean (`true`) | Whether automatic scrolling may continue through outer scroll containers when the nearest one cannot scroll farther.
 
 ## Slots
 Slot Name | Description
@@ -34,6 +36,18 @@ Slot Name | Description
 An example of `go-back` prop
 
 <DragGoBackDemo />
+
+## Lazy and external handles
+
+A string `handle` selector is checked when pointer input begins, so matching content may be rendered after the Drag component mounts. For a handle outside the Drag root, pass a function that returns the current handle element. The function is also resolved lazily on pointer-down.
+
+<ExternalHandleDemo />
+
+## Automatic scrolling
+
+Use `scrolling-edge-size` to control how close the pointer must be to an edge, `scrolling-speed` to control the maximum step, and `scrolling-propagation` to decide whether scrolling may continue through outer containers. A DropList can override edge size and propagation while it is the active target.
+
+<AutoScrollControlsDemo />
 
 ## CSS classes
 
@@ -72,6 +86,21 @@ Drop and DropList components provide the `drag-image` slot (props : `data` and `
 DropList components additionaly provide the `reordering-drag-image` slot (prop : `item` subject to reordering) that behaves the same way as `drag-image` but controls the drag image to be displayed during list reordering.
 
 The position of the drag image relative to the mouse cursor can be controlled by CSS using the transform property.
+
+### Dynamic drag images
+
+If reactive content in the active drag image changes during a drag, call `refreshDragImage()` after updating that state. The helper waits for Vue's next render and replaces only the active clone.
+
+```ts
+import { refreshDragImage } from 'vue-easy-dnd'
+
+previewMode.value = 'expanded'
+void refreshDragImage()
+```
+
+<DynamicDragImageDemo />
+
+### Source and target drag images
 
 The following demo illustrate the use of custom drag images, nested Drop components and a mask :
 

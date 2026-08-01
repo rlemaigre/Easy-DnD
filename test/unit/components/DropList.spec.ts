@@ -119,6 +119,45 @@ describe('DropList component', () => {
     expect(reorder).toMatchObject({ from: 0, to: 2 });
   });
 
+  it('pins a locked item while allowing movable items to cross it', async () => {
+    const onReorder = vi.fn();
+    const pinnedItems = [
+      { id: 1, label: 'One' },
+      { id: 2, label: 'Two' },
+      { id: 3, label: 'Pinned' },
+      { id: 4, label: 'Four' },
+      { id: 5, label: 'Five' }
+    ];
+    const reorderable = (item: Item) => item.id !== 3;
+    const wrapper = mountList({ items: pinnedItems, onReorder, reorderable });
+    layOut(wrapper);
+    const sourceElement = wrapper.findAll('.item')[0].element as HTMLElement;
+    const source = makeDragController(sourceElement);
+
+    dnd.startDrag(source, new Event('mousedown'), 1, 20, 'widget', pinnedItems[0]);
+    await nextTick();
+    wrapper.element.dispatchEvent(moveEvent(10, 180));
+    await nextTick();
+    expect(wrapper.classes()).toContain('drop-allowed');
+    dnd.stopDrag(new Event('mouseup'));
+
+    expect(onReorder).toHaveBeenCalledOnce();
+    const reorder = onReorder.mock.calls[0]?.[0] as ReorderEvent;
+    const result = [...pinnedItems];
+    reorder.apply(result);
+    expect(reorder).toMatchObject({ from: 0, to: 4, locked: [2] });
+    expect(result.map(item => item.id)).toEqual([2, 4, 3, 5, 1]);
+
+    const pinnedElement = wrapper.findAll('.item')[2].element as HTMLElement;
+    dnd.startDrag(makeDragController(pinnedElement), new Event('mousedown'), 1, 100, 'widget', pinnedItems[2]);
+    await nextTick();
+    wrapper.element.dispatchEvent(moveEvent(10, 20));
+    await nextTick();
+    expect(wrapper.classes()).toContain('drop-forbidden');
+    dnd.stopDrag(new Event('mouseup'));
+    expect(onReorder).toHaveBeenCalledOnce();
+  });
+
   it('does not reorder a single-item list or emit unchanged positions', async () => {
     const onReorder = vi.fn();
     const single = [{ id: 1, label: 'One' }];
@@ -137,6 +176,29 @@ describe('DropList component', () => {
   it('renders the empty slot for an empty list', () => {
     const wrapper = mountList({ items: [] });
     expect(wrapper.get('.empty').text()).toBe('Nothing here');
+  });
+
+  it('renders default slot content after list items, including when empty', () => {
+    const populated = mount(DropList, {
+      props: { items, noAnimations: true },
+      slots: {
+        item: ({ item }: { item: Item }) => h('div', { class: 'item', key: item.id }, item.label),
+        feedback: () => h('div', { key: 'feedback' }),
+        default: () => h('footer', { class: 'footer', key: 'footer' }, 'Add item')
+      }
+    });
+    expect(populated.element.lastElementChild?.classList).toContain('footer');
+
+    const empty = mount(DropList, {
+      props: { items: [], noAnimations: true },
+      slots: {
+        item: () => h('div'),
+        feedback: () => h('div', { key: 'feedback' }),
+        empty: () => h('small', { class: 'empty', key: 'empty' }, 'Nothing here'),
+        default: () => h('footer', { class: 'footer', key: 'footer' }, 'Add item')
+      }
+    });
+    expect(empty.findAll(':scope > *').map(node => node.classes()[0])).toEqual(['empty', 'footer']);
   });
 
   it('uses source imagery unless a matching custom drag-image slot exists', async () => {

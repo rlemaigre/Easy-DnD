@@ -13,6 +13,7 @@ describe('package public API', () => {
       'useDrag',
       'useDrop',
       'DragImagesManager',
+      'refreshDragImage',
       'dnd',
       'DnDEvent',
       'InsertEvent',

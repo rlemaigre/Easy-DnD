@@ -17,5 +17,11 @@ Yes. ESC key can be pressed to cancel the drag.
 
 Yes.
 
+### Does it work inside Shadow DOM?
+
+Yes. Open shadow roots are supported for mouse and touch target detection, composed drag movement, Drop event routing, and scroll-parent discovery across the shadow host.
+
+<ShadowDomDemo />
+
 &nbsp;\
 &nbsp;

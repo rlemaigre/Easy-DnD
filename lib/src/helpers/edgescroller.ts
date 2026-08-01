@@ -123,7 +123,8 @@ function canBeScrolledInCurrentDirection (
   container: HTMLElement,
   edgeSize: number,
   edgeParams: NonNullable<ReturnType<typeof isInEdge>>,
-  scrollParams: ReturnType<typeof canContainerBeScrolled>
+  scrollParams: ReturnType<typeof canContainerBeScrolled>,
+  maxStep = 50
 ) {
   const {
     viewportX,
@@ -161,8 +162,6 @@ function canBeScrolledInCurrentDirection (
   // gets the viewport edge. As such, we'll calculate the percentage that
   // the user has made it "through the edge" when calculating the delta.
   // Then, that use that percentage to back-off from the "max" step value.
-  const maxStep = 50;
-  
   // Should we scroll left?
   if (isInLeftEdge && canScrollLeft) {
     const intensity = ((edgeLeft - viewportX) / edgeSize);
@@ -228,9 +227,10 @@ export function performEdgeScroll (
   container: HTMLElement,
   clientX: number,
   clientY: number,
-  edgeSize: number
+  edgeSize: number,
+  maxStep = 50
 ): boolean {
-  if (!container || !edgeSize) {
+  if (!container || !edgeSize || maxStep <= 0) {
     cancelScrollAction();
     return false;
   }
@@ -280,7 +280,13 @@ export function performEdgeScroll (
   function adjustWindowScroll () {
     const scrollParams = canContainerBeScrolled(container, viewportWidth, viewportHeight);
 
-    const nextScrollParams = canBeScrolledInCurrentDirection(container, edgeSize, edgeParams!, scrollParams);
+    const nextScrollParams = canBeScrolledInCurrentDirection(
+      container,
+      edgeSize,
+      edgeParams!,
+      scrollParams,
+      maxStep
+    );
     if (nextScrollParams) {
       const { nextScrollX, nextScrollY } = nextScrollParams;
       (isBodyContainer(container) ? window : container).scrollTo(nextScrollX, nextScrollY);

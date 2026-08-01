@@ -27,6 +27,18 @@ describe('scrollparent', () => {
     expect(scrollparent(document.createElement('div'))).toBe(document.body);
     expect(scrollparent(null)).toBe(document.body);
   });
+
+  it('crosses a shadow root to find a scrollable host', () => {
+    const host = document.createElement('div');
+    host.style.overflow = 'auto';
+    const shadow = host.attachShadow({ mode: 'open' });
+    const child = document.createElement('span');
+    shadow.appendChild(child);
+    document.body.appendChild(host);
+
+    expect(scrollparent(child)).toBe(host);
+    host.remove();
+  });
 });
 
 describe('edge scrolling', () => {
@@ -67,6 +79,18 @@ describe('edge scrolling', () => {
     expect(scrollTo).toHaveBeenCalled();
     expect(element.scrollLeft).toBeGreaterThan(0);
     expect(element.scrollTop).toBeGreaterThan(0);
+    cancelScrollAction();
+    vi.runOnlyPendingTimers();
+    vi.useRealTimers();
+  });
+
+  it('uses a configurable maximum scroll step', () => {
+    vi.useFakeTimers();
+    const { element } = makeScrollable();
+
+    expect(performEdgeScroll(element, 95, 95, 20, 10)).toBe(true);
+    expect(element.scrollLeft).toBe(7.5);
+    expect(element.scrollTop).toBe(7.5);
     cancelScrollAction();
     vi.runOnlyPendingTimers();
     vi.useRealTimers();

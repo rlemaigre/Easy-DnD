@@ -22,6 +22,24 @@ Change the drag image at the source and as the pointer moves through nested targ
 
 <CustomDragImageDemo />
 
+### Dynamic drag images
+
+Update reactive drag-image content during an active drag and explicitly refresh its visible clone.
+
+<DynamicDragImageDemo />
+
+### Lazy external handles
+
+Select a card and drag it from a shared toolbar rendered outside every Drag component.
+
+<ExternalHandleDemo />
+
+### Automatic scrolling controls
+
+Adjust edge-scrolling speed and toggle propagation between nested scroll containers.
+
+<AutoScrollControlsDemo />
+
 ## Drop
 
 ### Copy and cut modes
@@ -44,6 +62,12 @@ Reorder items in place or transfer them between lists.
 
 <DropListTransferDemo />
 
+### Keep an item at a fixed position
+
+Pin one item while allowing every unlocked item to move around and across it.
+
+<PositionLockDemo />
+
 ### Nested drop lists
 
 Compose row and column lists into a nested layout.
@@ -65,6 +89,14 @@ Keep part of a Drop component insensitive to drag-and-drop interactions.
 Watch the reactive state exposed by `useDragAware` throughout a drag operation.
 
 <DragStateDemo />
+
+## Compatibility
+
+### Shadow DOM
+
+Run the complete interaction inside an isolated open shadow root.
+
+<ShadowDomDemo />
 
 ## Complete interface examples
 

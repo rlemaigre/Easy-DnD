@@ -22,12 +22,14 @@ export interface DragProps {
   dragImageOpacity: number;
   disabled: boolean;
   goBack: boolean;
-  handle?: string | null;
+  handle?: string | (() => Element | null) | null;
   delta: number;
   delay: number;
   dragClass?: string | null;
   vibration: number;
   scrollingEdgeSize: number;
+  scrollingSpeed?: number;
+  scrollingPropagation?: boolean;
 }
 
 export interface DragOptions {
@@ -58,7 +60,7 @@ export const dragProps = {
     default: false
   },
   handle: {
-    type: String,
+    type: [String, Function] as PropType<string | (() => Element | null)>,
     default: null
   },
   delta: {
@@ -80,10 +82,28 @@ export const dragProps = {
   scrollingEdgeSize: {
     type: Number,
     default: 100
+  },
+  scrollingSpeed: {
+    type: Number,
+    default: 50
+  },
+  scrollingPropagation: {
+    type: Boolean,
+    default: true
   }
 };
 
 export const dragEmits = ['dragstart', 'dragend', 'cut', 'copy'];
+
+const deepestElementFromPoint = (x: number, y: number): Element | null => {
+  let target = document.elementFromPoint(x, y);
+  while (target?.shadowRoot) {
+    const nestedTarget = target.shadowRoot.elementFromPoint(x, y);
+    if (!nestedTarget || nestedTarget === target) break;
+    target = nestedTarget;
+  }
+  return target;
+};
 
 export function useDrag (props: DragProps, emit: DnDEmit, options: DragOptions) {
   const instance = getCurrentInstance()!;
@@ -238,13 +258,13 @@ export function useDrag (props: DragProps, emit: DnDEmit, options: DragOptions) 
       if (!touch) return;
       x = touch.clientX;
       y = touch.clientY;
-      target = document.elementFromPoint(x, y);
+      target = deepestElementFromPoint(x, y);
       if (!target) return;
     }
     else {
       x = (event as MouseEvent).clientX;
       y = (event as MouseEvent).clientY;
-      target = event.target as Element | null;
+      target = (event.composedPath()[0] ?? event.target) as Element | null;
     }
 
     if (!(target instanceof Element) || !startPosition.value) return;
@@ -275,21 +295,24 @@ export function useDrag (props: DragProps, emit: DnDEmit, options: DragOptions) 
       const top = dnd.topController;
       const targetEdgeSize = top?.getScrollingEdgeSize();
       const edgeSize = targetEdgeSize ?? props.scrollingEdgeSize;
+      const scrollingPropagation = top?.getScrollingPropagation?.() ?? props.scrollingPropagation ?? true;
 
       if (edgeSize) {
         let currentContainer = top ? scrollparent(top.getElement()) : scrollContainer.value;
         if (!currentContainer) return;
         const nodes = [currentContainer];
-        do {
-          if (currentContainer === document.body) break;
-          currentContainer = scrollparent(currentContainer.parentNode);
-          nodes.push(currentContainer);
-        } while (currentContainer !== document.body);
+        if (scrollingPropagation) {
+          do {
+            if (currentContainer === document.body) break;
+            currentContainer = scrollparent(currentContainer.parentNode);
+            nodes.push(currentContainer);
+          } while (currentContainer !== document.body);
+        }
 
         cancelScrollAction();
         for (let index = nodes.length - 1; index >= 0; index--) {
           const node = nodes[index];
-          if (performEdgeScroll(node, x, y, edgeSize)) break;
+          if (performEdgeScroll(node, x, y, edgeSize, props.scrollingSpeed ?? 50)) break;
         }
       }
       else {
@@ -299,6 +322,7 @@ export function useDrag (props: DragProps, emit: DnDEmit, options: DragOptions) 
       target.dispatchEvent(new CustomEvent('easy-dnd-move', {
         bubbles: true,
         cancelable: true,
+        composed: true,
         detail: { x, y, native: event }
       }));
     }
@@ -309,16 +333,20 @@ export function useDrag (props: DragProps, emit: DnDEmit, options: DragOptions) 
   const onMouseDown = (event: MouseEvent | TouchEvent) => {
     const mouseEvent = event.type === 'mousedown';
     const touch = mouseEvent ? null : (event as TouchEvent).touches[0];
-    const target = mouseEvent ? event.target : touch?.target;
+    const target = event.composedPath()[0] ?? (mouseEvent ? event.target : touch?.target);
     const goodButton = mouseEvent ? (event as MouseEvent).buttons === 1 : true;
     if (props.disabled || downEvent.value !== null || !goodButton) return;
     if (!(target instanceof Element)) return;
 
-    const goodTarget = !target.matches('.dnd-no-drag, .dnd-no-drag *') &&
-      (!props.handle || target.matches(`${props.handle}, ${props.handle} *`));
+    const handle = typeof props.handle === 'function' ? props.handle() : null;
+    const goodTarget = !target.matches('.dnd-no-drag, .dnd-no-drag *') && (
+      !props.handle || (typeof props.handle === 'string'
+        ? target.matches(`${props.handle}, ${props.handle} *`)
+        : !!handle && (target === handle || handle.contains(target)))
+    );
     if (!goodTarget) return;
 
-    scrollContainer.value = scrollparent(target);
+    scrollContainer.value = scrollparent(typeof props.handle === 'function' ? getRootElement() : target);
     initialUserSelect.value = document.documentElement.style.userSelect;
     document.documentElement.style.userSelect = 'none';
     dragStarted.value = false;
@@ -371,19 +399,33 @@ export function useDrag (props: DragProps, emit: DnDEmit, options: DragOptions) 
 
   let mounted = false;
   const addRootListeners = (element: HTMLElement) => {
-    element.addEventListener('mousedown', onMouseDown, { passive: true });
-    element.addEventListener('touchstart', onMouseDown, { passive: true });
-    element.addEventListener('dragstart', onNativeDragStart, { capture: true });
+    if (typeof props.handle === 'function') {
+      document.addEventListener('mousedown', onMouseDown as EventListener, { passive: true });
+      document.addEventListener('touchstart', onMouseDown as EventListener, { passive: true });
+      document.addEventListener('dragstart', onNativeDragStart as EventListener, { capture: true });
+    }
+    else {
+      element.addEventListener('mousedown', onMouseDown, { passive: true });
+      element.addEventListener('touchstart', onMouseDown, { passive: true });
+      element.addEventListener('dragstart', onNativeDragStart, { capture: true });
+    }
   };
-  const removeRootListeners = (element: HTMLElement | null) => {
-    element?.removeEventListener('mousedown', onMouseDown);
-    element?.removeEventListener('touchstart', onMouseDown);
-    element?.removeEventListener('dragstart', onNativeDragStart, true);
+  const removeRootListeners = (element: HTMLElement | null, handle = props.handle) => {
+    if (typeof handle === 'function') {
+      document.removeEventListener('mousedown', onMouseDown as EventListener);
+      document.removeEventListener('touchstart', onMouseDown as EventListener);
+      document.removeEventListener('dragstart', onNativeDragStart as EventListener, true);
+    }
+    else {
+      element?.removeEventListener('mousedown', onMouseDown);
+      element?.removeEventListener('touchstart', onMouseDown);
+      element?.removeEventListener('dragstart', onNativeDragStart, true);
+    }
   };
 
-  watch(options.rootElement, (element, previousElement) => {
-    if (!mounted || element === previousElement) return;
-    removeRootListeners(previousElement);
+  watch([options.rootElement, () => props.handle], ([element, handle], [previousElement, previousHandle]) => {
+    if (!mounted || (element === previousElement && handle === previousHandle)) return;
+    removeRootListeners(previousElement, previousHandle);
     if (element) addRootListeners(element);
   }, { flush: 'sync' });
 

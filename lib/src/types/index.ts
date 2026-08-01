@@ -33,6 +33,7 @@ export interface DropController {
   getElement(): HTMLElement;
   getMode(): DropMode;
   getScrollingEdgeSize(): number | undefined;
+  getScrollingPropagation?(): boolean | undefined;
   getCompatibleMode(): boolean | null;
   getDropAllowed(): boolean | null;
   getReordering(): boolean;

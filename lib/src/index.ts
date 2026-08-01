@@ -9,7 +9,7 @@ import { useDrag } from './composables/useDrag';
 import { useDrop } from './composables/useDrop';
 
 import { dnd } from './js/DnD';
-import { DragImagesManager } from './js/DragImagesManager';
+import { DragImagesManager, refreshDragImage } from './js/DragImagesManager';
 import { DnDEvent, InsertEvent, ReorderEvent } from './js/events';
 import { createDragImage } from './js/createDragImage';
 export type * from './types';
@@ -24,6 +24,7 @@ export {
   useDrag,
   useDrop,
   DragImagesManager,
+  refreshDragImage,
   dnd,
   DnDEvent,
   InsertEvent,
