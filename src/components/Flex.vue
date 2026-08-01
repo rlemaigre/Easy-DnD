@@ -30,7 +30,7 @@
       <template #feedback="{data}">
         <div :key="key(data)" class="feedback" />
       </template>
-      <template #reordering-feedback="{item}">
+      <template #reordering-feedback>
         <div key="feedback" class="reordering-feedback" />
       </template>
     </drop-list>

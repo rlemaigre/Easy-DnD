@@ -7,7 +7,7 @@
         class="droplist"
         @reorder="$event.apply(items)"
       >
-        <template #item="{item, index}">
+        <template #item="{item}">
           <Drag
             :key="item"
             handle=".handle"

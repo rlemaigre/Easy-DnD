@@ -74,7 +74,7 @@
               {{ data.title }}
             </Chip>
           </template>
-          <template #reordering-drag-image="{item}" />
+          <template #reordering-drag-image />
         </drop-list>
       </div>
     </div>

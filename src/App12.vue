@@ -9,7 +9,7 @@
             @reorder="$event.apply(items1)"
             @insert="insert1"
           >
-            <template #item="{item, reorder, index}">
+            <template #item="{item}">
               <drag
                 :key="`item-${item}`"
                 :tag="App12Item"

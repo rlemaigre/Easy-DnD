@@ -61,7 +61,7 @@
             @reorder="$event.apply(items2)"
             @insert="insert2"
           >
-            <template #item="{item,reorder,index}">
+            <template #item="{item,reorder}">
               <drag
                 :key="item"
                 class="chip"
@@ -85,7 +85,7 @@
                 {{ data }}
               </Chip>
             </template>
-            <template #reordering-drag-image="{ item }" />
+            <template #reordering-drag-image />
           </drop-list>
         </div>
       </div>

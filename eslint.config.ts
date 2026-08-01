@@ -13,11 +13,16 @@ export default [
       'docs/.vitepress/dist/**'
     ]
   },
+  {
+    linterOptions: {
+      reportUnusedDisableDirectives: 'error'
+    }
+  },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   ...pluginVue.configs['flat/recommended'],
   {
-    files: ['**/*.{ts,vue}'],
+    files: ['**/*.{ts,tsx,mts,cts,vue}'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
@@ -35,9 +40,6 @@ export default [
     },
     rules: {
       'vue/multi-word-component-names': 'off',
-      'vue/no-unused-vars': 'off',
-      'no-prototype-builtins': 'off',
-      'vue/no-mutating-props': 'off',
       'vue/max-attributes-per-line': [
         'error',
         {
@@ -57,9 +59,6 @@ export default [
           math: 'always'
         }
       ],
-      'vue/no-v-html': 'off',
-      '@typescript-eslint/no-explicit-any': 'off',
-      'no-useless-assignment': 'off',
       '@stylistic/no-multiple-empty-lines': 'error',
       '@stylistic/semi': 'error',
       '@stylistic/space-before-function-paren': 'error',
@@ -67,6 +66,27 @@ export default [
       '@stylistic/object-curly-spacing': ['error', 'always'],
       '@stylistic/quotes': ['error', 'single'],
       '@stylistic/brace-style': ['error', 'stroustrup', { allowSingleLine: true }]
+    }
+  },
+  {
+    files: [
+      'src/App3.vue',
+      'src/App6.vue',
+      'src/App8.vue',
+      'src/App11.vue',
+      'src/App14.vue',
+      'src/App16.vue'
+    ],
+    rules: {
+      // These demos intentionally render hard-coded HTML fixture strings.
+      'vue/no-v-html': 'off'
+    }
+  },
+  {
+    files: ['src/components/Flex.vue'],
+    rules: {
+      // The recursive mutable-data demo intentionally edits its supplied tree.
+      'vue/no-mutating-props': 'off'
     }
   }
 ];

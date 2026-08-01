@@ -54,7 +54,7 @@
             :items="items2"
             mode="cut"
           >
-            <template #item="{item,reorder,index}">
+            <template #item="{item,reorder}">
               <drag
                 :key="item"
                 class="chip"
@@ -77,7 +77,7 @@
                 {{ data }}
               </Chip>
             </template>
-            <template #reordering-drag-image="{ item }" />
+            <template #reordering-drag-image />
           </drop-list>
         </div>
       </div>
