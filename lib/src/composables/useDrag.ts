@@ -299,7 +299,7 @@ export function useDrag (props: DragProps, emit: DnDEmit, options: DragOptions) 
     if (!goodTarget) return;
 
     scrollContainer.value = scrollparent(target);
-    initialUserSelect.value = document.body.style.userSelect;
+    initialUserSelect.value = document.documentElement.style.userSelect;
     document.documentElement.style.userSelect = 'none';
     dragStarted.value = false;
     downEvent.value = event;

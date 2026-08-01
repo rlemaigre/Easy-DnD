@@ -15,7 +15,7 @@ export default class Grid {
     ) {
       const first = collection.item(0);
       if (!(first?.parentNode instanceof HTMLElement)) {
-        throw new Error('Easy-DnD requires a list with an HTML element parent.');
+        throw new TypeError('Easy-DnD requires a list with an HTML element parent.');
       }
       this.reference = first.parentNode;
       this.referenceOriginalPosition = {
@@ -31,7 +31,7 @@ export default class Grid {
         if (hasNestedDrop) {
           if (direction === 'auto') {
             // Auto mode not supported for now. Row or column must be defined explicitly if there are nested drop lists.
-            throw 'Easy-DnD error : a drop list is missing one of these attributes : \'row\' or \'column\'.';
+            throw new Error('Easy-DnD error : a drop list is missing one of these attributes : \'row\' or \'column\'.');
           }
           else {
             horizontal = direction === 'row';

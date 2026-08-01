@@ -391,11 +391,9 @@ export default defineComponent({
           ref: 'dragImageElement',
           key: 'reordering-drag-image'
         },
-        {
-          default: () => this.$slots['reordering-drag-image']!({
-            item: this.items[this.fromIndex!]
-          })[0]
-        }
+        this.$slots['reordering-drag-image']!({
+          item: this.items[this.fromIndex!]
+        })[0]
       ));
     }
 
@@ -407,12 +405,10 @@ export default defineComponent({
           ref: 'dragImageElement',
           key: 'inserting-drag-image'
         },
-        {
-          default: () => this.$slots['drag-image']!({
-            type: this.dragType,
-            data: this.dragData
-          })[0]
-        }
+        this.$slots['drag-image']!({
+          type: this.dragType,
+          data: this.dragData
+        })[0]
       ));
     }
 

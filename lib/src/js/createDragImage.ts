@@ -40,7 +40,8 @@ function deepClone (el: HTMLElement): DragImageElement {
 function copyStyle (src: Element, destination: Element) {
   const styledDestination = destination as HTMLElement | SVGElement;
   const computedStyle = window.getComputedStyle(src);
-  for (const key of computedStyle) {
+  for (let index = 0; index < computedStyle.length; index++) {
+    const key = computedStyle.item(index);
     styledDestination.style.setProperty(
       key,
       computedStyle.getPropertyValue(key),

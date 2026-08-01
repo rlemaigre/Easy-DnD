@@ -88,5 +88,12 @@ export default [
       // The recursive mutable-data demo intentionally edits its supplied tree.
       'vue/no-mutating-props': 'off'
     }
+  },
+  {
+    files: ['test/**/*.ts'],
+    rules: {
+      'vue/one-component-per-file': 'off',
+      'vue/require-prop-types': 'off'
+    }
   }
 ];

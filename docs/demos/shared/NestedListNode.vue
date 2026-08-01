@@ -39,23 +39,31 @@
       <div
         v-if="rich && isRichDemoWidget(data)"
         key="rich-feedback"
-        :class="feedbackClass(data)"
+        :class="feedbackClass()"
         :style="{ '--feedback-height': feedbackHeight(data.kind) }"
       >
         <span class="dnd-demo__feedback-label">{{ data.kind }} widget</span>
       </div>
-      <div v-else key="feedback" class="dnd-demo__feedback" />
+      <div
+        v-else
+        key="feedback"
+        class="dnd-demo__feedback"
+      />
     </template>
     <template #reordering-feedback="{ item }">
       <div
         v-if="rich && isRichDemoWidget(item)"
         key="rich-reordering-feedback"
-        :class="feedbackClass(item)"
+        :class="feedbackClass()"
         :style="{ '--feedback-height': feedbackHeight(item.kind) }"
       >
         <span class="dnd-demo__feedback-label">{{ item.kind }} widget</span>
       </div>
-      <div v-else key="reordering-feedback-fallback" class="dnd-demo__feedback" />
+      <div
+        v-else
+        key="reordering-feedback-fallback"
+        class="dnd-demo__feedback"
+      />
     </template>
     <template #empty>
       <small key="empty">Drop a widget here</small>
@@ -112,7 +120,7 @@ const isRichDemoWidget = (value: unknown): value is DemoWidget => {
     'id' in value;
 };
 
-const feedbackClass = (item: DemoWidget) => [
+const feedbackClass = () => [
   'dnd-demo__feedback',
   'dnd-demo__feedback--dashboard'
 ];
