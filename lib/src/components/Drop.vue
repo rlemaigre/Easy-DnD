@@ -1,8 +1,9 @@
 <template>
   <component
     :is="tag"
-    ref="rootElement"
     :class="cssClasses"
+    @vue:mounted="setRootElement"
+    @vue:updated="setRootElement"
   >
     <slot v-bind="$slots['default'] || {}" />
 
@@ -24,9 +25,10 @@
   </component>
 </template>
 
-<script setup>
-import { computed, ref, useSlots } from 'vue';
+<script lang="ts" setup>
+import { computed, ref, useSlots, type VNode } from 'vue';
 import { dropEmits, dropProps, useDrop } from '../composables/useDrop';
+import type { DropProps } from '../composables/useDrop';
 
 defineOptions({
   name: 'Drop',
@@ -41,9 +43,12 @@ const props = defineProps({
 });
 const emit = defineEmits(dropEmits);
 const slots = useSlots();
-const rootElement = ref(null);
-const dragImageElement = ref(null);
-const drop = useDrop(props, emit, {
+const rootElement = ref<HTMLElement | null>(null);
+const dragImageElement = ref<HTMLElement | null>(null);
+const setRootElement = (vnode: VNode) => {
+  rootElement.value = vnode.el instanceof HTMLElement ? vnode.el : null;
+};
+const drop = useDrop(props as unknown as DropProps, emit, {
   rootElement,
   dragImageElement
 });

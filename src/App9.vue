@@ -41,12 +41,12 @@
   </Page>
 </template>
 
-<script>
-import Page from './components/scaffold/Page';
+<script lang="ts">
+import Page from './components/scaffold/Page.vue';
 
-import Drag from '../lib/src/components/Drag';
-import DropList from '../lib/src/components/DropList';
-import '../lib/src/js/DragImagesManager.js';
+import Drag from '../lib/src/components/Drag.vue';
+import DropList from '../lib/src/components/DropList.vue';
+import '../lib/src/js/DragImagesManager';
 
 export default {
   name: 'App',

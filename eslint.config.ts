@@ -2,6 +2,7 @@ import js from '@eslint/js';
 import stylistic from '@stylistic/eslint-plugin';
 import pluginVue from 'eslint-plugin-vue';
 import globals from 'globals';
+import tseslint from 'typescript-eslint';
 
 export default [
   {
@@ -13,12 +14,17 @@ export default [
     ]
   },
   js.configs.recommended,
+  ...tseslint.configs.recommended,
   ...pluginVue.configs['flat/recommended'],
   {
-    files: ['**/*.{js,mjs,cjs,vue}'],
+    files: ['**/*.{ts,vue}'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
+      parserOptions: {
+        parser: tseslint.parser,
+        extraFileExtensions: ['.vue']
+      },
       globals: {
         ...globals.browser,
         ...globals.node
@@ -52,6 +58,7 @@ export default [
         }
       ],
       'vue/no-v-html': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
       'no-useless-assignment': 'off',
       '@stylistic/no-multiple-empty-lines': 'error',
       '@stylistic/semi': 'error',

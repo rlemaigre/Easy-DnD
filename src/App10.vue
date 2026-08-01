@@ -25,30 +25,33 @@
         <drop
           :class="{'hovering': active}"
           class="dropper"
-          @dragend="(e) => onDragEnd('active', e)"
-          @dragenter="(e) => onDragEnter('active', e)"
+          @dragend="onActiveDragEnd"
+          @dragenter="onActiveDragEnter"
           @drop="onDrop"
-          @dragleave="(e) => onDragLeave('active', e)"
+          @dragleave="onActiveDragLeave"
         />
         <drop
           :class="{'hovering': active2}"
           class="dropper"
-          @dragend="(e) => onDragEnd('active2', e)"
-          @dragenter="(e) => onDragEnter('active2', e)"
-          @dragleave="(e) => onDragLeave('active2', e)"
+          @dragend="onActive2DragEnd"
+          @dragenter="onActive2DragEnter"
+          @dragleave="onActive2DragLeave"
         />
       </div>
     </div>
   </Page>
 </template>
 
-<script>
-import Page from './components/scaffold/Page';
+<script lang="ts">
+import Page from './components/scaffold/Page.vue';
 
-import Drag from '../lib/src/components/Drag';
-import DropList from '../lib/src/components/DropList';
-import Drop from '../lib/src/components/Drop';
-import '../lib/src/js/DragImagesManager.js';
+import Drag from '../lib/src/components/Drag.vue';
+import DropList from '../lib/src/components/DropList.vue';
+import Drop from '../lib/src/components/Drop.vue';
+import '../lib/src/js/DragImagesManager';
+import type { DemoDnDEvent, DessertItem } from './types/demo';
+
+type ActiveState = 'active' | 'active2';
 
 export default {
   name: 'App',
@@ -112,34 +115,52 @@ export default {
           fat: 9.0,
         },
       ],
-      items2: [],
-      selected: [],
+      items2: [] as DessertItem[],
+      selected: [] as DessertItem[],
       selectedList: 0,
-      timer: null,
+      timer: undefined as ReturnType<typeof setInterval> | undefined,
       active: false,
       active2: false
     };
   },
   methods: {
-    onDragEnter (variable, e) {
+    onDragEnter (variable: ActiveState, e: DemoDnDEvent) {
       this[variable] = true;
       this.timer = setInterval(() => {
         console.log('Logging Data...', variable, e);
       }, 1000);
     },
-    onDragEnd (variable, e) {
+    onDragEnd (variable: ActiveState, e: DemoDnDEvent) {
       console.log('DRAG END (esc)', variable, e);
       this.onDragLeave(variable, e);
     },
-    onDragLeave (variable, e) {
+    onDragLeave (variable: ActiveState, e: DemoDnDEvent) {
       console.log('Called drag leave', variable, e);
       this[variable] = false;
-      clearInterval(this.timer);
+      if (this.timer !== undefined) clearInterval(this.timer);
     },
-    onDrop (e) {
+    onActiveDragEnter (e: DemoDnDEvent) {
+      this.onDragEnter('active', e);
+    },
+    onActiveDragLeave (e: DemoDnDEvent) {
+      this.onDragLeave('active', e);
+    },
+    onActiveDragEnd (e: DemoDnDEvent) {
+      this.onDragEnd('active', e);
+    },
+    onActive2DragEnter (e: DemoDnDEvent) {
+      this.onDragEnter('active2', e);
+    },
+    onActive2DragLeave (e: DemoDnDEvent) {
+      this.onDragLeave('active2', e);
+    },
+    onActive2DragEnd (e: DemoDnDEvent) {
+      this.onDragEnd('active2', e);
+    },
+    onDrop (e: DemoDnDEvent) {
       console.log('DROP', e);
     },
-    onCut (e) {
+    onCut (e: DemoDnDEvent) {
       console.log('CUT', e);
     }
   }

@@ -1,8 +1,9 @@
 <template>
   <component
     :is="tag"
-    ref="rootElement"
     :class="cssClasses"
+    @vue:mounted="setRootElement"
+    @vue:updated="setRootElement"
   >
     <slot v-bind="$slots['default'] || {}" />
 
@@ -20,8 +21,8 @@
   </component>
 </template>
 
-<script setup>
-import { computed, ref, useSlots } from 'vue';
+<script lang="ts" setup>
+import { computed, ref, useSlots, type VNode } from 'vue';
 import { dragEmits, dragProps, useDrag } from '../composables/useDrag';
 
 defineOptions({
@@ -40,8 +41,11 @@ const props = defineProps({
 });
 const emit = defineEmits(dragEmits);
 const slots = useSlots();
-const rootElement = ref(null);
-const dragImageElement = ref(null);
+const rootElement = ref<HTMLElement | null>(null);
+const dragImageElement = ref<HTMLElement | null>(null);
+const setRootElement = (vnode: VNode) => {
+  rootElement.value = vnode.el instanceof HTMLElement ? vnode.el : null;
+};
 const dynamicSlots = computed(() => Object.entries(slots)
   .filter(([key]) => key !== 'drag-image' && key !== 'default'));
 const { cssClasses, dragInitialised } = useDrag(props, emit, {

@@ -81,18 +81,19 @@
   </Page>
 </template>
 
-<script>
-import Page from './components/scaffold/Page';
-import Avatar from './components/scaffold/Avatar';
-import List from './components/scaffold/List';
-import ListItem from './components/scaffold/ListItem';
-import Separator from './components/scaffold/Separator';
-import Skeleton from './components/scaffold/Skeleton';
-import Chip from './components/scaffold/Chip';
+<script lang="ts">
+import Page from './components/scaffold/Page.vue';
+import Avatar from './components/scaffold/Avatar.vue';
+import List from './components/scaffold/List.vue';
+import ListItem from './components/scaffold/ListItem.vue';
+import Separator from './components/scaffold/Separator.vue';
+import Skeleton from './components/scaffold/Skeleton.vue';
+import Chip from './components/scaffold/Chip.vue';
 
-import '../lib/src/js/DragImagesManager.js';
-import Drag from '../lib/src/components/Drag';
-import DropList from '../lib/src/components/DropList';
+import '../lib/src/js/DragImagesManager';
+import Drag from '../lib/src/components/Drag.vue';
+import DropList from '../lib/src/components/DropList.vue';
+import type { CardItem, InsertPayload } from './types/demo';
 
 export default {
   name: 'App',
@@ -146,15 +147,15 @@ export default {
     };
   },
   methods: {
-    insert1 (event) {
+    insert1 (event: InsertPayload<CardItem>) {
       console.log('on insert 1');
       this.items1.splice(event.index, 0, event.data);
     },
-    insert2 (event) {
+    insert2 (event: InsertPayload<CardItem>) {
       console.log('on insert 2');
       this.items2.splice(event.index, 0, event.data);
     },
-    remove (array, value) {
+    remove (array: CardItem[], value: CardItem) {
       console.warn('on remove CUT');
       const index = array.indexOf(value);
       array.splice(index, 1);

@@ -52,16 +52,17 @@
   </Page>
 </template>
 
-<script>
-import Page from './components/scaffold/Page';
-import List from './components/scaffold/List';
-import ListItem from './components/scaffold/ListItem';
-import Separator from './components/scaffold/Separator';
-import Chip from './components/scaffold/Chip';
+<script lang="ts">
+import Page from './components/scaffold/Page.vue';
+import List from './components/scaffold/List.vue';
+import ListItem from './components/scaffold/ListItem.vue';
+import Separator from './components/scaffold/Separator.vue';
+import Chip from './components/scaffold/Chip.vue';
 
-import Drag from '../lib/src/components/Drag';
-import Drop from '../lib/src/components/Drop';
-import '../lib/src/js/DragImagesManager.js';
+import Drag from '../lib/src/components/Drag.vue';
+import Drop from '../lib/src/components/Drop.vue';
+import '../lib/src/js/DragImagesManager';
+import type { DemoDnDEvent, DessertItem } from './types/demo';
 
 export default {
   name: 'App',
@@ -132,8 +133,8 @@ export default {
           fat: 26.0
         },
       ],
-      selected: [],
-      lists: []
+      selected: [] as DessertItem[],
+      lists: [] as DessertItem[][]
     };
   },
   computed: {
@@ -142,8 +143,8 @@ export default {
     }
   },
   methods: {
-    onDrop (event) {
-      this.lists.push(event.data);
+    onDrop (event: DemoDnDEvent) {
+      if (Array.isArray(event.data)) this.lists.push(event.data as DessertItem[]);
     }
   }
 };

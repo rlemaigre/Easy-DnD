@@ -1,10 +1,23 @@
-export default class Grid {
-    reference;
-    referenceOriginalPosition;
-    magnets = [];
+import type { Point } from '../types';
 
-    constructor (collection, upToIndex, direction, fromIndex) {
-      this.reference = collection.item(0).parentNode;
+export type GridDirection = 'auto' | 'row' | 'column';
+
+export default class Grid {
+    reference: HTMLElement;
+    referenceOriginalPosition: Point;
+    magnets: Point[] = [];
+
+    constructor (
+      collection: HTMLCollection,
+      upToIndex: number,
+      direction: GridDirection,
+      fromIndex: number | null
+    ) {
+      const first = collection.item(0);
+      if (!(first?.parentNode instanceof HTMLElement)) {
+        throw new Error('Easy-DnD requires a list with an HTML element parent.');
+      }
+      this.reference = first.parentNode;
       this.referenceOriginalPosition = {
         x: this.reference.getBoundingClientRect().left - this.reference.scrollLeft,
         y: this.reference.getBoundingClientRect().top - this.reference.scrollTop,
@@ -43,7 +56,7 @@ export default class Grid {
     /**
      * Returns the center of the rectangle.
      */
-    center (rect) {
+    center (rect: DOMRect): Point {
       return {
         x: rect.left + rect.width / 2,
         y: rect.top + rect.height / 2
@@ -53,7 +66,7 @@ export default class Grid {
     /**
      * When horizontal is true / false, returns middle of the left / top side of the rectangle.
      */
-    before (rect, horizontal) {
+    before (rect: DOMRect, horizontal: boolean): Point {
       return horizontal ? {
         x: rect.left,
         y: rect.top + rect.height / 2
@@ -66,7 +79,7 @@ export default class Grid {
     /**
      * When horizontal is true / false, returns middle of the right / bottom side of the rectangle.
      */
-    after (rect, horizontal) {
+    after (rect: DOMRect, horizontal: boolean): Point {
       return horizontal ? {
         x: rect.left + rect.width,
         y: rect.top + rect.height / 2
@@ -81,14 +94,14 @@ export default class Grid {
      * started. A correction must be applied that takes into account the amount of scroll. This correction is the
      * difference between the current position of the parent element and its position when the drag started.
      */
-    correction () {
+    correction (): Point {
       return {
         x: this.reference.getBoundingClientRect().left  - this.reference.scrollLeft - this.referenceOriginalPosition.x,
         y: this.reference.getBoundingClientRect().top - this.reference.scrollTop - this.referenceOriginalPosition.y,
       };
     }
 
-    closestIndex (position) {
+    closestIndex (position: Point): number {
       const x = position.x - this.correction().x;
       const y = position.y - this.correction().y;
       let minDist = 999999;

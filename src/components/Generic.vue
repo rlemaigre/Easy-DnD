@@ -9,10 +9,10 @@
   </div>
 </template>
 
-<script>
-import Row from './Row';
-import Column from './Column';
-import Atomic from './Atomic';
+<script lang="ts">
+import Row from './Row.vue';
+import Column from './Column.vue';
+import Atomic from './Atomic.vue';
 
 export default {
   name: 'Generic',

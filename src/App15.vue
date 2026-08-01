@@ -30,12 +30,13 @@
   </Page>
 </template>
 
-<script>
-import Page from './components/scaffold/Page';
+<script lang="ts">
+import Page from './components/scaffold/Page.vue';
 
-import DropList from '../lib/src/components/DropList';
-import Drag from '../lib/src/components/Drag';
-import '../lib/src/js/DragImagesManager.js';
+import DropList from '../lib/src/components/DropList.vue';
+import Drag from '../lib/src/components/Drag.vue';
+import '../lib/src/js/DragImagesManager';
+import type { DemoDnDEvent } from './types/demo';
 
 export default {
   name: 'App',
@@ -50,7 +51,7 @@ export default {
     };
   },
   methods: {
-    func (e) {
+    func (e: DemoDnDEvent) {
       console.log(e);
     },
   },

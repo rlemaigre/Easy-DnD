@@ -1,17 +1,18 @@
 // Forked from https://github.com/bennadel/JavaScript-Demos/blob/master/demos/window-edge-scrolling/index.htm
 // Code was altered to work with scrollable containers
-let timer = null;
+let timer: ReturnType<typeof setTimeout> | undefined;
 
 export function cancelScrollAction () {
-  clearTimeout(timer);
+  if (timer !== undefined) clearTimeout(timer);
+  timer = undefined;
 }
 
-function isBodyContainer (container) {
+function isBodyContainer (container: HTMLElement): container is HTMLBodyElement {
   return container === document.body;
 }
 
 // Determine if user is inside an edge of the container
-function isInEdge (container, clientX, clientY, edgeSize) {
+function isInEdge (container: HTMLElement, clientX: number, clientY: number, edgeSize: number) {
   // Get the viewport-relative coordinates of the mousemove event.
   const rect = container.getBoundingClientRect();
   const isBody = isBodyContainer(container);
@@ -67,7 +68,7 @@ function isInEdge (container, clientX, clientY, edgeSize) {
 }
 
 // Determine if the scroll container has offets which will allow it to be scrolled X or Y
-function canContainerBeScrolled (container, viewportWidth, viewportHeight) {
+function canContainerBeScrolled (container: HTMLElement, viewportWidth: number, viewportHeight: number) {
   const isBody = isBodyContainer(container);
   
   // Get the document dimensions.
@@ -118,7 +119,12 @@ function canContainerBeScrolled (container, viewportWidth, viewportHeight) {
 }
 
 // Determine whether the user is able to scroll based on current edge position and scroll of the container
-function canBeScrolledInCurrentDirection (container, edgeSize, edgeParams, scrollParams) {
+function canBeScrolledInCurrentDirection (
+  container: HTMLElement,
+  edgeSize: number,
+  edgeParams: NonNullable<ReturnType<typeof isInEdge>>,
+  scrollParams: ReturnType<typeof canContainerBeScrolled>
+) {
   const {
     viewportX,
     viewportY,
@@ -193,7 +199,12 @@ function canBeScrolledInCurrentDirection (container, edgeSize, edgeParams, scrol
 }
 
 /** Main function to determine whether a node can be scrolled based on current cursor pos and container edge + scroll pos **/
-export function isContainerReadyToEdgeScroll (container, clientX, clientY, edgeSize) {
+export function isContainerReadyToEdgeScroll (
+  container: HTMLElement,
+  clientX: number,
+  clientY: number,
+  edgeSize: number
+): boolean {
   // Check that the user's cursor is currently within an edge of this scrollable container
   const edgeParams = isInEdge(container, clientX, clientY, edgeSize);
   if (!edgeParams) {
@@ -213,7 +224,12 @@ export function isContainerReadyToEdgeScroll (container, clientX, clientY, edgeS
 }
 
 /** Main function for performing scroll action **/
-export function performEdgeScroll (container, clientX, clientY, edgeSize) {
+export function performEdgeScroll (
+  container: HTMLElement,
+  clientX: number,
+  clientY: number,
+  edgeSize: number
+): boolean {
   if (!container || !edgeSize) {
     cancelScrollAction();
     return false;
@@ -262,7 +278,7 @@ export function performEdgeScroll (container, clientX, clientY, edgeSize) {
   function adjustWindowScroll () {
     const scrollParams = canContainerBeScrolled(container, viewportWidth, viewportHeight);
 
-    const nextScrollParams = canBeScrolledInCurrentDirection(container, edgeSize, edgeParams, scrollParams);
+    const nextScrollParams = canBeScrolledInCurrentDirection(container, edgeSize, edgeParams!, scrollParams);
     if (nextScrollParams) {
       const { nextScrollX, nextScrollY } = nextScrollParams;
       (isBodyContainer(container) ? window : container).scrollTo(nextScrollX, nextScrollY);

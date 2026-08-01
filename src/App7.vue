@@ -4,10 +4,11 @@
   </Page>
 </template>
 
-<script>
-import Page from './components/scaffold/Page';
+<script lang="ts">
+import Page from './components/scaffold/Page.vue';
 
-import '../lib/src/js/DragImagesManager.js';
+import '../lib/src/js/DragImagesManager';
+import type { NestedItemGroup } from './types/demo';
 
 export default {
   name: 'App7',
@@ -15,7 +16,7 @@ export default {
   data () {
     return {
       key: 0,
-      data: null
+      data: null as NestedItemGroup | null
     };
   },
   created () {

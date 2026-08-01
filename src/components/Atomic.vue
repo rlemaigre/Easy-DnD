@@ -2,7 +2,7 @@
   <span class="Atomic">{{ data }}</span>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: 'Atomic',
   props: {

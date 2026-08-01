@@ -28,12 +28,13 @@
   </Page>
 </template>
 
-<script>
-import Page from './components/scaffold/Page';
+<script lang="ts">
+import Page from './components/scaffold/Page.vue';
 
-import Drag from '../lib/src/components/Drag';
-import DropList from '../lib/src/components/DropList';
-import '../lib/src/js/DragImagesManager.js';
+import Drag from '../lib/src/components/Drag.vue';
+import DropList from '../lib/src/components/DropList.vue';
+import '../lib/src/js/DragImagesManager';
+import type { InsertPayload } from './types/demo';
 
 export default {
   components: { Page, Drag, DropList },
@@ -43,7 +44,7 @@ export default {
     };
   },
   methods: {
-    onInsert (event) {
+    onInsert (event: InsertPayload<string>) {
       this.items.splice(event.index, 0, event.data);
     }
   }

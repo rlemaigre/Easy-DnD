@@ -7,11 +7,13 @@
 /**
  * Creates a drag image using the given element as model.
  */
-export function createDragImage (el) {
+import type { DragImageElement } from '../types';
+
+export function createDragImage (el: HTMLElement): DragImageElement {
   const clone = deepClone(el);
   clone.style.position = 'fixed';
   clone.style.margin = '0';
-  clone.style['z-index'] = '1000';
+  clone.style.zIndex = '1000';
   clone.style.transition = 'opacity 0.2s';
   return clone;
 }
@@ -19,8 +21,8 @@ export function createDragImage (el) {
 /**
  * Clones the given element and all its descendants.
  */
-function deepClone (el) {
-  const clone = el.cloneNode(true);
+function deepClone (el: HTMLElement): DragImageElement {
+  const clone = el.cloneNode(true) as DragImageElement;
   copyStyle(el, clone);
   const vSrcElements = el.getElementsByTagName('*');
   const vDstElements = clone.getElementsByTagName('*');
@@ -35,14 +37,15 @@ function deepClone (el) {
 /**
  * Copy the computed styles from src to destination.
  */
-function copyStyle (src, destination) {
+function copyStyle (src: Element, destination: Element) {
+  const styledDestination = destination as HTMLElement | SVGElement;
   const computedStyle = window.getComputedStyle(src);
   for (const key of computedStyle) {
-    destination.style.setProperty(
+    styledDestination.style.setProperty(
       key,
       computedStyle.getPropertyValue(key),
       computedStyle.getPropertyPriority(key)
     );
   }
-  destination.style.pointerEvents = 'none';
+  styledDestination.style.pointerEvents = 'none';
 }

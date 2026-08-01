@@ -1,8 +1,10 @@
+import { defineConfig } from 'vitepress';
+
 // https://vitepress.dev/reference/site-config
-export default {
-  title: "Vue-Easy-DnD",
-  description: "A HTML5 drag-and-drop replacement",
-  base: "/Easy-DnD/",
+export default defineConfig({
+  title: 'Vue-Easy-DnD',
+  description: 'A HTML5 drag-and-drop replacement',
+  base: '/Easy-DnD/',
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
@@ -36,4 +38,4 @@ export default {
       { icon: 'github', link: 'https://github.com/rlemaigre/Easy-DnD' }
     ]
   }
-}
+});

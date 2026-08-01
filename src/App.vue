@@ -75,13 +75,14 @@
   </Page>
 </template>
 
-<script>
-import Page from './components/scaffold/Page';
+<script lang="ts">
+import Page from './components/scaffold/Page.vue';
 
-import Drag from '../lib/src/components/Drag';
-import DropMask from '../lib/src/components/DropMask';
-import DropZone from './components/DropZone';
-import '../lib/src/js/DragImagesManager.js';
+import Drag from '../lib/src/components/Drag.vue';
+import DropMask from '../lib/src/components/DropMask.vue';
+import DropZone from './components/DropZone.vue';
+import '../lib/src/js/DragImagesManager';
+import type { DragData } from '../lib/src/types';
 
 export default {
   components: { Page, DropMask, DropZone, Drag },
@@ -91,11 +92,11 @@ export default {
     };
   },
   methods: {
-    acceptEven (data) {
-      return data % 2 === 0;
+    acceptEven (data: DragData) {
+      return typeof data === 'number' && data % 2 === 0;
     },
-    acceptOdd (data) {
-      return data % 2 === 1;
+    acceptOdd (data: DragData) {
+      return typeof data === 'number' && data % 2 === 1;
     }
   }
 };

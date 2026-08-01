@@ -37,17 +37,19 @@
   </div>
 </template>
 
-<script>
-import DropList from '../../lib/src/components/DropList';
-import Drag from '../../lib/src/components/Drag';
-import MyDiv from './MyDiv';
+<script lang="ts">
+import DropList from '../../lib/src/components/DropList.vue';
+import Drag from '../../lib/src/components/Drag.vue';
+import MyDiv from './MyDiv.vue';
+import type { Component, PropType } from 'vue';
+import type { InsertPayload, NestedItem, ReorderPayload } from '../types/demo';
 
 export default {
   name: 'Flex',
   components: { Drag, DropList },
   props: {
     items: {
-      type: Array,
+      type: Array as PropType<NestedItem[]>,
       required: true
     },
     direction: {
@@ -56,12 +58,12 @@ export default {
     }
   },
   computed: {
-    root () {
+    root (): Component {
       return MyDiv;
     }
   },
   methods: {
-    key (item) {
+    key (item: NestedItem) {
       if (typeof item === 'object') {
         return item.key;
       }
@@ -69,13 +71,13 @@ export default {
         return item;
       }
     },
-    onInsert (event) {
+    onInsert (event: InsertPayload<NestedItem>) {
       this.items.splice(event.index, 0, event.data);
     },
-    onReorder (event) {
+    onReorder (event: ReorderPayload) {
       event.apply(this.items);
     },
-    remove (item) {
+    remove (item: NestedItem) {
       const index = this.items.indexOf(item);
       this.items.splice(index, 1);
     }

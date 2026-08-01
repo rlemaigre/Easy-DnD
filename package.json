@@ -9,11 +9,14 @@
   "scripts": {
     "dev": "vite",
     "serve": "vite",
-    "build": "vite build --config vite.lib.config.js",
+    "build": "vite build --config vite.lib.config.ts",
     "build:demo": "vite build",
     "preview": "vite preview",
     "publish": "npm run build && cd lib && npm publish",
-    "lint": "eslint src lib/src *.config.js",
+    "lint": "eslint src lib/src *.config.ts docs/.vitepress/config.ts",
+    "typecheck": "npm run typecheck:app && npm run typecheck:lib",
+    "typecheck:app": "vue-tsc --noEmit -p tsconfig.json",
+    "typecheck:lib": "vue-tsc --noEmit -p tsconfig.lib.json",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
@@ -21,15 +24,21 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@stylistic/eslint-plugin": "^5.10.0",
+    "@types/node": "^26.1.2",
     "@vitejs/plugin-vue": "^6.0.8",
     "eslint": "^10.8.0",
     "eslint-plugin-vue": "^10.10.0",
     "globals": "^17.8.0",
+    "jiti": "^2.7.0",
     "mitt": "^3.0.1",
     "sass": "^1.102.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.65.0",
     "vite": "^8.2.0",
+    "vite-plugin-dts": "^5.0.3",
     "vitepress": "^1.6.4",
-    "vue": "^3.5.40"
+    "vue": "^3.5.40",
+    "vue-tsc": "^3.3.9"
   },
   "browserslist": [
     "> 1%",

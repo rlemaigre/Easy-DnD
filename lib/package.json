@@ -5,10 +5,12 @@
   "type": "module",
   "main": "./dist/vue-easy-dnd.cjs",
   "module": "./dist/vue-easy-dnd.mjs",
+  "types": "./dist/index.d.ts",
   "unpkg": "./dist/vue-easy-dnd.global.js",
   "jsdelivr": "./dist/vue-easy-dnd.global.js",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/vue-easy-dnd.mjs",
       "require": "./dist/vue-easy-dnd.cjs"
     },

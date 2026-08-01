@@ -31,10 +31,10 @@
   </div>
 </template>
 
-<script>
-import DropList from '../lib/src/components/DropList';
-import Drag from '../lib/src/components/Drag';
-import Drop from '../lib/src/components/Drop';
+<script lang="ts">
+import DropList from '../lib/src/components/DropList.vue';
+import Drag from '../lib/src/components/Drag.vue';
+import Drop from '../lib/src/components/Drop.vue';
 
 export default {
   name: 'App',

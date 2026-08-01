@@ -58,17 +58,18 @@
   </Page>
 </template>
 
-<script>
-import Page from './components/scaffold/Page';
-import Avatar from './components/scaffold/Avatar';
-import List from './components/scaffold/List';
-import ListItem from './components/scaffold/ListItem';
-import Separator from './components/scaffold/Separator';
-import Skeleton from './components/scaffold/Skeleton';
+<script lang="ts">
+import Page from './components/scaffold/Page.vue';
+import Avatar from './components/scaffold/Avatar.vue';
+import List from './components/scaffold/List.vue';
+import ListItem from './components/scaffold/ListItem.vue';
+import Separator from './components/scaffold/Separator.vue';
+import Skeleton from './components/scaffold/Skeleton.vue';
 
-import Drag from '../lib/src/components/Drag';
-import DropList from '../lib/src/components/DropList';
-import '../lib/src/js/DragImagesManager.js';
+import Drag from '../lib/src/components/Drag.vue';
+import DropList from '../lib/src/components/DropList.vue';
+import '../lib/src/js/DragImagesManager';
+import type { InsertPayload } from './types/demo';
 
 export default {
   name: 'App',
@@ -85,24 +86,24 @@ export default {
   data: function () {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
     const arr = [];
-    for (const index in chars) {
+    for (const [index] of Array.from(chars).entries()) {
       arr.push(`${chars[index]}-${index}`);
       arr.push(`2x${chars[index]}-${index}`);
     }
 
     return {
       items1: arr,
-      items2: []
+      items2: [] as string[]
     };
   },
   methods: {
-    insert1 (event) {
+    insert1 (event: InsertPayload<string>) {
       this.items1.splice(event.index, 0, event.data);
     },
-    insert2 (event) {
+    insert2 (event: InsertPayload<string>) {
       this.items2.splice(event.index, 0, event.data);
     },
-    remove (array, value) {
+    remove (array: string[], value: string) {
       const index = array.indexOf(value);
       array.splice(index, 1);
     }

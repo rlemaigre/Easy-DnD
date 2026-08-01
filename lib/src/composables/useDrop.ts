@@ -1,7 +1,34 @@
 import { computed, getCurrentInstance, markRaw, onBeforeUnmount, onMounted, ref } from 'vue';
+import type { Ref } from 'vue';
 import { createDragImage as cloneDragImage } from '../js/createDragImage';
 import { dnd } from '../js/DnD';
 import { useDragAware } from './useDragAware';
+import type {
+  DnDEmit,
+  DnDEventPayload,
+  DragData,
+  DragImage,
+  DragType,
+  DropController
+} from '../types';
+
+export interface DropProps {
+  acceptsType?: DragType | unknown[] | ((type: DragType) => boolean) | null;
+  acceptsData: (data: DragData, type: DragType) => boolean;
+  mode: string;
+  dragImageOpacity: number;
+}
+
+export interface DropOptions {
+  rootElement: Ref<HTMLElement | null>;
+  dragImageElement?: Ref<HTMLElement | null>;
+  getScrollingEdgeSize?: () => number | undefined;
+  getReordering?: () => boolean;
+  getDropAllowed?: () => boolean | null;
+  doDrop?: (event: DnDEventPayload) => void;
+  candidate?: (type: DragType, data: DragData, sourceController: DnDEventPayload['sourceController']) => boolean;
+  createDragImage?: () => DragImage;
+}
 
 export const dropProps = {
   acceptsType: {
@@ -24,17 +51,24 @@ export const dropProps = {
 
 export const dropEmits = ['dragover', 'dragenter', 'dragleave', 'dragend', 'drop'];
 
-export function useDrop (props, emit, options = {}) {
-  const instance = getCurrentInstance();
+export function useDrop (props: DropProps, emit: DnDEmit, options: DropOptions) {
+  const instance = getCurrentInstance()!;
   const component = instance.proxy;
+  const getRootElement = (): HTMLElement => {
+    const element = options.rootElement.value;
+    if (!element) {
+      throw new TypeError('Easy-DnD Drop requires its tag component to render a single HTML root element.');
+    }
+    return element;
+  };
   const dragAware = useDragAware();
   const isDrop = ref(true);
-  const controller = markRaw({
+  const controller: DropController = markRaw({
     get component () {
       return instance.exposeProxy ?? component;
     },
-    isDropMask: false,
-    getElement: () => options.rootElement.value,
+    isDropMask: false as const,
+    getElement: getRootElement,
     getMode: () => props.mode,
     getScrollingEdgeSize: () => options.getScrollingEdgeSize?.(),
     getCompatibleMode: () => compatibleMode.value,
@@ -44,8 +78,8 @@ export function useDrop (props, emit, options = {}) {
     createDragImage: () => createDragImage()
   });
 
-  const effectiveAcceptsType = (type) => {
-    if (props.acceptsType === null) {
+  const effectiveAcceptsType = (type: DragType): boolean => {
+    if (props.acceptsType == null) {
       return true;
     }
     else if (typeof props.acceptsType === 'string' || typeof props.acceptsType === 'number') {
@@ -57,7 +91,8 @@ export function useDrop (props, emit, options = {}) {
     return props.acceptsType(type);
   };
 
-  const effectiveAcceptsData = (data, type) => props.acceptsData(data, type);
+  const effectiveAcceptsData = (data: DragData, type: DragType): boolean =>
+    props.acceptsData(data, type);
   const compatibleMode = computed(() => dragAware.dragInProgress.value ? true : null);
   const dropIn = computed(() => dragAware.dragInProgress.value ? dnd.topController === controller : null);
   const typeAllowed = computed(() => dragAware.dragInProgress.value
@@ -73,7 +108,7 @@ export function useDrop (props, emit, options = {}) {
     ? options.getDropAllowed()
     : baseDropAllowed.value);
   const cssClasses = computed(() => {
-    const classes = { 'dnd-drop': true };
+    const classes: Record<string, boolean> = { 'dnd-drop': true };
     if (dropIn.value !== null) {
       classes['drop-in'] = dropIn.value;
       classes['drop-out'] = !dropIn.value;
@@ -89,55 +124,61 @@ export function useDrop (props, emit, options = {}) {
     return classes;
   });
 
-  const defaultDoDrop = (event) => {
+  const defaultDoDrop = (event: DnDEventPayload) => {
     emit('drop', event);
-    event.sourceController.notifyDrop(props.mode, event);
+    event.sourceController?.notifyDrop(props.mode, event);
   };
-  const doDrop = (event) => options.doDrop ? options.doDrop(event) : defaultDoDrop(event);
-  const candidate = (type) => options.candidate
-    ? options.candidate(type)
+  const doDrop = (event: DnDEventPayload) => options.doDrop ? options.doDrop(event) : defaultDoDrop(event);
+  const candidate = (
+    type: DragType,
+    data: DragData,
+    sourceController: DnDEventPayload['sourceController']
+  ) => options.candidate
+    ? options.candidate(type, data, sourceController)
     : effectiveAcceptsType(type);
-  const createDragImage = () => {
+  const createDragImage = (): DragImage => {
     if (options.createDragImage) {
       return options.createDragImage();
     }
 
-    let image = 'source';
+    let image: DragImage = 'source';
     const element = options.dragImageElement?.value;
     if (element) {
-      image = cloneDragImage(element.childElementCount !== 1 ? element : element.children.item(0));
+      const model = element.childElementCount !== 1 ? element : element.children.item(0);
+      if (!(model instanceof HTMLElement)) return 'source';
+      image = cloneDragImage(model);
       image.__opacity = props.dragImageOpacity;
       image.classList.add('dnd-ghost');
     }
     return image;
   };
 
-  const onDragPositionChanged = (event) => {
+  const onDragPositionChanged = (event: DnDEventPayload) => {
     if (controller === event.topController) emit('dragover', event);
   };
-  const onDragTopChanged = (event) => {
+  const onDragTopChanged = (event: DnDEventPayload) => {
     if (controller === event.topController) emit('dragenter', event);
     if (controller === event.previousTopController) emit('dragleave', event);
   };
-  const onDragEnd = (event) => {
+  const onDragEnd = (event: DnDEventPayload) => {
     if (controller === event.topController) emit('dragend', event);
   };
-  const onDrop = (event) => {
+  const onDrop = (event: DnDEventPayload) => {
     if (dropIn.value && compatibleMode.value && dropAllowed.value) doDrop(event);
   };
-  const onDnDMove = (event) => dnd.mouseMove(event, controller);
+  const onDnDMove = (event: Event) => dnd.mouseMove(event as CustomEvent, controller);
 
   onMounted(() => {
     dnd.on('dragpositionchanged', onDragPositionChanged);
     dnd.on('dragtopchanged', onDragTopChanged);
     dnd.on('drop', onDrop);
     dnd.on('dragend', onDragEnd);
-    options.rootElement.value.addEventListener('easy-dnd-move', onDnDMove);
+    getRootElement().addEventListener('easy-dnd-move', onDnDMove);
   });
 
   onBeforeUnmount(() => {
     if (dnd.topController === controller) dnd.clearTop();
-    options.rootElement.value.removeEventListener('easy-dnd-move', onDnDMove);
+    options.rootElement.value?.removeEventListener('easy-dnd-move', onDnDMove);
     dnd.off('dragpositionchanged', onDragPositionChanged);
     dnd.off('dragtopchanged', onDragTopChanged);
     dnd.off('drop', onDrop);

@@ -4,14 +4,46 @@ import { dnd } from '../js/DnD';
 import scrollparent from '../helpers/scrollparent';
 import { cancelScrollAction, isContainerReadyToEdgeScroll, performEdgeScroll } from '../helpers/edgescroller';
 import { useDragAware } from './useDragAware';
+import type { PropType, Ref } from 'vue';
+import type {
+  DnDEmit,
+  DnDEventPayload,
+  DragController,
+  DragData,
+  DragImageElement,
+  DragType,
+  EasyDnDMoveEvent,
+  Point
+} from '../types';
+
+export interface DragProps {
+  type?: DragType;
+  data?: DragData;
+  dragImageOpacity: number;
+  disabled: boolean;
+  goBack: boolean;
+  handle?: string | null;
+  delta: number;
+  delay: number;
+  dragClass?: string | null;
+  vibration: number;
+  scrollingEdgeSize: number;
+}
+
+export interface DragOptions {
+  rootElement: Ref<HTMLElement | null>;
+  dragImageElement: Ref<HTMLElement | null>;
+  hasDragImage: () => boolean;
+}
 
 export const dragProps = {
   type: {
-    type: String,
-    default: null
+    type: [String, Number] as PropType<Exclude<DragType, null>>,
+    default: null as DragType
   },
   data: {
-    default: null
+    type: null as unknown as PropType<DragData>,
+    default: null as DragData
   },
   dragImageOpacity: {
     type: Number,
@@ -53,26 +85,33 @@ export const dragProps = {
 
 export const dragEmits = ['dragstart', 'dragend', 'cut', 'copy'];
 
-export function useDrag (props, emit, options) {
-  const instance = getCurrentInstance();
+export function useDrag (props: DragProps, emit: DnDEmit, options: DragOptions) {
+  const instance = getCurrentInstance()!;
   const component = instance.proxy;
+  const getRootElement = (): HTMLElement => {
+    const element = options.rootElement.value;
+    if (!element) {
+      throw new TypeError('Easy-DnD Drag requires its tag component to render a single HTML root element.');
+    }
+    return element;
+  };
   const dragAware = useDragAware();
   const dragInitialised = ref(false);
   const dragStarted = ref(false);
   const ignoreNextClick = ref(false);
-  const initialUserSelect = ref(null);
-  const downEvent = ref(null);
-  const startPosition = ref(null);
-  const delayTimer = ref(null);
-  const scrollContainer = ref(null);
-  const controller = markRaw({
+  const initialUserSelect = ref('');
+  const downEvent = ref<MouseEvent | TouchEvent | null>(null);
+  const startPosition = ref<Point | null>(null);
+  const delayTimer = ref<ReturnType<typeof setTimeout> | undefined>();
+  const scrollContainer = ref<HTMLElement | null>(null);
+  const controller: DragController = markRaw({
     get component () {
       return instance.exposeProxy ?? component;
     },
-    getElement: () => options.rootElement.value,
+    getElement: getRootElement,
     getGoBack: () => props.goBack,
-    createDragImage: (selfTransform) => createDragImage(selfTransform),
-    notifyDrop: (mode, event) => emit(mode, event)
+    createDragImage: (selfTransform: string | null) => createDragImage(selfTransform),
+    notifyDrop: (mode: string, event: DnDEventPayload) => emit(mode, event)
   });
 
   const currentDropMode = computed(() => {
@@ -98,7 +137,7 @@ export function useDrag (props, emit, options) {
     };
   });
 
-  const onSelectStart = (event) => {
+  const onSelectStart = (event: Event) => {
     event.stopPropagation();
     event.preventDefault();
   };
@@ -107,7 +146,7 @@ export function useDrag (props, emit, options) {
       window.navigator.vibrate(props.vibration);
     }
   };
-  const onMouseClick = (event) => {
+  const onMouseClick = (event: MouseEvent) => {
     if (ignoreNextClick.value) {
       event.preventDefault();
       event.stopPropagation?.();
@@ -116,10 +155,10 @@ export function useDrag (props, emit, options) {
       return false;
     }
   };
-  const onEasyDnDMove = (event) => dnd.mouseMove(event, null);
+  const onEasyDnDMove = (event: Event) => dnd.mouseMove(event as EasyDnDMoveEvent, null);
   const cancelDragActions = () => {
     dragInitialised.value = false;
-    clearTimeout(delayTimer.value);
+    if (delayTimer.value !== undefined) clearTimeout(delayTimer.value);
     cancelScrollAction();
   };
   const finishDrag = () => {
@@ -139,7 +178,7 @@ export function useDrag (props, emit, options) {
     document.removeEventListener('keyup', onKeyUp);
     document.documentElement.style.userSelect = initialUserSelect.value;
   };
-  const onMouseUp = (event) => {
+  const onMouseUp = (event: MouseEvent | TouchEvent) => {
     if (!downEvent.value || (downEvent.value.type === 'touchstart' && event.type === 'mouseup')) return;
 
     setTimeout(() => {
@@ -148,7 +187,7 @@ export function useDrag (props, emit, options) {
       finishDrag();
     }, 0);
   };
-  const onKeyUp = (event) => {
+  const onKeyUp = (event: KeyboardEvent) => {
     if (event.key === 'Escape') {
       cancelDragActions();
       setTimeout(() => {
@@ -158,31 +197,35 @@ export function useDrag (props, emit, options) {
     }
   };
 
-  const onMouseMove = (event) => {
+  const onMouseMove = (event: MouseEvent | TouchEvent) => {
     if (downEvent.value === null) return;
     if (downEvent.value.type === 'touchstart' && event.type === 'mousemove') return;
 
-    let target;
-    let x;
-    let y;
+    let target: Element | null;
+    let x: number;
+    let y: number;
     if (event.type === 'touchmove') {
-      x = event.touches[0].clientX;
-      y = event.touches[0].clientY;
+      const touch = (event as TouchEvent).touches[0];
+      if (!touch) return;
+      x = touch.clientX;
+      y = touch.clientY;
       target = document.elementFromPoint(x, y);
       if (!target) return;
     }
     else {
-      x = event.clientX;
-      y = event.clientY;
-      target = event.target;
+      x = (event as MouseEvent).clientX;
+      y = (event as MouseEvent).clientY;
+      target = event.target as Element | null;
     }
+
+    if (!(target instanceof Element) || !startPosition.value) return;
 
     const distance = Math.sqrt(
       Math.pow(startPosition.value.x - x, 2) + Math.pow(startPosition.value.y - y, 2)
     );
     if (!dragStarted.value && distance > props.delta) {
       if (!dragInitialised.value) {
-        clearTimeout(delayTimer.value);
+        if (delayTimer.value !== undefined) clearTimeout(delayTimer.value);
       }
       else {
         ignoreNextClick.value = true;
@@ -192,7 +235,7 @@ export function useDrag (props, emit, options) {
           downEvent.value,
           startPosition.value.x,
           startPosition.value.y,
-          props.type,
+          props.type ?? null,
           props.data
         );
         document.documentElement.classList.add('drag-in-progress');
@@ -207,6 +250,7 @@ export function useDrag (props, emit, options) {
 
       if (edgeSize) {
         let currentContainer = top ? scrollparent(top.getElement()) : scrollContainer.value;
+        if (!currentContainer) return;
         const nodes = [currentContainer];
         do {
           if (currentContainer === document.body) break;
@@ -238,11 +282,13 @@ export function useDrag (props, emit, options) {
     if (dragInitialised.value && event.cancelable) event.preventDefault();
   };
 
-  const onMouseDown = (event) => {
+  const onMouseDown = (event: MouseEvent | TouchEvent) => {
     const mouseEvent = event.type === 'mousedown';
-    const target = mouseEvent ? event.target : event.touches[0].target;
-    const goodButton = mouseEvent ? event.buttons === 1 : true;
+    const touch = mouseEvent ? null : (event as TouchEvent).touches[0];
+    const target = mouseEvent ? event.target : touch?.target;
+    const goodButton = mouseEvent ? (event as MouseEvent).buttons === 1 : true;
     if (props.disabled || downEvent.value !== null || !goodButton) return;
+    if (!(target instanceof Element)) return;
 
     const goodTarget = !target.matches('.dnd-no-drag, .dnd-no-drag *') &&
       (!props.handle || target.matches(`${props.handle}, ${props.handle} *`));
@@ -253,12 +299,12 @@ export function useDrag (props, emit, options) {
     document.documentElement.style.userSelect = 'none';
     dragStarted.value = false;
     downEvent.value = event;
-    const input = mouseEvent ? event : event.touches[0];
+    const input = mouseEvent ? event as MouseEvent : touch!;
     startPosition.value = { x: input.clientX, y: input.clientY };
 
     if (props.delay) {
       dragInitialised.value = false;
-      clearTimeout(delayTimer.value);
+      if (delayTimer.value !== undefined) clearTimeout(delayTimer.value);
       delayTimer.value = setTimeout(() => {
         dragInitialised.value = true;
         performVibration();
@@ -282,21 +328,22 @@ export function useDrag (props, emit, options) {
     event.stopPropagation();
   };
 
-  const dndDragStart = (event) => {
+  const dndDragStart = (event: DnDEventPayload) => {
     if (event.sourceController === controller) emit('dragstart', event);
   };
-  const dndDragEnd = (event) => {
+  const dndDragEnd = (event: DnDEventPayload) => {
     if (event.sourceController === controller) emit('dragend', event);
   };
-  const createDragImage = (selfTransform) => {
-    let image;
+  const createDragImage = (selfTransform: string | null): DragImageElement => {
+    let image: DragImageElement;
     if (options.hasDragImage()) {
       const element = options.dragImageElement.value || document.createElement('div');
-      image = cloneDragImage(element.childElementCount !== 1 ? element : element.children.item(0));
+      const model = element.childElementCount !== 1 ? element : element.children.item(0);
+      image = cloneDragImage(model instanceof HTMLElement ? model : element);
     }
     else {
-      image = cloneDragImage(options.rootElement.value);
-      image.style.transform = selfTransform;
+      image = cloneDragImage(getRootElement());
+      image.style.transform = selfTransform ?? '';
     }
 
     if (props.dragClass) image.classList.add(props.dragClass);
@@ -308,8 +355,9 @@ export function useDrag (props, emit, options) {
   onMounted(() => {
     dnd.on('dragstart', dndDragStart);
     dnd.on('dragend', dndDragEnd);
-    options.rootElement.value.addEventListener('mousedown', onMouseDown, { passive: true });
-    options.rootElement.value.addEventListener('touchstart', onMouseDown, { passive: true });
+    const element = getRootElement();
+    element.addEventListener('mousedown', onMouseDown, { passive: true });
+    element.addEventListener('touchstart', onMouseDown, { passive: true });
   });
 
   onBeforeUnmount(() => {
@@ -318,8 +366,8 @@ export function useDrag (props, emit, options) {
     }
     dnd.off('dragstart', dndDragStart);
     dnd.off('dragend', dndDragEnd);
-    options.rootElement.value.removeEventListener('mousedown', onMouseDown);
-    options.rootElement.value.removeEventListener('touchstart', onMouseDown);
+    options.rootElement.value?.removeEventListener('mousedown', onMouseDown);
+    options.rootElement.value?.removeEventListener('touchstart', onMouseDown);
     if (downEvent.value) {
       cancelDragActions();
       finishDrag();

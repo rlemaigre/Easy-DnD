@@ -12,6 +12,7 @@ import { dnd } from './js/DnD';
 import { DragImagesManager } from './js/DragImagesManager';
 import { DnDEvent, InsertEvent, ReorderEvent } from './js/events';
 import { createDragImage } from './js/createDragImage';
+export type * from './types';
 
 export {
   Drag,

@@ -20,26 +20,28 @@
   </drop>
 </template>
 
-<script>
-import Drop from '../../lib/src/components/Drop';
+<script lang="ts">
+import Drop from '../../lib/src/components/Drop.vue';
 import { dnd } from '../../lib/src';
+import type { DragData } from '../../lib/src/types';
+import type { PropType } from 'vue';
 
 export default {
   components: { Drop },
   props: {
     accept: {
-      type: Function,
+      type: Function as PropType<(data: DragData) => boolean>,
       required: true
     }
   },
   data () {
     return {
-      numbers: []
+      numbers: [] as number[]
     };
   },
   methods: {
     drop () {
-      this.numbers.push(dnd.data);
+      if (typeof dnd.data === 'number') this.numbers.push(dnd.data);
     }
   }
 };

@@ -36,9 +36,10 @@
   </div>
 </template>
 
-<script>
-import DropList from '../lib/src/components/DropList';
-import Drag from '../lib/src/components/Drag';
+<script lang="ts">
+import DropList from '../lib/src/components/DropList.vue';
+import Drag from '../lib/src/components/Drag.vue';
+import type { InsertPayload } from './types/demo';
 
 export default {
   name: 'MyComponent',
@@ -52,7 +53,7 @@ export default {
     };
   },
   methods: {
-    onInsert (event) {
+    onInsert (event: InsertPayload<string>) {
       this.items.splice(event.index, 0, event.data);
     },
   },
